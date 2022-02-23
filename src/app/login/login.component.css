@@ -1,0 +1,13 @@
+div {
+  margin-top: 20%;
+  margin: 20% 30% 0 30%;
+}
+
+div div {
+  padding: 10px;
+  font-size: 22px;
+  border-radius: 15px;
+  border:1px solid black;
+  background: gray;
+  box-shadow: 0 0 3px dimgray;
+}

@@ -1,6 +1,10 @@
 import {Observable} from "rxjs";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {Injectable} from "@angular/core";
+
+@Injectable()
 export class HttpService{
+
   private basePath = 'http://localhost:65070/api';
   constructor(private http: HttpClient) {
   }

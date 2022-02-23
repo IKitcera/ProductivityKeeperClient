@@ -3,7 +3,9 @@ import {HttpService} from "./httpService";
 import {Category} from "../models/category.model";
 import {HttpHeaders} from "@angular/common/http";
 import {Subcategory} from "../models/subcategory.model";
+import {Injectable} from "@angular/core";
 
+@Injectable()
 export class TaskService{
   constructor(private  http: HttpService) {
   }
