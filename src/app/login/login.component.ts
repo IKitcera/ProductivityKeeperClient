@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {AuthService} from "../services/authServices";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-login',
@@ -12,7 +13,7 @@ export class LoginComponent implements OnInit {
   passwordConfirmation: string;
   isRegistration = false;
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit(): void {
   }
@@ -22,6 +23,8 @@ export class LoginComponent implements OnInit {
       if(res) {
         this.userName = '';
         this.password = '';
+
+        this.router.navigate([''], {replaceUrl: true});
       }
     }).catch(err => console.error(err.message));
   }
@@ -33,6 +36,8 @@ export class LoginComponent implements OnInit {
 
     this.authService.register(this.userName, this.password).then(res => {
       if(res) {
+        this.authService.login(this.userName, this.password);
+
         this.userName = '';
         this.password = '';
         this.passwordConfirmation = '';

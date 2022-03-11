@@ -7,3 +7,6 @@ body {
   background: slategrey;
 }
 
+.autowidth{
+  width: 100%;
+}

@@ -1,7 +1,8 @@
 import {Unit} from "../models/unit.model";
 import {HttpService} from "./httpService";
 import {Category} from "../models/category.model";
-import {HttpHeaders} from "@angular/common/http";
+import {Task} from "../models/task.model";
+import {HttpHeaders, HttpParams} from "@angular/common/http";
 import {Subcategory} from "../models/subcategory.model";
 import {Injectable} from "@angular/core";
 
@@ -11,57 +12,55 @@ export class TaskService{
   }
   //Category
   async getUnit(): Promise<Unit> {
-    return await this.http.get<Unit>('Category').toPromise() as Unit;
+    return await this.http.get<Unit>('api/Category').toPromise() as Unit;
   }
-  //don't work
   async getCategory(categoryId: number): Promise<Category>{
-    return await this.http.get<Category>('Category', new HttpHeaders()
+    return await this.http.get<Category>('api/Category/' + categoryId, new HttpParams()
       .set('categoryId',categoryId.toString())
     ).toPromise() as Category;
   }
   async postCategory(category: Category): Promise<Category> {
-    return await this.http.post<Category>('Category', category).toPromise() as Category;
+    return await this.http.post<Category>('api/Category', category).toPromise() as Category;
   }
   async putCategory(category: Category): Promise<boolean>{
-    const res =  await this.http.put('Category', category, new HttpHeaders()
+    const res =  await this.http.put('api/Category', category, new HttpParams()
       .set('categoryId', category.id.toString())
     ).toPromise();
     return this.checkRes(res);
   }
   async deleteCategory(categoryId: number): Promise<boolean>{
-    const res =  await this.http.delete('Category', new HttpHeaders()
+    const res =  await this.http.delete('api/Category', new HttpParams()
       .set('categoryId',categoryId.toString())
     ).toPromise();
     return this.checkRes(res);
   }
   //Subcategory
   async getSubcategories(categoryId: number): Promise<Subcategory[]>{
-    return (await this.http.get<Subcategory[]>('Subcategory', new HttpHeaders()
+    return (await this.http.get<Subcategory[]>('api/Subcategory', new HttpParams()
       .set('categoryId',categoryId.toString())
     ).toPromise()) as Subcategory[];
   }
-  //don't work
   async getSubcategory(categoryId: number, subcategoryId: number): Promise<Subcategory>{
-    return await this.http.get<Subcategory>('Subcategory', new HttpHeaders()
+    return await this.http.get<Subcategory>('api/Subcategory/'+subcategoryId, new HttpParams()
       .set('categoryId',categoryId.toString())
       .set('subcategoryId', subcategoryId.toString())
     ).toPromise() as Subcategory;
   }
   async postSubcategory(categoryId: number, sub: Subcategory): Promise<Subcategory>{
-    return await this.http.post<Subcategory>('Subcategory', sub, new HttpHeaders()
+    return await this.http.post<Subcategory>('api/Subcategory', sub, new HttpParams()
       .set('categoryId', categoryId.toString())
     ).toPromise() as Subcategory;
   }
   //won;t work
   async putSubcategory(categoryId: number, subcategoryId: number, sub: Subcategory): Promise<boolean>{
-    const res = await this.http.put('Subcategory', sub, new HttpHeaders()
+    const res = await this.http.put('api/Subcategory', sub, new HttpParams()
       .set('categoryId', categoryId.toString())
       .set('subcategoryId', subcategoryId.toString())
     ).toPromise();
     return this.checkRes(res);
   }
   async deleteSubcategory(categoryId: number, subcategoryId: number): Promise<boolean>{
-    const res =  await this.http.delete('Subcategory', new HttpHeaders()
+    const res =  await this.http.delete('api/Subcategory', new HttpParams()
       .set('categoryId',categoryId.toString())
       .set('subcategoryId', subcategoryId.toString())
     ).toPromise();
@@ -69,27 +68,27 @@ export class TaskService{
   }
   //Task
   async getTasks(categoryId: number, subcategoryId: number): Promise<Task[]>{
-    return await this.http.get<Task[]>('Task', new HttpHeaders()
+    return await this.http.get<Task[]>('api/Task', new HttpParams()
       .set('categoryId',categoryId.toString())
       .set('subcategoryId', subcategoryId.toString())
     ).toPromise() as Task[];
   }
   //don;t work
   async getTask(categoryId: number, subcategoryId: number, taskId: number): Promise<Task>{
-    return (await this.http.get<Task>('Task', new HttpHeaders()
+    return (await this.http.get<Task>('api/Task', new HttpParams()
       .set('categoryId',categoryId.toString())
       .set('subcategoryId', subcategoryId.toString())
       .set('taskId', taskId.toString())
     ).toPromise()) as Task;
   }
   async postTask(categoryId: number, subcategoryId: number, task: Task): Promise<Task>{
-    return await this.http.post<Task>('Task', task, new HttpHeaders()
+    return await this.http.post<Task>('api/Task', task, new HttpParams()
       .set('categoryId', categoryId.toString())
       .set('subcategoryId', subcategoryId.toString())
     ).toPromise() as Task;
   }
   async checkTask(categoryId: number, subcategoryId: number, taskId: number): Promise<boolean>{
-    const res = await this.http.post('Task/changeStatus', null, new HttpHeaders()
+    const res = await this.http.post('changeStatus', null, new HttpParams()
       .set('categoryId', categoryId.toString())
       .set('subcategoryId', subcategoryId.toString())
       .set('taskId', taskId.toString())
@@ -98,7 +97,7 @@ export class TaskService{
   }
   //won;t work
   async putTask(categoryId: number, subcategoryId: number, taskId: number, task: Task): Promise<boolean>{
-    const res = await this.http.put('Task', task, new HttpHeaders()
+    const res = await this.http.put('api/Task', task, new HttpParams()
       .set('categoryId', categoryId.toString())
       .set('subcategoryId', subcategoryId.toString())
       .set('taskId', taskId.toString())
@@ -106,7 +105,7 @@ export class TaskService{
     return this.checkRes(res);
   }
   async deleteTask(categoryId: number, subcategoryId: number, taskId: number): Promise<boolean>{
-    const res =  await this.http.delete('Task', new HttpHeaders()
+    const res =  await this.http.delete('api/Task', new HttpParams()
       .set('categoryId', categoryId.toString())
       .set('subcategoryId', subcategoryId.toString())
       .set('taskId', taskId.toString())

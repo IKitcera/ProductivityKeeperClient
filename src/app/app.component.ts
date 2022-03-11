@@ -9,7 +9,8 @@ import {AuthService} from "./services/authServices";
 export class AppComponent {
   title = 'ProductivityKeeperClient';
 
-  constructor(private authService: AuthService) {
+
+  constructor(public authService: AuthService) {
   }
 
 }

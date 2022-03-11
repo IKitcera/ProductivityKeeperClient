@@ -1,14 +1,15 @@
 import {HttpService} from "./httpService";
-import {HttpHeaders} from "@angular/common/http";
+import {HttpHeaders, HttpParams} from "@angular/common/http";
 import {AbstractUser} from "../models/abstract-user.model";
 import {Injectable} from "@angular/core";
+import {Router} from "@angular/router";
 
 @Injectable()
 export class AuthService{
   private tokenKey = '_token';
   private userNameKey = '_userName';
 
-  constructor(private http: HttpService) {
+  constructor(private http: HttpService, private router: Router) {
   }
   isAuthorized(): boolean {
     const token = localStorage.getItem(this.tokenKey);
@@ -37,19 +38,25 @@ export class AuthService{
 
   logout() {
     localStorage.clear();
+    this.router.navigate(['login']);
   }
 
   private async getToken(username: string, password: string): Promise<string>{
-    return await this.http.post<string>('Account/token', null, new HttpHeaders()
+    const res = await this.http.post<any>('token', null, new HttpParams()
       .set('username',username)
       .set('password',password)
-    ).toPromise() as string;
+    ).toPromise();
+    if (res) {
+      return res["accessToken"];
+    }
+    return '';
   }
 
   private async registrate(username: string, pass: string): Promise<string>{
     const user =  new AbstractUser();
     user.email = username;
     user.hashPassword = pass;
-    return await this.http.post<string>('Account/registration', user).toPromise() as string;
+    console.log(user);
+    return await this.http.post<string>('registration', user).toPromise() as string;
   }
 }

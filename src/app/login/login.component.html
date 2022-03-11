@@ -1,16 +1,35 @@
-<div>
-  <div *ngIf="!isRegistration" fxLayout="column" fxLayoutAlign="center center">
-    <h3>Sign in</h3>
-    <input placeholder="Username">
-    <input placeholder="Password">
-    <button mat-button color="accent" (click)="Login()">Login</button>
+<div fxLayoutAlign="center center">
+  <div class="border" *ngIf="!isRegistration" fxLayout="column" fxLayoutAlign="center center">
+    <h2>Sign in</h2>
+    <mat-form-field appearance="fill">
+      <mat-label>Email</mat-label>
+      <input matInput name="e" type="text" [(ngModel)]="userName">
+    </mat-form-field>
+    <mat-form-field  appearance="fill">
+      <mat-label>Password</mat-label>
+      <input matInput name="p" type="text" [(ngModel)]="password">
+    </mat-form-field>
+    <button fxLayoutAlign="center" mat-flat-button color="accent" (click)="Login()">Login</button>
+      <a class="regLogChange" (click)="isRegistration = true">No account? Register</a>
   </div>
 
-  <div *ngIf="isRegistration" fxLayout="column" fxLayoutAlign="center center">
+  <form #regForm fxLayoutAlign="center center">
+  <div *ngIf="isRegistration" class="border"  fxLayout="column" fxLayoutAlign="center center">
     <h3>Sign up</h3>
-    <input placeholder="Username">
-    <input placeholder="Password">
-    <input placeholder="Confirm password">
-    <button mat-button color="accent" (click)="Registration()">Login</button>
-  </div>
+    <mat-form-field appearance="fill">
+      <mat-label>Email</mat-label>
+      <input name="e" matInput type="text" [(ngModel)]="userName">
+    </mat-form-field>
+    <mat-form-field  appearance="fill">
+      <mat-label>Password</mat-label>
+      <input name="p" matInput type="text" [(ngModel)]="password">
+    </mat-form-field>
+    <mat-form-field  appearance="fill">
+      <mat-label>Confirm password</mat-label>
+      <input name="pc" matInput type="text" [(ngModel)]="passwordConfirmation">
+    </mat-form-field>
+      <button mat-flat-button color="accent" (click)="Registration()">Register</button>
+    <a class="regLogChange" (click)="isRegistration = false">Already have an account? Login</a>
+    </div>
+  </form>
 </div>

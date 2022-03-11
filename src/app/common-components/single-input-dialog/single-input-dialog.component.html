@@ -1,0 +1,4 @@
+<mat-form-field color="accent"  appearance="fill" class="autowidth">
+  <mat-label>{{labelToShow}}</mat-label>
+  <input [(ngModel)]="input" matInput type="text" name="inp" (keyup.enter)="close()" autofocus>
+</mat-form-field>

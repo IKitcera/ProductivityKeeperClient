@@ -18,6 +18,11 @@ import {AuthService} from "./services/authServices";
 import {TaskService} from "./services/taskService";
 import {HttpService} from "./services/httpService";
 import {HttpClient, HttpClientModule} from "@angular/common/http";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {FormsModule} from "@angular/forms";
+import {MatInputModule} from "@angular/material/input";
+import {MatDialogModule} from "@angular/material/dialog";
+import { SingleInputDialogComponent } from './common-components/single-input-dialog/single-input-dialog.component';
 
 const routes: Routes = [
   { path: '', component: TaskListComponent, canActivate: [AuthGuard] },
@@ -33,7 +38,8 @@ export function tokenGetter() {
   declarations: [
     AppComponent,
     TaskListComponent,
-    LoginComponent
+    LoginComponent,
+    SingleInputDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -43,13 +49,18 @@ export function tokenGetter() {
     MatIconModule,
     FlexLayoutModule,
     HttpClientModule,
+    MatDialogModule,
     RouterModule.forRoot(routes, {useHash: true}),
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
         allowedDomains: ['localhost:65070']
-    }}),
-    MatButtonModule
+      }
+    }),
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule
   ],
   providers: [AuthGuard, HttpClient, HttpService, AuthService,TaskService],
   bootstrap: [AppComponent]

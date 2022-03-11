@@ -1,15 +1,68 @@
 .categoryNamesList{
-  margin-right: 120px;
-  margin-left: 115px;
-  font-size: 18px;
+  padding-left: 115px;
+  font-size: 16px;
 }
 .categoryName{
+  position: relative;
   margin-left: 5px;
   width: fit-content;
   min-width: 200px;
-  padding: 3px;
+  padding: 5px;
   text-align: center;
   border-radius: 8px;
   background:  #69f0ae;
   box-shadow: 0 0 2px gray;
+}
+.selectedCategoryName{
+  background: transparent;
+  color: white;
+  border: 1px solid #69f0ae;
+}
+
+#newCatNameBlock{
+  display: none;
+}
+
+.topright{
+  position:absolute;
+  right: 0;
+  top: 2px;
+
+  font-size: 14px;
+}
+
+.toprightBtn{
+  position:absolute;
+  right: 40px;
+  top: 10px;
+}
+
+.subcategory{
+  position: relative;
+}
+
+.task{
+  position: relative;
+  width: 40%;
+}
+
+.tasksWrap{
+  position: relative;
+  width: 60%;
+  margin:2%;
+}
+
+.rightBtn{
+  position: fixed;
+  left: calc(62% - 20px);
+  top: calc(100% - 80px);
+  overflow: visible;
+}
+
+.m-1{
+  margin-left: 5px;
+}
+.mat-checkbox-checked::ng-deep{
+  color: rgb(150, 150, 150);
+  text-decoration: rgb(150, 150, 150) line-through;
 }

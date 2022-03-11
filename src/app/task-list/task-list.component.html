@@ -1,31 +1,50 @@
 <div>
-<!--  ngFor-->
-  <div fxLayout="row" fxLayoutAlign="start center" class="categoryNamesList">
-    <div class="categoryName">
-      <h4>Category</h4>
+  <div fxLayout="row wrap" fxFlexFill fxLayoutAlign="start center" class="categoryNamesList">
+    <div *ngFor="let category of unit.categories">
+      <div *ngIf="activeCategory !== category" class="categoryName" (click)="activeCategory = category">
+        <p>{{category.name}}</p>
+        <mat-icon class="topright" (click)="deleteCategory(category.id)">close</mat-icon>
+      </div>
+      <div *ngIf="activeCategory === category" class="categoryName selectedCategoryName">
+        <p>{{category.name}}</p>
+        <mat-icon class="topright" (click)="deleteCategory()">close</mat-icon>
+      </div>
     </div>
-    <div class="categoryName">
-      <h4>Category</h4>
-    </div>
-    <div class="categoryName">
-      <h4>Category</h4>
-    </div>
+    <button class="m-1" color="primary" mat-mini-fab (click)="addCategory()">
+      <mat-icon>add</mat-icon>
+    </button>
   </div>
 </div>
 
-<div>
+<div class="tasksWrap">
   <mat-accordion multi>
-<!--    ngfor-->
-    <mat-expansion-panel expanded="true">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          Category Name
-        </mat-panel-title>
+    <div *ngFor="let subcategory of activeCategory.subcategories">
+      <mat-expansion-panel expanded="true" class="subcategory">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{subcategory.name}}
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <button mat-mini-fab color="accent" (click)="addTask(subcategory.id)" class="toprightBtn">
+          <mat-icon>add</mat-icon>
+        </button>
 
-      </mat-expansion-panel-header>
-
-      <mat-checkbox>Task 1</mat-checkbox>
-
-    </mat-expansion-panel>
+        <div *ngFor="let task of subcategory.tasks">
+          <div class="task">
+            <mat-checkbox class="autowidth" [checked]="task.isChecked" (change)="taskChanged(subcategory.id, task, $event)">{{task.text}}</mat-checkbox>
+            <mat-icon class="topright" (click)="deleteTask(subcategory.id, task.id)">close</mat-icon>
+          </div>
+        </div>
+      </mat-expansion-panel>
+    </div>
+    <div fxLayout="row" *ngIf="activeCategory.subcategories.length === 0">
+      <h3 class="autowidth"> You don't have any subcategory </h3>
+      <button mat-mini-fab (click)="addSubcategory()">
+         <mat-icon>add</mat-icon>
+      </button>
+    </div>
   </mat-accordion>
+  <button class="rightBtn" color="primary" mat-fab (click)="addSubcategory()">
+    <mat-icon>add</mat-icon>
+  </button>
 </div>

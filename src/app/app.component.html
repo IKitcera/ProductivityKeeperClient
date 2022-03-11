@@ -2,10 +2,10 @@
   <div fxAlign="row" fxLayoutAlign="space-around">
     <a>Productivity Keeper</a>
     <div fxLayoutAlign="space-around">
-      <a>href1</a>
-      <a>href1</a>
-      <a>href1</a>
-      <a>href1</a>
+      <a>Tasks</a>
+      <a>About</a>
+      <a *ngIf="!authService.isAuthorized()">Login</a>
+      <a *ngIf="authService.isAuthorized()" (click)="authService.logout()">Logout</a>
     </div>
   </div>
 </nav>
