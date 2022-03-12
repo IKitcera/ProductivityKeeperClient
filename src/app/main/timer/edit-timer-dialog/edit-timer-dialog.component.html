@@ -1,0 +1,41 @@
+<div>
+  <mat-form-field color="accent"  appearance="fill" class="autowidth">
+    <mat-label>What is your goal?</mat-label>
+    <input [(ngModel)]="timer.label" matInput type="text" name="tName" (keyup.enter)="close()" autofocus>
+  </mat-form-field>
+<!--  <mat-select>-->
+<!--    <mat-option [value]=""> </mat-option>-->
+<!--  </mat-select>-->
+  <mat-label>Enter the duration of the timer</mat-label>
+  <div fxLayout="row" fxLayoutAlign="space-evenly center">
+    <mat-form-field color="accent"  appearance="fill">
+      <mat-label>Years</mat-label>
+      <input [(ngModel)]="goalTS.years" matInput type="text" name="gYear">
+    </mat-form-field>
+    <mat-form-field color="accent"  appearance="fill">
+      <mat-label>Months</mat-label>
+      <input [(ngModel)]="goalTS.month" matInput type="text" name="gMonth">
+    </mat-form-field>
+    <mat-form-field color="accent"  appearance="fill">
+      <mat-label>Days</mat-label>
+      <input [(ngModel)]="goalTS.days" matInput type="text" name="gDay">
+    </mat-form-field>
+  </div>
+
+  <div fxLayout="row" fxLayoutAlign="space-evenly center">
+    <mat-form-field color="accent"  appearance="fill">
+      <mat-label>Hours</mat-label>
+      <input [(ngModel)]="goalTS.hours" matInput type="text" name="gHour">
+    </mat-form-field>
+    <mat-form-field color="accent"  appearance="fill">
+      <mat-label>Minutes</mat-label>
+      <input [(ngModel)]="goalTS.minutes" matInput type="text" name="gMinutes">
+    </mat-form-field>
+    <mat-form-field color="accent"  appearance="fill">
+      <mat-label>Seconds</mat-label>
+      <input [(ngModel)]="goalTS.seconds" matInput type="text" name="gSeconds">
+    </mat-form-field>
+  </div>
+
+  <button mat-stroked-button (click)="close()">Apply</button>
+</div>

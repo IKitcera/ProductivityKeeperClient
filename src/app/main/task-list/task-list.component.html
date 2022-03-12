@@ -10,19 +10,25 @@
         <mat-icon class="topright" (click)="deleteCategory()">close</mat-icon>
       </div>
     </div>
+    <div *ngIf="!unit.categories || unit.categories.length === 0">
+      <p>Start from adding new category</p>
+    </div>
     <button class="m-1" color="primary" mat-mini-fab (click)="addCategory()">
       <mat-icon>add</mat-icon>
     </button>
   </div>
 </div>
 
+<div fxLayout="row">
+<!--  TASKS -->
 <div class="tasksWrap">
   <mat-accordion multi>
-    <div *ngFor="let subcategory of activeCategory.subcategories">
+    <div *ngFor="let subcategory of activeCategory?.subcategories">
       <mat-expansion-panel expanded="true" class="subcategory">
         <mat-expansion-panel-header>
           <mat-panel-title>
             {{subcategory.name}}
+            <mat-icon class="m-1 small" (click)="deleteSubcategory(subcategory.id)">delete_outline</mat-icon>
           </mat-panel-title>
         </mat-expansion-panel-header>
         <button mat-mini-fab color="accent" (click)="addTask(subcategory.id)" class="toprightBtn">
@@ -37,14 +43,21 @@
         </div>
       </mat-expansion-panel>
     </div>
-    <div fxLayout="row" *ngIf="activeCategory.subcategories.length === 0">
-      <h3 class="autowidth"> You don't have any subcategory </h3>
-      <button mat-mini-fab (click)="addSubcategory()">
+    <div fxLayout="row" fxLayoutAlign="space-evenly center" *ngIf="!activeCategory || activeCategory.subcategories.length === 0">
+      <h3> You don't have any subcategory </h3>
+      <button class="m-1" mat-mini-fab [matTooltip]="!activeCategory ? 'Create at least 1 category before': '!activeCategory'" [disabled]="!activeCategory" (click)="addSubcategory()">
          <mat-icon>add</mat-icon>
       </button>
     </div>
   </mat-accordion>
-  <button class="rightBtn" color="primary" mat-fab (click)="addSubcategory()">
+  <button matTooltip="Add subcategory" class="rightBtn" color="primary" mat-fab [disabled]="!activeCategory" (click)="addSubcategory()">
     <mat-icon>add</mat-icon>
   </button>
 </div>
+<!--  TIMER & STATISTICS-->
+  <div fxLayout="column" class="childContainer">
+  <app-timer [timer]="unit.timer"></app-timer>
+    <app-statistics></app-statistics>
+  </div>
+
+</div>>

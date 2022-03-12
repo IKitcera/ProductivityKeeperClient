@@ -62,7 +62,18 @@
 .m-1{
   margin-left: 5px;
 }
+.small{
+  font-size: 18px;
+  text-align: center;
+  margin-top: 5px;
+}
+
 .mat-checkbox-checked::ng-deep{
   color: rgb(150, 150, 150);
   text-decoration: rgb(150, 150, 150) line-through;
+}
+
+.childContainer{
+  margin: 2%;
+  width: 30%;
 }

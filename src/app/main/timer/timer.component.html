@@ -1,0 +1,34 @@
+<div class="container">
+  <div *ngIf="!noTimer" class="timerContent">
+  <div fxLayout="row wrap" class="label" fxLayoutAlign="start center">
+    <h2>
+      <mat-icon>flag</mat-icon>
+      {{timer.label}}
+    </h2>
+  </div>
+  <h4 class="medGray">{{goalValue.toString()}}</h4>
+  <h2 class="centered large">{{currentValue.toString()}}</h2>
+  <div fxLayout="row" fxLayoutAlign="center center">
+    <button mat-stroked-button [disabled]="isTicking" (click)="start()">
+      <mat-icon>play_arrow</mat-icon>
+      <p>Start</p>
+    </button>
+    <button mat-stroked-button [disabled]="!isTicking" (click)="pause()">
+      <mat-icon>pause</mat-icon>
+      <p>Pause</p>
+    </button>
+    <button mat-stroked-button (click)="stop()">
+      <mat-icon>stop</mat-icon>
+      <p>Stop</p>
+    </button>
+  </div>
+    <mat-icon class="topright" (click)="editTimer()">edit</mat-icon>
+  </div>
+
+  <div fxLayout="row" fxLayoutAlign="center center" *ngIf="noTimer">
+    <button color="primary" mat-stroked-button (click)="editTimer()">
+      Add specific timer
+    </button>
+  </div>
+</div>
+
