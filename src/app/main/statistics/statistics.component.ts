@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import {StatisticService} from "../../services/statisticService";
+import {UserStatistic} from "../../models/user-statistic.model";
 
 @Component({
   selector: 'app-statistics',
@@ -7,9 +9,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class StatisticsComponent implements OnInit {
 
-  constructor() { }
+  statistic: UserStatistic;
+
+  constructor(private analytic: StatisticService) { }
 
   ngOnInit(): void {
+    this.analytic.getStatistics().then(x => {
+      this.statistic = x;
+    })
   }
 
 }

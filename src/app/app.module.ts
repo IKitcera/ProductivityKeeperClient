@@ -30,7 +30,11 @@ import {ErrorInterceptor} from "./services/error-interceptor";
 import { EditTimerDialogComponent } from './main/timer/edit-timer-dialog/edit-timer-dialog.component';
 import {MatSelectModule} from "@angular/material/select";
 import {TimerService} from "./services/timerService";
-
+import {StatisticService} from "./services/statisticService";
+import { EditTaskDialogComponent } from './main/task-list/edit-task-dialog/edit-task-dialog.component';
+import {MatDatepickerModule} from "@angular/material/datepicker";
+import {MatNativeDateModule} from "@angular/material/core";
+import {DragDropModule} from '@angular/cdk/drag-drop';
 const routes: Routes = [
   { path: '', component: TaskListComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent },
@@ -49,7 +53,8 @@ export function tokenGetter() {
     SingleInputDialogComponent,
     StatisticsComponent,
     TimerComponent,
-    EditTimerDialogComponent
+    EditTimerDialogComponent,
+    EditTaskDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -72,9 +77,12 @@ export function tokenGetter() {
     MatInputModule,
     FormsModule,
     MatTooltipModule,
-    MatSelectModule
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    DragDropModule
   ],
-  providers: [AuthGuard, HttpClient, HttpService, AuthService, TaskService, TimerService,
+  providers: [AuthGuard, HttpClient, HttpService, AuthService, TaskService, TimerService, StatisticService,
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }],
   bootstrap: [AppComponent]
 })

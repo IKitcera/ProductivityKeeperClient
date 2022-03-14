@@ -1,1 +1,34 @@
-<p>statistics works!</p>
+<div *ngIf="statistic" class="container">
+  <div fxLayoutAlign="center center">
+    <h2>Statistics</h2>
+  </div>
+  <div>{{statistic.donePerDay}}</div>
+  <div fxLayout="row" fxLayoutAlign="space-evenly">
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <p>Count of done today:{{'\t'}}</p>
+      <p class="pl-10">{{statistic.countOfDoneToday}}</p>
+    </div>
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <p>Count of done total:{{'\t'}}</p>
+      <p class="pl-10">{{statistic.countOfDoneTotal}}</p>
+    </div>
+  </div>
+
+  <div fxLayout="row" fxLayoutAlign="space-evenly">
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <p>Percent of done today: </p>
+      <p class="pl-10">{{statistic.percentOfDoneToday}}</p>
+    </div>
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <p>Percent of done total: </p>
+      <p class="pl-10">{{statistic.percentOfDoneTotal}}</p>
+    </div>
+  </div>
+
+  <div fxLayout="row" fxLayoutAlign="space-evenly">
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <p>Expired total: </p>
+      <p class="pl-10">{{statistic.countOfExpiredTotal}}</p>
+    </div>
+  </div>
+</div>

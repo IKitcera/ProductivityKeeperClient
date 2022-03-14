@@ -22,9 +22,9 @@
 <div fxLayout="row">
 <!--  TASKS -->
 <div class="tasksWrap">
-  <mat-accordion multi>
+  <mat-accordion cdkDropList (cdkDropListDropped)="drop($event)" multi>
     <div *ngFor="let subcategory of activeCategory?.subcategories">
-      <mat-expansion-panel expanded="true" class="subcategory">
+      <mat-expansion-panel expanded="true" class="subcategory"   cdkDrag>
         <mat-expansion-panel-header>
           <mat-panel-title>
             {{subcategory.name}}
@@ -36,8 +36,11 @@
         </button>
 
         <div *ngFor="let task of subcategory.tasks">
-          <div class="task">
-            <mat-checkbox class="autowidth" [checked]="task.isChecked" (change)="taskChanged(subcategory.id, task, $event)">{{task.text}}</mat-checkbox>
+          <div class="task" fxLayout="row">
+            <mat-checkbox class="autowidth" [checked]="task.isChecked" (change)="taskChanged(subcategory.id, task, $event)">
+            {{task.text}}
+            </mat-checkbox>
+            <mat-icon class="right" (click)="editTask(subcategory.id, task)">edit</mat-icon>
             <mat-icon class="topright" (click)="deleteTask(subcategory.id, task.id)">close</mat-icon>
           </div>
         </div>

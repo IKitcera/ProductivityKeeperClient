@@ -23,7 +23,7 @@ export class TaskService{
     return await this.http.post<Category>('api/Category', category).toPromise() as Category;
   }
   async putCategory(category: Category): Promise<boolean>{
-    const res =  await this.http.put('api/Category', category, new HttpParams()
+    const res =  await this.http.put('api/Category/'+category.id, category, new HttpParams()
       .set('categoryId', category.id.toString())
     ).toPromise();
     return this.checkRes(res);

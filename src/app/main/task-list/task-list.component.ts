@@ -7,6 +7,8 @@ import {MatDialog} from "@angular/material/dialog";
 import {SingleInputDialogComponent} from "../../common-components/single-input-dialog/single-input-dialog.component";
 import {Task} from "../../models/task.model";
 import {MatCheckboxChange} from "@angular/material/checkbox";
+import {EditTaskDialogComponent} from "./edit-task-dialog/edit-task-dialog.component";
+import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 
 @Component({
   selector: 'app-task-list',
@@ -80,6 +82,27 @@ export class TaskListComponent implements OnInit {
     task.isChecked = value.checked;
     this.taskService.putTask((this.activeCategory as Category).id, subId, task.id, task).then(x => {
       this.getSubcategory(subId);
+    });
+  }
+
+  editTask(subId: number, task: Task){
+    const dialogRef = this.dialog.open(EditTaskDialogComponent, {
+      data: {task: task, categories: this.unit.categories},
+      width: '60%'
+    });
+
+    dialogRef.afterClosed().toPromise().then(t => {
+      this.taskService.putTask((this.activeCategory as Category).id, subId, task.id, task).then(tt => {
+        this.getSubcategory(subId);
+      })
+    });
+  }
+
+  drop(event: any) {
+    moveItemInArray((this.activeCategory as Category).subcategories, event.previousIndex, event.currentIndex);
+
+    this.taskService.putCategory(this.activeCategory as Category).catch(x => {
+      moveItemInArray((this.activeCategory as Category).subcategories, event.currentIndex, event.previousIndex);
     });
   }
 

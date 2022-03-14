@@ -10,13 +10,14 @@
   padding: 5px;
   text-align: center;
   border-radius: 8px;
-  background:  #69f0ae;
+  background:  transparent;
   box-shadow: 0 0 2px gray;
-}
-.selectedCategoryName{
-  background: transparent;
   color: white;
   border: 1px solid #69f0ae;
+}
+.selectedCategoryName{
+  background: #69f0ae;
+  color: black;
 }
 
 #newCatNameBlock{
@@ -39,6 +40,11 @@
 
 .subcategory{
   position: relative;
+}
+
+.right{
+  font-size: 18px;
+  margin-right: 20px;
 }
 
 .task{

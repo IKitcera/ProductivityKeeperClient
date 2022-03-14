@@ -1,0 +1,32 @@
+<div fxLayout="column">
+  <mat-form-field color="accent"  appearance="fill" class="autowidth">
+    <mat-label>What need to do?</mat-label>
+    <input [(ngModel)]="data.task.text" matInput type="text" name="taskText" autofocus>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Choose a date & time" name="nnnn" [(ngModel)]="data.task.deadline">
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+
+  <button mat-stroked-button (click)="connectedDupliate.push({cId: data.categories[0].id, sId: data.categories[0].subcategories[0].id})">
+    Add connected duplicate
+  </button>
+  <div *ngIf="connectedDupliate.length > 0">
+    <div fxFill fxLayout="row" fxLayoutAlign="center center" *ngFor="let item of connectedDupliate">
+    <mat-select #selectedCtg [value]="item.cId" *ngIf="data.categories && data.categories.length > 0"
+      (change)="item.sId = findCtg(item.cId).subcategories[0].id">
+      <div *ngFor="let ctg of data.categories">
+        <mat-option [value]="ctg.id" >{{ctg.name}}</mat-option>
+      </div>
+    </mat-select>
+    <mat-select [value]="item.sId" [disabled]="!item.cId && item.sId === -1">
+      <div *ngFor="let sub of findCtg(item.cId).subcategories">
+        <mat-option [value]="sub.id">{{sub.name}}</mat-option>
+      </div>
+    </mat-select>
+    </div>
+  </div>
+  <button mat-stroked-button (click)="close()">Apply</button>
+</div>
