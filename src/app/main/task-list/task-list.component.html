@@ -23,8 +23,8 @@
 <!--  TASKS -->
 <div class="tasksWrap">
   <mat-accordion cdkDropList (cdkDropListDropped)="drop($event)" multi>
-    <div *ngFor="let subcategory of activeCategory?.subcategories">
-      <mat-expansion-panel expanded="true" class="subcategory"   cdkDrag>
+    <div *ngFor="let subcategory of activeCategory?.subcategories" cdkDrag>
+      <mat-expansion-panel expanded="true" class="subcategory" >
         <mat-expansion-panel-header>
           <mat-panel-title>
             {{subcategory.name}}
@@ -60,7 +60,7 @@
 <!--  TIMER & STATISTICS-->
   <div fxLayout="column" class="childContainer">
   <app-timer [timer]="unit.timer"></app-timer>
-    <app-statistics></app-statistics>
+    <app-statistics #stat></app-statistics>
   </div>
 
 </div>>

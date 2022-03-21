@@ -35,6 +35,7 @@ import { EditTaskDialogComponent } from './main/task-list/edit-task-dialog/edit-
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import {MatNativeDateModule} from "@angular/material/core";
 import {DragDropModule} from '@angular/cdk/drag-drop';
+import {NgxChartsModule} from "@swimlane/ngx-charts";
 const routes: Routes = [
   { path: '', component: TaskListComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent },
@@ -80,7 +81,8 @@ export function tokenGetter() {
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    DragDropModule
+    DragDropModule,
+    NgxChartsModule
   ],
   providers: [AuthGuard, HttpClient, HttpService, AuthService, TaskService, TimerService, StatisticService,
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }],

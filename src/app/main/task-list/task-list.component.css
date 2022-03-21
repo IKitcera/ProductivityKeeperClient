@@ -83,3 +83,7 @@
   margin: 2%;
   width: 30%;
 }
+
+.cdk-drag-placeholder {
+  opacity: 0;
+}

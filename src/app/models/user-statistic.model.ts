@@ -1,9 +1,12 @@
+import {DonePerDay} from "./done-per-day.model";
+
 export class UserStatistic{
   id: number;
-  donePerDay: {date: Date, done: number};
+  perDayStatistic: DonePerDay[];
   percentOfDoneToday: number;
   percentOfDoneTotal: number;
   countOfDoneToday: number;
   countOfDoneTotal: number;
   countOfExpiredTotal: number;
 }
+

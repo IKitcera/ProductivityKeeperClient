@@ -5,9 +5,9 @@
   </mat-form-field>
 
   <mat-form-field>
-    <input matInput placeholder="Choose a date & time" name="nnnn" [(ngModel)]="data.task.deadline">
+    <input matInput placeholder="Choose a date & time" name="nnnn" [(ngModel)]="data.task.deadline" [matDatepicker]="picker">
     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker #picker></mat-datepicker>
+    <mat-datepicker #picker ></mat-datepicker>
   </mat-form-field>
 
   <button mat-stroked-button (click)="connectedDupliate.push({cId: data.categories[0].id, sId: data.categories[0].subcategories[0].id})">

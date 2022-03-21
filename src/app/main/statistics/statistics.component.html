@@ -2,7 +2,6 @@
   <div fxLayoutAlign="center center">
     <h2>Statistics</h2>
   </div>
-  <div>{{statistic.donePerDay}}</div>
   <div fxLayout="row" fxLayoutAlign="space-evenly">
     <div fxLayout="row" fxLayoutAlign="center center">
       <p>Count of done today:{{'\t'}}</p>
@@ -17,11 +16,11 @@
   <div fxLayout="row" fxLayoutAlign="space-evenly">
     <div fxLayout="row" fxLayoutAlign="center center">
       <p>Percent of done today: </p>
-      <p class="pl-10">{{statistic.percentOfDoneToday}}</p>
+      <p class="pl-10">{{statistic.percentOfDoneToday | percent}} </p>
     </div>
     <div fxLayout="row" fxLayoutAlign="center center">
       <p>Percent of done total: </p>
-      <p class="pl-10">{{statistic.percentOfDoneTotal}}</p>
+      <p class="pl-10">{{statistic.percentOfDoneTotal| percent}} %</p>
     </div>
   </div>
 
@@ -30,5 +29,52 @@
       <p>Expired total: </p>
       <p class="pl-10">{{statistic.countOfExpiredTotal}}</p>
     </div>
+  </div>
+
+  <div>
+    <div fxLayout="row" fxLayoutAlign="end senter" [ngSwitch]="selectedChart">
+      <button mat-button *ngSwitchCase="!SelectedChart.Gauge" (click)="selectedChart = SelectedChart.Gauge; refresh()">
+        <mat-icon>donut_large</mat-icon>
+      </button>
+      <button mat-button *ngSwitchCase="!SelectedChart.Line" (click)="selectedChart = SelectedChart.Line;">
+        <mat-icon>timeline</mat-icon>
+      </button>
+    </div>
+  <div class="chartWrap" [ngSwitch]="selectedChart">
+
+    <ngx-charts-gauge *ngSwitchCase="SelectedChart.Gauge"
+      #gChart
+      [results]="single"
+      [legend]="legend"
+      [legendTitle]="'Percents of done per '"
+      [legendPosition]="legendPosition"
+      [scheme]="'neons'"
+      [bigSegments]="10"
+      [smallSegments]="0"
+      [startAngle]="0"
+      [angleSpan]="360"
+      [margin]="[40,0,30,0]"
+      (select)="onSelect($event)"
+      (activate)="onActivate($event)"
+      (deactivate)="onDeactivate($event)"
+    >
+    </ngx-charts-gauge>
+
+    <ngx-charts-line-chart *ngSwitchCase="SelectedChart.Line"
+      #lChart
+      [legend]="legend"
+      [legendPosition]="legendPosition"
+      [showXAxisLabel]="false"
+      [showYAxisLabel]="true"
+      [xAxis]="true"
+      [yAxis]="true"
+      [xAxisLabel]="'Days'"
+      [yAxisLabel]="'Count of done tasks'"
+      [timeline]="true"
+      [results]="multi"
+      [legendTitle]="''"
+    >
+    </ngx-charts-line-chart>
+  </div>
   </div>
 </div>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {Category} from "../../models/category.model";
 import {Subcategory} from "../../models/subcategory.model";
 import {Unit} from "../../models/unit.model";
@@ -9,6 +9,9 @@ import {Task} from "../../models/task.model";
 import {MatCheckboxChange} from "@angular/material/checkbox";
 import {EditTaskDialogComponent} from "./edit-task-dialog/edit-task-dialog.component";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
+import {Observable} from "rxjs";
+import {trigger} from "@angular/animations";
+import {StatisticsComponent} from "../statistics/statistics.component";
 
 @Component({
   selector: 'app-task-list',
@@ -17,7 +20,10 @@ import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 })
 export class TaskListComponent implements OnInit {
 
+  @ViewChild('stat') statistic: StatisticsComponent;
+  updateStat = new Observable<void>();
   activeCategory: Category | undefined;
+  // @ts-ignore
   unit: Unit;
 
   constructor(private taskService: TaskService, private dialog: MatDialog) { }
@@ -115,18 +121,21 @@ export class TaskListComponent implements OnInit {
     } else {
       this.activeCategory = undefined;
     }
+    this.statistic.refresh();
   }
 
   private async getActiveCategory() {
     const catId = this.unit.categories.findIndex(c => c.id === (this.activeCategory as Category).id);
     this.unit.categories[catId] = await this.taskService.getCategory((this.activeCategory as Category).id);
     this.activeCategory = this.unit.categories[catId];
+    this.statistic.refresh();
   }
 
   private async getSubcategory(id: number) {
     const catId = this.unit.categories.findIndex(c => c.id === (this.activeCategory as Category).id);
     const subIndex = this.unit.categories[catId].subcategories.findIndex(s => s.id === id);
     this.unit.categories[catId].subcategories[subIndex] = await this.taskService.getSubcategory((this.activeCategory as Category).id, id);
+    this.statistic.refresh();
   }
 }
 
