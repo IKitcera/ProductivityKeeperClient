@@ -80,6 +80,7 @@ export class StatisticsComponent implements OnInit {
   }
 
   onSelect(data: any): void {
+
   }
 
   onActivate(data: any): void {

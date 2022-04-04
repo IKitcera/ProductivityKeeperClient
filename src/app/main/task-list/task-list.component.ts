@@ -12,6 +12,8 @@ import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {Observable} from "rxjs";
 import {trigger} from "@angular/animations";
 import {StatisticsComponent} from "../statistics/statistics.component";
+import {ConnectedToDifferentSubcategoriesTask} from "../../models/connected-to-different-subcategories-task";
+import {ToastrService} from "ngx-toastr";
 
 @Component({
   selector: 'app-task-list',
@@ -24,9 +26,9 @@ export class TaskListComponent implements OnInit {
   updateStat = new Observable<void>();
   activeCategory: Category | undefined;
   // @ts-ignore
-  unit: Unit;
+  unit: Unit = new Unit();
 
-  constructor(private taskService: TaskService, private dialog: MatDialog) { }
+  constructor(private taskService: TaskService, private dialog: MatDialog, private toastr: ToastrService) { }
 
   ngOnInit(): void {
     this.getUnit();
@@ -80,28 +82,38 @@ export class TaskListComponent implements OnInit {
 
   deleteTask(subId: number, taskId: number){
     this.taskService.deleteTask((this.activeCategory as Category).id, subId, taskId).then(x => {
-      this.getSubcategory(subId);
+      this.getCategories();
     });
   }
 
   taskChanged(subId: number, task: Task, value: MatCheckboxChange){
     task.isChecked = value.checked;
     this.taskService.putTask((this.activeCategory as Category).id, subId, task.id, task).then(x => {
-      this.getSubcategory(subId);
+      this.getCategories();
     });
   }
 
-  editTask(subId: number, task: Task){
+  async editTask(subId: number, task: Task){
     const dialogRef = this.dialog.open(EditTaskDialogComponent, {
-      data: {task: task, categories: this.unit.categories},
+      data: {
+        task: task,
+        categories: this.unit.categories,
+        categoryId: this.activeCategory?.id,
+        subcategoryId: subId
+      },
       width: '60%'
     });
 
-    dialogRef.afterClosed().toPromise().then(t => {
-      this.taskService.putTask((this.activeCategory as Category).id, subId, task.id, task).then(tt => {
-        this.getSubcategory(subId);
-      })
-    });
+    await dialogRef.afterClosed().toPromise();
+    const connected = task as ConnectedToDifferentSubcategoriesTask;
+    if (connected && connected.categoriesId?.length > 0 && connected.subcategoriesId?.length > 0) {
+      await this.taskService.putConnectedTask((this.activeCategory as Category).id, subId, task.id, connected)
+        .catch(err => this.toastr.error(err.message || err, ''));
+      await this.getCategories();
+    } else {
+      await this.taskService.putTask((this.activeCategory as Category).id, subId, task.id, task);
+      await this.getSubcategory(subId);
+    };
   }
 
   drop(event: any) {
@@ -114,13 +126,7 @@ export class TaskListComponent implements OnInit {
 
   private async getUnit() {
     this.unit = await this.taskService.getUnit();
-
-    if (this.unit.categories.length > 0) {
-      const activeCtg = this.unit.categories.find(c => c.id === this.activeCategory?.id);
-      this.activeCategory = this.activeCategory && activeCtg ? activeCtg : this.unit.categories[0];
-    } else {
-      this.activeCategory = undefined;
-    }
+    this.selectActiveCtg();
     this.statistic.refresh();
   }
 
@@ -136,6 +142,21 @@ export class TaskListComponent implements OnInit {
     const subIndex = this.unit.categories[catId].subcategories.findIndex(s => s.id === id);
     this.unit.categories[catId].subcategories[subIndex] = await this.taskService.getSubcategory((this.activeCategory as Category).id, id);
     this.statistic.refresh();
+  }
+
+   private async getCategories() {
+    this.unit.categories = await this.taskService.getCategories();
+    this.selectActiveCtg();
+    this.statistic.refresh();
+  }
+
+  private selectActiveCtg() {
+    if (this.unit.categories.length > 0) {
+      const activeCtg = this.unit.categories.find(c => c.id === this.activeCategory?.id);
+      this.activeCategory = this.activeCategory && activeCtg ? activeCtg : this.unit.categories[0];
+    } else {
+      this.activeCategory = undefined;
+    }
   }
 }
 

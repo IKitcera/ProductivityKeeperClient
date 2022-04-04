@@ -36,6 +36,7 @@ import {MatDatepickerModule} from "@angular/material/datepicker";
 import {MatNativeDateModule} from "@angular/material/core";
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import {NgxChartsModule} from "@swimlane/ngx-charts";
+import {ToastrModule} from "ngx-toastr";
 const routes: Routes = [
   { path: '', component: TaskListComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent },
@@ -82,7 +83,8 @@ export function tokenGetter() {
     MatDatepickerModule,
     MatNativeDateModule,
     DragDropModule,
-    NgxChartsModule
+    NgxChartsModule,
+    ToastrModule.forRoot()
   ],
   providers: [AuthGuard, HttpClient, HttpService, AuthService, TaskService, TimerService, StatisticService,
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }],

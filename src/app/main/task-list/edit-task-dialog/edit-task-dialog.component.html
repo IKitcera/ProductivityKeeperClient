@@ -16,13 +16,14 @@
   <div *ngIf="connectedDupliate.length > 0">
     <div fxFill fxLayout="row" fxLayoutAlign="center center" *ngFor="let item of connectedDupliate">
     <mat-select #selectedCtg [value]="item.cId" *ngIf="data.categories && data.categories.length > 0"
-      (change)="item.sId = findCtg(item.cId).subcategories[0].id">
+      (valueChange)=" ctgSelectionChanged(item, $event)">
       <div *ngFor="let ctg of data.categories">
         <mat-option [value]="ctg.id" >{{ctg.name}}</mat-option>
       </div>
     </mat-select>
-    <mat-select [value]="item.sId" [disabled]="!item.cId && item.sId === -1">
-      <div *ngFor="let sub of findCtg(item.cId).subcategories">
+    <mat-select [value]="item.sId" [disabled]="!item.cId || !item.sId|| item.sId === -1"
+      (valueChange)=" item.sId = $event">
+      <div *ngFor="let sub of getSubcategories(item.cId)">
         <mat-option [value]="sub.id">{{sub.name}}</mat-option>
       </div>
     </mat-select>

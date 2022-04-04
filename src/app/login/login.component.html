@@ -7,7 +7,7 @@
     </mat-form-field>
     <mat-form-field  appearance="fill">
       <mat-label>Password</mat-label>
-      <input matInput name="p" type="text" [(ngModel)]="password">
+      <input matInput name="p" type="text" [(ngModel)]="password" type="password">
     </mat-form-field>
     <button fxLayoutAlign="center" mat-flat-button color="accent" (click)="Login()">Login</button>
       <a class="regLogChange" (click)="isRegistration = true">No account? Register</a>
@@ -22,11 +22,11 @@
     </mat-form-field>
     <mat-form-field  appearance="fill">
       <mat-label>Password</mat-label>
-      <input name="p" matInput type="text" [(ngModel)]="password">
+      <input name="p" matInput type="text" [(ngModel)]="password" type="password">
     </mat-form-field>
     <mat-form-field  appearance="fill">
       <mat-label>Confirm password</mat-label>
-      <input name="pc" matInput type="text" [(ngModel)]="passwordConfirmation">
+      <input name="pc" matInput type="text" [(ngModel)]="passwordConfirmation" type="password">
     </mat-form-field>
       <button mat-flat-button color="accent" (click)="Registration()">Register</button>
     <a class="regLogChange" (click)="isRegistration = false">Already have an account? Login</a>

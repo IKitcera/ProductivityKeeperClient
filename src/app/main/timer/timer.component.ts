@@ -26,7 +26,7 @@ export class TimerComponent implements OnInit {
   constructor(private dialog: MatDialog, private timerService: TimerService) { }
 
   ngOnInit(): void {
-    this.noTimer = this.timer.goal === 0 && this.timer.ticked === 0 && (!this.timer.label || this.timer.label === '');
+    this.noTimer = !this.timer || this.timer.goal === 0 && this.timer.ticked === 0 && (!this.timer.label || this.timer.label === '');
 
     if(!this.noTimer){
       this.currentValue = new TimeSpan();

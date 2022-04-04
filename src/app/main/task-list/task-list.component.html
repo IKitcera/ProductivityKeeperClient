@@ -1,6 +1,6 @@
 <div>
   <div fxLayout="row wrap" fxFlexFill fxLayoutAlign="start center" class="categoryNamesList">
-    <div *ngFor="let category of unit.categories">
+    <div *ngFor="let category of unit?.categories">
       <div *ngIf="activeCategory !== category" class="categoryName" (click)="activeCategory = category">
         <p>{{category.name}}</p>
         <mat-icon class="topright" (click)="deleteCategory(category.id)">close</mat-icon>
@@ -10,7 +10,7 @@
         <mat-icon class="topright" (click)="deleteCategory()">close</mat-icon>
       </div>
     </div>
-    <div *ngIf="!unit.categories || unit.categories.length === 0">
+    <div *ngIf="!unit?.categories || unit?.categories?.length === 0">
       <p>Start from adding new category</p>
     </div>
     <button class="m-1" color="primary" mat-mini-fab (click)="addCategory()">
@@ -46,9 +46,9 @@
         </div>
       </mat-expansion-panel>
     </div>
-    <div fxLayout="row" fxLayoutAlign="space-evenly center" *ngIf="!activeCategory || activeCategory.subcategories.length === 0">
+    <div fxLayout="row" fxLayoutAlign="space-evenly center" *ngIf="!activeCategory || activeCategory.subcategories.length === 0" >
       <h3> You don't have any subcategory </h3>
-      <button class="m-1" mat-mini-fab [matTooltip]="!activeCategory ? 'Create at least 1 category before': '!activeCategory'" [disabled]="!activeCategory" (click)="addSubcategory()">
+      <button class="m-1" mat-mini-fab [disabled]="!activeCategory" (click)="addSubcategory()">
          <mat-icon>add</mat-icon>
       </button>
     </div>
