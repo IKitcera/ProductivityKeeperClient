@@ -3,7 +3,8 @@ import {HttpHeaders, HttpParams} from "@angular/common/http";
 import {AbstractUser} from "../models/abstract-user.model";
 import {Injectable} from "@angular/core";
 import {Router} from "@angular/router";
-import {map} from "rxjs";
+import {map, Observable} from "rxjs";
+import {ToastrService} from "ngx-toastr";
 
 @Injectable()
 export class AuthService{
@@ -11,31 +12,29 @@ export class AuthService{
   private userNameKey = '_userName';
 
   private refreshTime = 60;
-  constructor(private http: HttpService, private router: Router) {
+  constructor(private http: HttpService, private router: Router, private toastr: ToastrService) {
   }
   isAuthorized(): boolean {
     const token = localStorage.getItem(this.tokenKey);
-    return  (token && token !== null && token !== '') as boolean;
+    return  (token && token !== '') as boolean;
   }
 
   async login(username: string, password: string): Promise<boolean>{
     const res = await this.getToken(username, password);
-    if(res && res !== null && res !== '') {
+    if(res && res !== '') {
       localStorage.setItem(this.tokenKey, res);
       localStorage.setItem(this.userNameKey, username);
+      this.router.navigate([''], {replaceUrl: true});
       return true;
     }
     return false;
   }
 
-  async register(username: string, password: string){
-    const res = await this.registrate(username,password);
-    if(res && res !== null && res !== '') {
-      localStorage.setItem(this.tokenKey, res);
-      localStorage.setItem(this.userNameKey, username);
-      return true;
-    }
-    return false;
+  register(username: string, password: string) {
+    this.registrate(username,password)
+      .subscribe(x => {
+         this.login(username, password);
+      }, err => this.toastr.error(err.message));
   }
 
   logout() {
@@ -54,12 +53,13 @@ export class AuthService{
     return '';
   }
 
-  private async registrate(username: string, pass: string): Promise<string>{
+  private registrate(username: string, pass: string): Observable<void> {
+
     const user =  new AbstractUser();
     user.email = username;
     user.hashPassword = pass;
-    console.log(user);
-    return await this.http.post<string>('registration', user).toPromise() as string;
+
+    return this.http.post('registration', user);
   }
 
   private startRefreshTokenTimer() {

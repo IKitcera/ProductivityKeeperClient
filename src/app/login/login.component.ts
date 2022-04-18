@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {AuthService} from "../services/authServices";
 import {Router} from "@angular/router";
+import {ToastrService} from "ngx-toastr";
 
 @Component({
   selector: 'app-login',
@@ -13,7 +14,7 @@ export class LoginComponent implements OnInit {
   passwordConfirmation: string;
   isRegistration = false;
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(private authService: AuthService, private router: Router, private toastr: ToastrService) { }
 
   ngOnInit(): void {
   }
@@ -24,24 +25,29 @@ export class LoginComponent implements OnInit {
         this.userName = '';
         this.password = '';
 
-        this.router.navigate([''], {replaceUrl: true});
+      //  this.router.navigate([''], {replaceUrl: true});
       }
-    }).catch(err => console.error(err.message));
+    }).catch(err => this.toastr.error(err.message));
   }
 
   public Registration(){
     if (this.password !== this.passwordConfirmation) {
+      this.toastr.error("Password confirmation failed");
       return;
     }
 
-    this.authService.register(this.userName, this.password).then(res => {
+    this.authService.register(this.userName, this.password);
+    /*.then(res => {
+      debugger;
       if(res) {
-        this.authService.login(this.userName, this.password);
+        this.router.navigate([''],{replaceUrl: true});
 
         this.userName = '';
         this.password = '';
         this.passwordConfirmation = '';
       }
-    }).catch(err => console.error(err.message));
+    }).catch(err => this.toastr.error(err.message));
+
+     */
   }
 }
