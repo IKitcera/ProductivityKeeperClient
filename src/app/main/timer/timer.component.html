@@ -22,7 +22,10 @@
       <p>Stop</p>
     </button>
   </div>
-    <mat-icon class="topright" (click)="editTimer()">edit</mat-icon>
+    <div fxLayout="row" class="topright">
+    <mat-icon  (click)="editTimer()">edit</mat-icon>
+    <mat-icon  (click)="deleteTimer()">delete_outline</mat-icon>
+    </div>
   </div>
 
   <div fxLayout="row" fxLayoutAlign="center center" *ngIf="noTimer">

@@ -4,4 +4,8 @@ export class Task{
   isChecked: boolean;
   deadline: Date;
   doneDate: Date;
+  isRepeatable: boolean;
+  timesToRepeat: number;
+  goalRepeatCount: number;
+  habbitIntervalInHours: number;
 }

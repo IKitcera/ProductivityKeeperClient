@@ -1,4 +1,8 @@
-<div>
+<!--SPINNER-->
+<div *ngIf="loading" class="spinner-wrap" fxFill fxLayoutAlign="center center">
+  <mat-progress-spinner  mode="indeterminate"></mat-progress-spinner>
+</div>
+<div class="categories-wrap">
   <div fxLayout="row wrap" fxFlexFill fxLayoutAlign="start center" class="categoryNamesList">
     <div *ngFor="let category of unit?.categories">
       <div *ngIf="activeCategory !== category" class="categoryName" (click)="activeCategory = category">
@@ -19,9 +23,10 @@
   </div>
 </div>
 
-<div fxLayout="row">
-<!--  TASKS -->
-<div class="tasksWrap">
+<!--CONTENT-->
+<div class="main-content-wrap" fxLayout="row">
+  <!--  TASKS -->
+  <div class="tasksWrap">
   <mat-accordion cdkDropList (cdkDropListDropped)="drop($event)" multi>
     <div *ngFor="let subcategory of activeCategory?.subcategories" cdkDrag>
       <mat-expansion-panel expanded="true" class="subcategory" >
@@ -36,12 +41,17 @@
         </button>
 
         <div *ngFor="let task of subcategory.tasks">
-          <div class="task" fxLayout="row">
+          <div fxLayout="row">
+            <div  class="task">
             <mat-checkbox class="autowidth" [checked]="task.isChecked" (change)="taskChanged(subcategory.id, task, $event)">
             {{task.text}}
             </mat-checkbox>
-            <mat-icon class="right" (click)="editTask(subcategory.id, task)">edit</mat-icon>
+            <mat-icon class="topright edit" (click)="editTask(subcategory.id, task)">edit</mat-icon>
             <mat-icon class="topright" (click)="deleteTask(subcategory.id, task.id)">close</mat-icon>
+            </div>
+            <div *ngIf="task.isRepeatable && task.timesToRepeat > 0" class="right repeatable-text " fxLayout="row" fxLayoutAlign="center center">
+              {{'(' + task.timesToRepeat + ' left) - ' + ((task.goalRepeatCount-task.timesToRepeat)/ task.goalRepeatCount | percent)}}
+            </div>
           </div>
         </div>
       </mat-expansion-panel>
@@ -57,10 +67,15 @@
     <mat-icon>add</mat-icon>
   </button>
 </div>
-<!--  TIMER & STATISTICS-->
+  <!--  TIMER & STATISTICS-->
   <div fxLayout="column" class="childContainer">
   <app-timer [timer]="unit.timer"></app-timer>
     <app-statistics #stat></app-statistics>
   </div>
 
-</div>>
+</div>
+
+<mat-divider></mat-divider>
+<div class="footer" fxLayoutAlign="end center" [style.margin-right]="'10%'" [style.margin-top]="'10px'">
+  {{'Ⓒ IKitsera   -   2022'}}
+</div>

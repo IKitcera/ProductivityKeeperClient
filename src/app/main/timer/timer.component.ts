@@ -70,17 +70,28 @@ export class TimerComponent implements OnInit {
     });
     const modifiedTimer = await matDialogRef.afterClosed().toPromise();
 
-    this.timerService.postTimer(modifiedTimer).then(y => {
-        this.timerService.getTimer().then(t => this.timer = t);
-        this.noTimer = this.timer.goal === 0 && this.timer.ticked === 0 && (!this.timer.label || this.timer.label === '');
-        if(!this.noTimer){
+   await this.updateTimer(modifiedTimer);
+  }
+
+    async deleteTimer() {
+      if (this.currentValue.getInSeconds() === 0 || this.currentValue.getInSeconds() > 0
+        && window.confirm("Are you sure about deleting timer? Progress will be lost")) {
+        await this.updateTimer(new Timer());
+      }
+    }
+
+    private async updateTimer(modifiedTimer: Timer) {
+      await this.timerService.postTimer(modifiedTimer);
+      const newTimer = await this.timerService.getTimer();
+      this.timer = newTimer;
+      this.noTimer = this.timer.goal === 0 && this.timer.ticked === 0 && (!this.timer.label || this.timer.label === '');
+
+      if(!this.noTimer){
           this.goalValue = new TimeSpan();
           this.goalValue.getFromSeconds(this.timer.goal);
           this.goalValue.timeFormat = TimerFormat.FullDateTime;
-        }
-      });
-
-  }
+      };
+    }
 }
 
 export class TimeSpan{
@@ -110,6 +121,7 @@ export class TimeSpan{
   }
 
   getFromSeconds(s: number){
+    console.log(s);
     this.seconds = s;
     this.minutes = Math.trunc(this.seconds / 60);
     this.seconds = this.seconds % 60;
@@ -118,10 +130,13 @@ export class TimeSpan{
     this.days = Math.trunc(this.hours / 24);
     this.hours = this.hours % 24;
 
-    this.month = Math.trunc(this.days / 30)
+    this.month = Math.trunc(this.days / 30);
+    this.days = this.days % 30;
+    this.years = Math.trunc(this.month / 12);
     this.month = this.month % 12;
-    this.years = Math.trunc(this.days / 365);
-    this.days = Math.trunc(this.days%30);
+    // this.month = this.month % 12;
+    // this.years = Math.trunc(this.days / 365);
+    // this.days = Math.trunc(this.days%30);
   }
 
   addSecond(){
@@ -171,14 +186,14 @@ export class TimeSpan{
   getInDays(){
     return this.days +
       this.month*30 +
-      this.years*365;
+      this.years*12*30;
   }
 
   getInHours(){
     return this.hours +
       this.days*24 +
       this.month*30*24 +
-      this.years*365*24;
+      this.years*12*30*24;
   }
 
   getInMinutes(){
@@ -186,7 +201,7 @@ export class TimeSpan{
       this.hours*60 +
       this.days*24*60 +
       this.month*30*24*60 +
-      this.years*365*24*60;
+      this.years*12*30*24*60;
   }
 
   getInSeconds(){
@@ -195,7 +210,7 @@ export class TimeSpan{
       this.hours*3600 +
       this.days*24*3600 +
       this.month*30*24*3600+
-      this.years*365*24*3600;
+      this.years*12*30*24*3600;
   }
 
   getInMiliseconds(){

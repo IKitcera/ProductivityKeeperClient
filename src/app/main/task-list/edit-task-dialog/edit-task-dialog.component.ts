@@ -6,6 +6,7 @@ import {Category} from "../../../models/category.model";
 import {ConnectedToDifferentSubcategoriesTask} from "../../../models/connected-to-different-subcategories-task";
 import {Subcategory} from "../../../models/subcategory.model";
 import {TaskService} from "../../../services/taskService";
+import {combineLatest} from "rxjs";
 
 @Component({
   selector: 'app-edit-task-dialog',
@@ -69,5 +70,12 @@ export class EditTaskDialogComponent implements OnInit {
   getSubcategories(categoryId: number): Subcategory[] {
     const subs = this.findCtg(categoryId)?.subcategories;
     return subs;
+  }
+
+  removeConnectedLine(item: any): void {
+    const index = this.connectedDupliate.indexOf(item, 0);
+    if (index > -1) {
+      this.connectedDupliate.splice(index, 1);
+    }
   }
 }

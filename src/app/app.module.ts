@@ -37,6 +37,15 @@ import {MatNativeDateModule} from "@angular/material/core";
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import {NgxChartsModule} from "@swimlane/ngx-charts";
 import {ToastrModule} from "ngx-toastr";
+import {MatSliderModule} from "@angular/material/slider";
+import {MatDividerModule} from "@angular/material/divider";
+import {MatTableModule} from "@angular/material/table";
+import {
+  NgxMatDateAdapter,
+  NgxMatDatetimePickerModule, NgxMatNativeDateModule,
+  NgxMatTimepickerModule
+} from "@angular-material-components/datetime-picker";
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 const routes: Routes = [
   { path: '', component: TaskListComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent },
@@ -84,7 +93,14 @@ export function tokenGetter() {
     MatNativeDateModule,
     DragDropModule,
     NgxChartsModule,
-    ToastrModule.forRoot()
+    ToastrModule.forRoot(),
+    MatSliderModule,
+    MatDividerModule,
+    MatTableModule,
+    NgxMatDatetimePickerModule,
+    NgxMatTimepickerModule,
+    NgxMatNativeDateModule,
+    MatProgressSpinnerModule
   ],
   providers: [AuthGuard, HttpClient, HttpService, AuthService, TaskService, TimerService, StatisticService,
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }],

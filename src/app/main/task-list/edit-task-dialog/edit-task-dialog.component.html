@@ -4,29 +4,46 @@
     <input [(ngModel)]="data.task.text" matInput type="text" name="taskText" autofocus>
   </mat-form-field>
 
-  <mat-form-field>
-    <input matInput placeholder="Choose a date & time" name="nnnn" [(ngModel)]="data.task.deadline" [matDatepicker]="picker">
-    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker #picker ></mat-datepicker>
-  </mat-form-field>
+  <div fxLayout="row" fxLayoutAlign="space-between center">
+    <mat-checkbox [(ngModel)]="data.task.isRepeatable">Is repeatable</mat-checkbox>
+    <div *ngIf="data.task.isRepeatable" fxLayout="row" fxLayoutAlign="space-between center">
+      <mat-form-field [style.margin-right]="'10px'">
+        <input matInput  [(ngModel)]="data.task.goalRepeatCount" placeholder="Repeating count">
+      </mat-form-field>
+      <mat-form-field [style.margin-right]="'10px'">
+        <input matInput [(ngModel)]="data.task.habbitIntervalInHours" placeholder="Repeating interval (hrs)">
+      </mat-form-field>
+    </div>
 
+    <mat-form-field>
+      <input matInput placeholder="Choose a deadline" (click)="picker.open()" name="nnnn"
+             [(ngModel)]="data.task.deadline"  [ngxMatDatetimePicker]="picker" >
+      <mat-datepicker-toggle matSuffix [for]="$any(picker)"></mat-datepicker-toggle>
+      <ngx-mat-datetime-picker #picker [showSeconds]="false"
+                               [color]="'primary'"
+                               [disableMinute]="false" [hideTime]="false">
+      </ngx-mat-datetime-picker>
+    </mat-form-field>
+  </div>
   <button mat-stroked-button (click)="connectedDupliate.push({cId: data.categories[0].id, sId: data.categories[0].subcategories[0].id})">
     Add connected duplicate
   </button>
-  <div *ngIf="connectedDupliate.length > 0">
-    <div fxFill fxLayout="row" fxLayoutAlign="center center" *ngFor="let item of connectedDupliate">
-    <mat-select #selectedCtg [value]="item.cId" *ngIf="data.categories && data.categories.length > 0"
-      (valueChange)=" ctgSelectionChanged(item, $event)">
-      <div *ngFor="let ctg of data.categories">
-        <mat-option [value]="ctg.id" >{{ctg.name}}</mat-option>
-      </div>
-    </mat-select>
-    <mat-select [value]="item.sId" [disabled]="!item.cId || !item.sId|| item.sId === -1"
-      (valueChange)=" item.sId = $event">
-      <div *ngFor="let sub of getSubcategories(item.cId)">
-        <mat-option [value]="sub.id">{{sub.name}}</mat-option>
-      </div>
-    </mat-select>
+  <div *ngIf="connectedDupliate.length > 0" >
+    <div fxFill fxLayout="row" fxLayoutAlign="space-evenly center" class="divider"
+         *ngFor="let item of connectedDupliate">
+      <mat-select #selectedCtg [value]="item.cId" *ngIf="data.categories && data.categories.length > 0"
+        (valueChange)=" ctgSelectionChanged(item, $event)">
+        <div *ngFor="let ctg of data.categories">
+          <mat-option [value]="ctg.id" >{{ctg.name}}</mat-option>
+        </div>
+      </mat-select>
+      <mat-select [value]="item.sId" [disabled]="!item.cId || !item.sId|| item.sId === -1"
+        (valueChange)=" item.sId = $event">
+        <div *ngFor="let sub of getSubcategories(item.cId)">
+          <mat-option [value]="sub.id">{{sub.name}}</mat-option>
+        </div>
+      </mat-select>
+      <mat-icon (click)="removeConnectedLine(item)">close</mat-icon>
     </div>
   </div>
   <button mat-stroked-button (click)="close()">Apply</button>

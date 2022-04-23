@@ -27,6 +27,7 @@ export class TaskListComponent implements OnInit {
   activeCategory: Category | undefined;
   // @ts-ignore
   unit: Unit = new Unit();
+  loading = false;
 
   constructor(private taskService: TaskService, private dialog: MatDialog, private toastr: ToastrService) { }
 
@@ -88,9 +89,11 @@ export class TaskListComponent implements OnInit {
 
   taskChanged(subId: number, task: Task, value: MatCheckboxChange){
     task.isChecked = value.checked;
-    this.taskService.putTask((this.activeCategory as Category).id, subId, task.id, task).then(x => {
-      this.getCategories();
-    });
+    this.taskService.checkTask(this.activeCategory?.id as number, subId, task.id)
+      .then(x => this.getCategories());
+    // this.taskService.putTask((this.activeCategory as Category).id, subId, task.id, task).then(x => {
+    //   this.getCategories();
+    // });
   }
 
   async editTask(subId: number, task: Task){
@@ -125,29 +128,37 @@ export class TaskListComponent implements OnInit {
   }
 
   private async getUnit() {
+    this.loading = true;
     this.unit = await this.taskService.getUnit();
     this.selectActiveCtg();
-    this.statistic.refresh();
+    await this.statistic.refresh();
+    this.loading = false;
   }
 
   private async getActiveCategory() {
+    this.loading = true;
     const catId = this.unit.categories.findIndex(c => c.id === (this.activeCategory as Category).id);
     this.unit.categories[catId] = await this.taskService.getCategory((this.activeCategory as Category).id);
     this.activeCategory = this.unit.categories[catId];
-    this.statistic.refresh();
+    await this.statistic.refresh();
+    this.loading = false;
   }
 
   private async getSubcategory(id: number) {
+    this.loading = true;
     const catId = this.unit.categories.findIndex(c => c.id === (this.activeCategory as Category).id);
     const subIndex = this.unit.categories[catId].subcategories.findIndex(s => s.id === id);
     this.unit.categories[catId].subcategories[subIndex] = await this.taskService.getSubcategory((this.activeCategory as Category).id, id);
-    this.statistic.refresh();
+    await this.statistic.refresh();
+    this.loading = false;
   }
 
    private async getCategories() {
+    this.loading = true;
     this.unit.categories = await this.taskService.getCategories();
     this.selectActiveCtg();
-    this.statistic.refresh();
+    await this.statistic.refresh();
+    this.loading = false;
   }
 
   private selectActiveCtg() {

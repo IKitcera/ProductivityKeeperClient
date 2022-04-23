@@ -3,7 +3,7 @@
     <a>Productivity Keeper</a>
     <div fxLayoutAlign="space-around">
       <a>Tasks</a>
-      <a>About</a>
+      <a *ngIf="authService.isAuthorized()" disabled>Settings</a>
       <a *ngIf="!authService.isAuthorized()">Login</a>
       <a *ngIf="authService.isAuthorized()" (click)="authService.logout()">Logout</a>
     </div>

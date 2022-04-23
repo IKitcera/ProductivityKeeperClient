@@ -1,3 +1,14 @@
+.spinner-wrap{
+  backdrop-filter: brightness(30%) blur(5px);
+}
+
+.main-content-wrap{
+  margin-top: 1%;
+  margin-left: 1%;
+}
+.categories-wrap{
+  margin-top: 10px;
+}
 .categoryNamesList{
   padding-left: 115px;
   font-size: 16px;
@@ -32,6 +43,10 @@
   font-size: 14px;
 }
 
+.edit{
+  right: 15px;
+}
+
 .toprightBtn{
   position:absolute;
   right: 40px;
@@ -40,6 +55,10 @@
 
 .subcategory{
   position: relative;
+}
+
+.mat-expansion-panel-header-title {
+  font-size: 16px;
 }
 
 .right{
@@ -51,12 +70,14 @@
   position: relative;
   min-width: 40%;
   width: fit-content;
+  font-size: 15px;
 }
 
 .tasksWrap{
   position: relative;
   width: 60%;
   margin:2%;
+  margin-top: 0;
 }
 
 .rightBtn{
@@ -83,8 +104,24 @@
 .childContainer{
   margin: 2%;
   width: 30%;
+  margin-top: 0;
 }
 
 .cdk-drag-placeholder {
   opacity: 0;
+}
+
+.footer{
+  color: lightgray;
+}
+
+.repeatable-text{
+  font-size: 13px;
+  color: lightgray;
+  border-radius: 5px;
+  padding: 1px 3px;
+  margin: 2px 4px;
+  backdrop-filter: brightness(130%);
+  min-width: 10px;
+  width: fit-content;
 }

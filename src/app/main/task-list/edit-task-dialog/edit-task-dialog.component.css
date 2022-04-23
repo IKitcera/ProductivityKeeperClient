@@ -1,4 +1,12 @@
 .mat-select {
-  margin: 10px 0;
+  margin: 8px 10px;
   height: 30px;
+}
+
+mat-datepicker-toggle{
+  font-size: 30px;
+}
+
+.divider{
+  border-bottom: 1px solid lightgray;
 }
