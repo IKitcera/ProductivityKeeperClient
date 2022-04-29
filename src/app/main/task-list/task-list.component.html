@@ -41,13 +41,14 @@
         </button>
 
         <div *ngFor="let task of subcategory.tasks">
-          <div fxLayout="row">
-            <div  class="task">
-            <mat-checkbox class="autowidth" [checked]="task.isChecked" (change)="taskChanged(subcategory.id, task, $event)">
+          <div fxLayout="row wrap">
+            <div class="task"  fxLayout="row wrap">
+            <mat-checkbox class="autowidth autoheight"
+                          [checked]="task.isChecked" (change)="taskChanged(subcategory.id, task, $event)">
             {{task.text}}
             </mat-checkbox>
             <mat-icon class="topright edit" (click)="editTask(subcategory.id, task)">edit</mat-icon>
-            <mat-icon class="topright" (click)="deleteTask(subcategory.id, task.id)">close</mat-icon>
+            <mat-icon class="topright delete" (click)="deleteTask(subcategory.id, task.id)">close</mat-icon>
             </div>
             <div *ngIf="task.isRepeatable && task.timesToRepeat > 0" class="right repeatable-text " fxLayout="row" fxLayoutAlign="center center">
               {{'(' + task.timesToRepeat + ' left) - ' + ((task.goalRepeatCount-task.timesToRepeat)/ task.goalRepeatCount | percent)}}
@@ -69,7 +70,7 @@
 </div>
   <!--  TIMER & STATISTICS-->
   <div fxLayout="column" class="childContainer">
-  <app-timer [timer]="unit.timer"></app-timer>
+  <app-timer #timer [timer]="unit.timer"></app-timer>
     <app-statistics #stat></app-statistics>
   </div>
 

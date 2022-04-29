@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Time} from "@angular/common";
 import { timer } from 'rxjs';
 import {Timer} from "../../models/timer.model";
@@ -14,6 +14,8 @@ import {TimerService} from "../../services/timerService";
 export class TimerComponent implements OnInit {
 
   @Input() timer: Timer;
+  @Output() refreshedTimer: EventEmitter<Timer>;
+
   currentValue: TimeSpan = new TimeSpan();
   goalValue: TimeSpan = new TimeSpan();
   isTicking = false;
@@ -26,7 +28,12 @@ export class TimerComponent implements OnInit {
   constructor(private dialog: MatDialog, private timerService: TimerService) { }
 
   ngOnInit(): void {
-    this.noTimer = !this.timer || this.timer.goal === 0 && this.timer.ticked === 0 && (!this.timer.label || this.timer.label === '');
+    this.refresh();
+  }
+
+  refresh(): void {
+    this.noTimer = !this.timer || this.timer.goal === 0 && this.timer.ticked === 0 &&
+      (!this.timer.label || this.timer.label === '');
 
     if(!this.noTimer){
       this.currentValue = new TimeSpan();
@@ -82,15 +89,8 @@ export class TimerComponent implements OnInit {
 
     private async updateTimer(modifiedTimer: Timer) {
       await this.timerService.postTimer(modifiedTimer);
-      const newTimer = await this.timerService.getTimer();
-      this.timer = newTimer;
-      this.noTimer = this.timer.goal === 0 && this.timer.ticked === 0 && (!this.timer.label || this.timer.label === '');
-
-      if(!this.noTimer){
-          this.goalValue = new TimeSpan();
-          this.goalValue.getFromSeconds(this.timer.goal);
-          this.goalValue.timeFormat = TimerFormat.FullDateTime;
-      };
+      this.timer = await this.timerService.getTimer();
+      this.refresh();
     }
 }
 
@@ -121,7 +121,6 @@ export class TimeSpan{
   }
 
   getFromSeconds(s: number){
-    console.log(s);
     this.seconds = s;
     this.minutes = Math.trunc(this.seconds / 60);
     this.seconds = this.seconds % 60;
@@ -134,9 +133,6 @@ export class TimeSpan{
     this.days = this.days % 30;
     this.years = Math.trunc(this.month / 12);
     this.month = this.month % 12;
-    // this.month = this.month % 12;
-    // this.years = Math.trunc(this.days / 365);
-    // this.days = Math.trunc(this.days%30);
   }
 
   addSecond(){

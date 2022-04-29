@@ -14,6 +14,7 @@ import {trigger} from "@angular/animations";
 import {StatisticsComponent} from "../statistics/statistics.component";
 import {ConnectedToDifferentSubcategoriesTask} from "../../models/connected-to-different-subcategories-task";
 import {ToastrService} from "ngx-toastr";
+import {TimerComponent} from "../timer/timer.component";
 
 @Component({
   selector: 'app-task-list',
@@ -23,6 +24,7 @@ import {ToastrService} from "ngx-toastr";
 export class TaskListComponent implements OnInit {
 
   @ViewChild('stat') statistic: StatisticsComponent;
+  @ViewChild('timer') timer: TimerComponent;
   updateStat = new Observable<void>();
   activeCategory: Category | undefined;
   // @ts-ignore
@@ -132,6 +134,7 @@ export class TaskListComponent implements OnInit {
     this.unit = await this.taskService.getUnit();
     this.selectActiveCtg();
     await this.statistic.refresh();
+    await this.timer.refresh();
     this.loading = false;
   }
 

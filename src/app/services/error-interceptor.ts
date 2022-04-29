@@ -12,7 +12,9 @@ export class ErrorInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(catchError(err => {
       if ([401].includes(err.status) && this.authService.isAuthorized()) {
         // auto logout if 401 or 403 response returned from api
-        this.authService.logout();
+        this.authService.refreshToken()
+          .subscribe(()=> console.log('token refreshed'),
+              err => this.authService.logout());
       }
 
       const error = (err && err.error && err.error.message) || err.statusText;

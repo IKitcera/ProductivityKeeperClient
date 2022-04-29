@@ -1,5 +1,6 @@
 .spinner-wrap{
   backdrop-filter: brightness(30%) blur(5px);
+  position: fixed;
 }
 
 .main-content-wrap{
@@ -38,13 +39,17 @@
 .topright{
   position:absolute;
   right: 0;
-  top: 2px;
+  top: 5px;
 
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .edit{
-  right: 15px;
+  right: -33px;
+}
+
+.delete{
+  right: -48px;
 }
 
 .toprightBtn{
@@ -68,8 +73,7 @@
 
 .task{
   position: relative;
-  min-width: 40%;
-  width: fit-content;
+  max-width: 85%;
   font-size: 15px;
 }
 
@@ -85,6 +89,12 @@
   left: calc(62% - 20px);
   top: calc(100% - 80px);
   overflow: visible;
+}
+
+.autoheight{
+  height: fit-content;
+
+  line-break: anywhere;
 }
 
 .m-1{
@@ -124,4 +134,5 @@
   backdrop-filter: brightness(130%);
   min-width: 10px;
   width: fit-content;
+  margin-left: 40px;
 }

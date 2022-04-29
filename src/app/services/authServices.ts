@@ -3,15 +3,15 @@ import {HttpHeaders, HttpParams} from "@angular/common/http";
 import {AbstractUser} from "../models/abstract-user.model";
 import {Injectable} from "@angular/core";
 import {Router} from "@angular/router";
-import {map, Observable} from "rxjs";
+import {map, Observable, tap} from "rxjs";
 import {ToastrService} from "ngx-toastr";
 
 @Injectable()
 export class AuthService{
   private tokenKey = '_token';
   private userNameKey = '_userName';
+  private refreshTime = '_refreshTime';
 
-  private refreshTime = 60;
   constructor(private http: HttpService, private router: Router, private toastr: ToastrService) {
   }
   isAuthorized(): boolean {
@@ -20,14 +20,9 @@ export class AuthService{
   }
 
   async login(username: string, password: string): Promise<boolean>{
-    const res = await this.getToken(username, password);
-    if(res && res !== '') {
-      localStorage.setItem(this.tokenKey, res);
-      localStorage.setItem(this.userNameKey, username);
-      this.router.navigate([''], {replaceUrl: true});
-      return true;
-    }
-    return false;
+    let res = true;
+     await this.getToken(username, password).catch( err => res = false);
+     return res;
   }
 
   register(username: string, password: string) {
@@ -39,18 +34,33 @@ export class AuthService{
 
   logout() {
     localStorage.clear();
+    this.stopRefreshTokenTimer();
     this.router.navigate(['login']);
   }
 
-  private async getToken(username: string, password: string): Promise<string>{
+  refreshToken(): Observable<any> {
+    return this.http.post<any>(`refresh-token`, {} )
+      .pipe(tap(tokenObj => {
+        this.startRefreshTokenTimer();
+        localStorage.setItem(this.tokenKey, tokenObj.accessToken);
+        localStorage.setItem(this.refreshTime, tokenObj.lifeTime);
+        this.stopRefreshTokenTimer();
+        this.startRefreshTokenTimer();
+      }));
+  }
+
+  private async getToken(username: string, password: string): Promise<void>{
     const res = await this.http.post<any>('token', null, new HttpParams()
       .set('username',username)
       .set('password',password)
     ).toPromise();
     if (res) {
-      return res["accessToken"];
+      localStorage.setItem(this.tokenKey, res["accessToken"]);
+      localStorage.setItem(this.userNameKey, username);
+      localStorage.setItem(this.refreshTime, res["lifeTime"]);
+      this.stopRefreshTokenTimer();
+      this.startRefreshTokenTimer();
     }
-    return '';
   }
 
   private registrate(username: string, pass: string): Observable<void> {
@@ -63,23 +73,14 @@ export class AuthService{
   }
 
   private startRefreshTokenTimer() {
-    const timeout = (this.refreshTime-1) * 1000;
+    const liveTime = parseInt(localStorage.getItem(this.refreshTime) as string);
+    const timeout = (liveTime*60-1) * 1000;
     this.refreshTokenTimeout = setTimeout(() => this.refreshToken().subscribe(), timeout);
   }
 
   private stopRefreshTokenTimer() {
     clearTimeout(this.refreshTokenTimeout);
   }
-
-  refreshToken() {
-    return this.http.post<any>(`refresh-token`, {}, )
-      .pipe(map(t => {
-        this.startRefreshTokenTimer();
-        localStorage.setItem(this.tokenKey, t);
-      }));
-  }
-
-  // helper methods
 
   private refreshTokenTimeout: any;
 }

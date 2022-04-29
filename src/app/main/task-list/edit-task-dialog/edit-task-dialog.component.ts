@@ -25,6 +25,8 @@ export class EditTaskDialogComponent implements OnInit {
               },
               public matDialogRef: MatDialogRef<EditTaskDialogComponent>,
               private taskService: TaskService) {
+    this.data.task.deadline = this.data.task.deadline ? new Date(this.data.task.deadline) : null;
+    this.data.task.doneDate = this.data.task.doneDate ? new Date(this.data.task.doneDate) : null;
 
     matDialogRef.beforeClosed().subscribe(() => this.close());
   }
@@ -49,9 +51,27 @@ export class EditTaskDialogComponent implements OnInit {
       if(!connected) {
         this.data.task = new ConnectedToDifferentSubcategoriesTask().copyFromBase(this.data.task);
       }
-        (this.data.task as ConnectedToDifferentSubcategoriesTask).categoriesId = this.connectedDupliate.map(x => x.cId);
-        (this.data.task as ConnectedToDifferentSubcategoriesTask).subcategoriesId = this.connectedDupliate.map(x => x.sId);
+      (this.data.task as ConnectedToDifferentSubcategoriesTask).categoriesId = this.connectedDupliate.map(x => x.cId);
+      (this.data.task as ConnectedToDifferentSubcategoriesTask).subcategoriesId = this.connectedDupliate.map(x => x.sId);
     }
+
+    //this.transformDateValues();
+  }
+
+  private transformDateValues(){
+    this.trimTimezoneFromLocalDateTime(this.data.task.deadline);
+    this.trimTimezoneFromLocalDateTime(this.data.task.doneDate);
+  }
+
+  /*  This manipulation is used if it's necessary to send local time as utc(with trimming offsets)
+      We will subtract time*offset, so you got 2x offset but with visible for system 1x offset,
+      so on the backend it'll count just once
+      Normally we would add time*offset to get time in utc. */
+  private  trimTimezoneFromLocalDateTime(date: Date | string | null | undefined): Date | null {
+    if (!date)
+      return null;
+    const d = new Date(date);
+    return new Date(d.getTime() - d.getTimezoneOffset() * 60000);
   }
 
   findCtg(id: number): Category{
