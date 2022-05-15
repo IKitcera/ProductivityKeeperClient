@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {AuthService} from "./services/authServices";
+import {TaskListComponent} from "./main/task-list/task-list.component";
 
 @Component({
   selector: 'app-root',
@@ -7,10 +8,21 @@ import {AuthService} from "./services/authServices";
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  @ViewChild('router') router: any;
   title = 'ProductivityKeeperClient';
-
+  isLoading = false;
 
   constructor(public authService: AuthService) {
   }
 
+
+  routeChanged(component: any) {
+
+    const cast = component as TaskListComponent;
+    if (cast !== null ) {
+      cast.loaderStateChanged.subscribe(x => {
+        this.isLoading = x;
+      })
+    }
+  }
 }

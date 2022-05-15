@@ -27,6 +27,7 @@ export class EditTimerDialogComponent implements OnInit {
   }
 
   close() {
+    this.goalTS.eachValToNum();
     this.timer.goal = this.goalTS.getInSeconds();
     this.matDialogRef.close(this.timer);
   }

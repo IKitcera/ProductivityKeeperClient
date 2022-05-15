@@ -9,3 +9,11 @@ nav{
   color: white;
   background: #424242;
 }
+
+.spinner-wrap{
+  background: url("src/assets/background.jpg");
+  background-size: cover;
+  position: fixed;
+
+  backdrop-filter: brightness(30%) blur(5px);
+}

@@ -1,11 +1,7 @@
-<!--SPINNER-->
-<div *ngIf="loading" class="spinner-wrap" fxFill fxLayoutAlign="center center">
-  <mat-progress-spinner  mode="indeterminate"></mat-progress-spinner>
-</div>
 <div class="categories-wrap">
   <div fxLayout="row wrap" fxFlexFill fxLayoutAlign="start center" class="categoryNamesList">
     <div *ngFor="let category of unit?.categories">
-      <div *ngIf="activeCategory !== category" class="categoryName" (click)="activeCategory = category">
+      <div *ngIf="activeCategory !== category" class="categoryName" (click)="changeActiveCategory(category)">
         <p>{{category.name}}</p>
         <mat-icon class="topright" (click)="deleteCategory(category.id)">close</mat-icon>
       </div>
@@ -25,8 +21,12 @@
 
 <!--CONTENT-->
 <div class="main-content-wrap" fxLayout="row">
+  <!-- tasks loader -->
+  <div class="spinner-wrap task-spinner" *ngIf="areTasksLoading" fxLayoutAlign="center center">
+    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+  </div>
   <!--  TASKS -->
-  <div class="tasksWrap">
+  <div class="tasksWrap" [style.opacity]="areTasksLoading ? 0.2 : 1" >
   <mat-accordion cdkDropList (cdkDropListDropped)="drop($event)" multi>
     <div *ngFor="let subcategory of activeCategory?.subcategories" cdkDrag>
       <mat-expansion-panel expanded="true" class="subcategory" >
@@ -70,8 +70,8 @@
 </div>
   <!--  TIMER & STATISTICS-->
   <div fxLayout="column" class="childContainer">
-  <app-timer #timer [timer]="unit.timer"></app-timer>
-    <app-statistics #stat></app-statistics>
+    <app-timer #timer [timer]="unit.timer"></app-timer>
+    <app-statistics #stat [statistic]="unit.statistic" [activeCtg]="activeCategory"></app-statistics>
   </div>
 
 </div>

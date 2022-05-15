@@ -5,6 +5,7 @@ import {Timer} from "../../models/timer.model";
 import {MatDialog} from "@angular/material/dialog";
 import {EditTimerDialogComponent} from "./edit-timer-dialog/edit-timer-dialog.component";
 import {TimerService} from "../../services/timerService";
+import {ToastrService} from "ngx-toastr";
 
 @Component({
   selector: 'app-timer',
@@ -25,7 +26,9 @@ export class TimerComponent implements OnInit {
   timerId: number;
   private autosaveId: number;
 
-  constructor(private dialog: MatDialog, private timerService: TimerService) { }
+  constructor(private dialog: MatDialog,
+              private timerService: TimerService,
+              private toastr: ToastrService) { }
 
   ngOnInit(): void {
     this.refresh();
@@ -47,8 +50,15 @@ export class TimerComponent implements OnInit {
     this.goalValue.timeFormat = TimerFormat.FullDateTime;
   }
 
+  addSecond() {
+    this.currentValue.addSecond();
+    if (this.currentValue.getInSeconds() === this.goalValue.getInSeconds()) {
+      this.toastr.success('Your timer goal is completed', 'Congratulation 🎉!');
+    }
+  }
+
   start(){
-    this.timerId = setInterval(()=>this.currentValue.addSecond() , 1000); // Will alert every second.
+    this.timerId = setInterval(()=> this.addSecond() , 1000); // Will alert every second.
     this.autosaveId = setInterval(() => {
       this.timerService.updateTicked(this.currentValue.getInSeconds());
     }, 60000);// autosave
@@ -76,7 +86,7 @@ export class TimerComponent implements OnInit {
       data: this.timer
     });
     const modifiedTimer = await matDialogRef.afterClosed().toPromise();
-
+   modifiedTimer.ticked = this.currentValue.getInSeconds();
    await this.updateTimer(modifiedTimer);
   }
 
@@ -258,6 +268,16 @@ export class TimeSpan{
     this.miliseconds = 0;
   }
 
+  eachValToNum() {
+    this.years = <number>this.years | 0;
+    this.month = <number>this.month | 0;
+    this.days = <number>this.days | 0;
+
+    this.hours = <number>this.hours | 0;
+    this.minutes = <number>this.minutes | 0;
+    this.seconds = <number>this.seconds | 0;
+    this.miliseconds = <number>this.miliseconds | 0;
+  }
 }
 
 export enum TimerFormat{

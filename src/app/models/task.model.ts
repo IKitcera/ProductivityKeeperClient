@@ -1,3 +1,5 @@
+import {TaskToManySubcategories} from "./task-to-many-subcategories";
+
 export class Task{
   id: number;
   text: string;
@@ -8,4 +10,6 @@ export class Task{
   timesToRepeat: number;
   goalRepeatCount: number;
   habbitIntervalInHours: number;
+  relationId?: number | null;
+  relatedTasks: TaskToManySubcategories
 }

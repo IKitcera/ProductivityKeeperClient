@@ -7,6 +7,7 @@ import {ConnectedToDifferentSubcategoriesTask} from "../../../models/connected-t
 import {Subcategory} from "../../../models/subcategory.model";
 import {TaskService} from "../../../services/taskService";
 import {combineLatest} from "rxjs";
+import {Unit} from "../../../models/unit.model";
 
 @Component({
   selector: 'app-edit-task-dialog',
@@ -19,7 +20,7 @@ export class EditTaskDialogComponent implements OnInit {
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: {
                 task: Task,
-                categories: Category[],
+                unit: Unit,
                 categoryId: number,
                 subcategoryId: number
               },
@@ -32,12 +33,23 @@ export class EditTaskDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.taskService.getTaskRelation(this.data.categoryId, this.data.subcategoryId, this.data.task.id).then(x => {
-      const relation = x.taskSubcategories.filter(y => y.taskId !== this.data.task.id);
-      for (const r of relation) {
+    const relation = this.data.unit.taskToManySubcategories.find(x => x.id === this.data.task.relationId);
+
+    if (relation) {
+      const taskSubcategories = relation.taskSubcategories.filter(y => y.taskId !== this.data.task.id);
+      for (const r of taskSubcategories) {
         this.connectedDupliate.push({cId: r.categoryId, sId: r.subcategoryId});
       }
-    })
+    }
+
+
+
+    // this.taskService.getTaskRelation(this.data.categoryId, this.data.subcategoryId, this.data.task.id).then(x => {
+    //   const relation = x.taskSubcategories.filter(y => y.taskId !== this.data.task.id);
+    //   for (const r of relation) {
+    //     this.connectedDupliate.push({cId: r.categoryId, sId: r.subcategoryId});
+    //   }
+    // })
   }
 
   close() {
@@ -53,6 +65,19 @@ export class EditTaskDialogComponent implements OnInit {
       }
       (this.data.task as ConnectedToDifferentSubcategoriesTask).categoriesId = this.connectedDupliate.map(x => x.cId);
       (this.data.task as ConnectedToDifferentSubcategoriesTask).subcategoriesId = this.connectedDupliate.map(x => x.sId);
+
+      // We will set deadline to 23:59 if it's not set and is included in today sub
+      const ctgWithTodaySub = this.data.unit.categories.find(c => c.subcategories.find(s => s.name.toLowerCase() === 'today' ));
+      if (ctgWithTodaySub) {
+        const todaySub = ctgWithTodaySub.subcategories.find(x => x.name.toLowerCase() === 'today');
+        if (this.connectedDupliate.some(x => x.cId === ctgWithTodaySub.id && x.sId === todaySub?.id) &&
+            !this.data.task.deadline) {
+          let ddate = new Date();
+          ddate.setHours(23,59,59);
+          this.data.task.deadline = ddate;
+          console.log(this.data.task.deadline);
+        }
+      }
     }
 
     //this.transformDateValues();
@@ -71,12 +96,12 @@ export class EditTaskDialogComponent implements OnInit {
     if (!date)
       return null;
     const d = new Date(date);
-    return new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+    return new Date(d.getTime() + d.getTimezoneOffset() * 60000);
   }
 
   findCtg(id: number): Category{
-    const ind = this.data.categories.findIndex(categ => categ.id === id);
-    return this.data.categories[ind];
+    const ind = this.data.unit.categories.findIndex(categ => categ.id === id);
+    return this.data.unit.categories[ind];
   }
 
   ctgSelectionChanged (item: any, newVal: any) {

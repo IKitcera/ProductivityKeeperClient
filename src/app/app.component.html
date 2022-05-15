@@ -1,4 +1,9 @@
-<nav>
+<!--SPINNER-->
+<div *ngIf="isLoading" class="spinner-wrap" fxFill fxLayoutAlign="center center">
+  <mat-progress-spinner  mode="indeterminate"></mat-progress-spinner>
+</div>
+
+<nav *ngIf="!isLoading">
   <div fxAlign="row" fxLayoutAlign="space-around">
     <a>Productivity Keeper</a>
     <div fxLayoutAlign="space-around">
@@ -10,4 +15,7 @@
   </div>
 </nav>
 
-<router-outlet></router-outlet>
+<router-outlet [style.display]="isLoading ? 'none' : 'flex'" #router (activate)="routeChanged($event)"></router-outlet>
+
+
+
