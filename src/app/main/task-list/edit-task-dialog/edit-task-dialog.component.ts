@@ -16,7 +16,12 @@ import {Unit} from "../../../models/unit.model";
 })
 export class EditTaskDialogComponent implements OnInit {
 
-  connectedDupliate: {cId:number, sId:number}[] = [];
+  connectedDupliate: IConnectedDuplicate [] = [];
+  previousRepeatCount: number | undefined;
+
+  public get categories(): Category[] {
+    return this.data.unit.categories.filter(c => !!c.subcategories.length);
+  }
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: {
                 task: Task,
@@ -28,6 +33,9 @@ export class EditTaskDialogComponent implements OnInit {
               private taskService: TaskService) {
     this.data.task.deadline = this.data.task.deadline ? new Date(this.data.task.deadline) : null;
     this.data.task.doneDate = this.data.task.doneDate ? new Date(this.data.task.doneDate) : null;
+
+    if (this.data.task.isRepeatable)
+      this.previousRepeatCount = this.data.task.timesToRepeat;
 
     matDialogRef.beforeClosed().subscribe(() => this.close());
   }
@@ -41,15 +49,6 @@ export class EditTaskDialogComponent implements OnInit {
         this.connectedDupliate.push({cId: r.categoryId, sId: r.subcategoryId});
       }
     }
-
-
-
-    // this.taskService.getTaskRelation(this.data.categoryId, this.data.subcategoryId, this.data.task.id).then(x => {
-    //   const relation = x.taskSubcategories.filter(y => y.taskId !== this.data.task.id);
-    //   for (const r of relation) {
-    //     this.connectedDupliate.push({cId: r.categoryId, sId: r.subcategoryId});
-    //   }
-    // })
   }
 
   close() {
@@ -75,28 +74,18 @@ export class EditTaskDialogComponent implements OnInit {
           let ddate = new Date();
           ddate.setHours(23,59,59);
           this.data.task.deadline = ddate;
-          console.log(this.data.task.deadline);
         }
       }
     }
 
-    //this.transformDateValues();
-  }
+    if (this.data.task.isRepeatable) {
 
-  private transformDateValues(){
-    this.trimTimezoneFromLocalDateTime(this.data.task.deadline);
-    this.trimTimezoneFromLocalDateTime(this.data.task.doneDate);
-  }
+      const compl = this.previousRepeatCount as number || 0 - this.data.task.timesToRepeat;
 
-  /*  This manipulation is used if it's necessary to send local time as utc(with trimming offsets)
-      We will subtract time*offset, so you got 2x offset but with visible for system 1x offset,
-      so on the backend it'll count just once
-      Normally we would add time*offset to get time in utc. */
-  private  trimTimezoneFromLocalDateTime(date: Date | string | null | undefined): Date | null {
-    if (!date)
-      return null;
-    const d = new Date(date);
-    return new Date(d.getTime() + d.getTimezoneOffset() * 60000);
+      this.data.task.timesToRepeat = compl > 0 ?
+        this.data.task.goalRepeatCount - compl :
+        this.data.task.goalRepeatCount;
+    }
   }
 
   findCtg(id: number): Category{
@@ -104,17 +93,24 @@ export class EditTaskDialogComponent implements OnInit {
     return this.data.unit.categories[ind];
   }
 
+
+  public getSubcategories(categoryId: number): Subcategory[] {
+    const subs = this.findCtg(categoryId)?.subcategories
+      .filter(s => s.id !== this.data.subcategoryId);
+    return subs;
+  }
+
   ctgSelectionChanged (item: any, newVal: any) {
     const ctg = this.findCtg(newVal as number);
-    const subCtg = ctg.subcategories[0] || null;
+    const subCtg = this.getSubcategories(ctg.id)[0];
 
     item.cId = ctg?.id;
     item.sId = subCtg?.id;
   }
 
-  getSubcategories(categoryId: number): Subcategory[] {
-    const subs = this.findCtg(categoryId)?.subcategories;
-    return subs;
+  addConnectedLine():void {
+    const firsDuplicate = this.getFirstDuplicateIfPossible() as IConnectedDuplicate;
+    this.connectedDupliate.push(firsDuplicate);
   }
 
   removeConnectedLine(item: any): void {
@@ -123,4 +119,25 @@ export class EditTaskDialogComponent implements OnInit {
       this.connectedDupliate.splice(index, 1);
     }
   }
+
+  isAddingDuplicatesDisabled(): boolean {
+    return !this.getFirstDuplicateIfPossible();
+  }
+
+  private getFirstDuplicateIfPossible(): IConnectedDuplicate | null {
+    let duplicate = null;
+    for (const ctg of this.data.unit.categories) {
+      if (!ctg.subcategories.length) {
+        continue;
+      }
+
+      duplicate = <IConnectedDuplicate>{cId: ctg.id, sId: ctg.subcategories[0].id};
+    }
+    return duplicate;
+  }
+}
+
+interface IConnectedDuplicate {
+  cId:  number;
+  sId:  number;
 }

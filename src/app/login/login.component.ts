@@ -21,13 +21,14 @@ export class LoginComponent implements OnInit {
 
   public Login(){
     this.authService.login(this.userName, this.password).then(res => {
-      if(res) {
-        this.userName = '';
-        this.password = '';
-
-        this.router.navigate([''], {replaceUrl: true});
-      }
-    }).catch(err => this.toastr.error(err.message ?? 'Login failed'));
+      this.userName = '';
+      this.password = '';
+      this.router.navigate([''], {replaceUrl: true});
+    }).catch(err => {
+      console.log(err);
+      this.toastr.error(err.message ?? err ?? 'Login failed');
+      
+    });
   }
 
   public Registration(){

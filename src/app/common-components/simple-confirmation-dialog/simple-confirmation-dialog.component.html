@@ -1,0 +1,11 @@
+<div fxLayout="column" [style.padding]="'10px 5px'">
+  <h3 fxLayoutAlign="row">{{this.data.label}}</h3>
+  <div fxLayout="row" fxLayoutAlign="space-evenly" >
+      <button mat-raised-button class="p-5" (click)="confirm()" color="accent">
+        Confirm
+      </button>
+      <button mat-stroked-button class="p-5" (click)="close()">
+        Cancel
+      </button>
+    </div>
+</div>

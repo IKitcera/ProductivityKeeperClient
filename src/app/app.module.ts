@@ -46,10 +46,15 @@ import {
   NgxMatTimepickerModule
 } from "@angular-material-components/datetime-picker";
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import { SettingsComponent } from './main/settings/settings.component';
+import {MatCardModule} from "@angular/material/card";
+import {StorageService} from "./services/storageService";
+import { SimpleConfirmationDialogComponent } from './common-components/simple-confirmation-dialog/simple-confirmation-dialog.component';
 const routes: Routes = [
   { path: '', component: TaskListComponent, canActivate: [AuthGuard] },
-  { path: 'login', component: LoginComponent },
   { path: 'tasks', redirectTo: '' },
+  { path: 'login', component: LoginComponent },
+  { path: 'settings', component: SettingsComponent },
   { path: '**', component:NotFoundError },  // Wildcard route for a 404 page
 ];
 
@@ -65,7 +70,9 @@ export function tokenGetter() {
     StatisticsComponent,
     TimerComponent,
     EditTimerDialogComponent,
-    EditTaskDialogComponent
+    EditTaskDialogComponent,
+    SettingsComponent,
+    SimpleConfirmationDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -100,9 +107,18 @@ export function tokenGetter() {
     NgxMatDatetimePickerModule,
     NgxMatTimepickerModule,
     NgxMatNativeDateModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatCardModule
   ],
-  providers: [AuthGuard, HttpClient, HttpService, AuthService, TaskService, TimerService, StatisticService,
+  providers: [
+    AuthGuard,
+    HttpClient,
+    HttpService,
+    AuthService,
+    TaskService,
+    TimerService,
+    StatisticService,
+    StorageService,
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }],
   bootstrap: [AppComponent]
 })

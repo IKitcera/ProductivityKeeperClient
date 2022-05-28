@@ -6,4 +6,5 @@ export class Category {
   name: string;
   color: Color;
   subcategories: Subcategory[];
+  isVisible: boolean;
 }

@@ -63,7 +63,7 @@ export class StatisticsComponent implements OnInit {
   ngOnInit(): void {
 
     this.refresh(true).then(() => {
-      this.gChart.scaleText(true);
+      this.gChart?.scaleText(true);
     }, finalize(()=> {
     }));
 

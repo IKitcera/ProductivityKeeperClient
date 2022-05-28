@@ -5,10 +5,10 @@
 
 <nav *ngIf="!isLoading">
   <div fxAlign="row" fxLayoutAlign="space-around">
-    <a>Productivity Keeper</a>
+    <a [routerLink]="'/tasks'">Productivity Keeper</a>
     <div fxLayoutAlign="space-around">
-      <a>Tasks</a>
-      <a *ngIf="authService.isAuthorized()" disabled>Settings</a>
+      <a [routerLink]="'/tasks'">Tasks</a>
+      <a *ngIf="authService.isAuthorized()" [routerLink]="'/settings'">Settings</a>
       <a *ngIf="!authService.isAuthorized()">Login</a>
       <a *ngIf="authService.isAuthorized()" (click)="authService.logout()">Logout</a>
     </div>

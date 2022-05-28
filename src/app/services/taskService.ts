@@ -7,6 +7,7 @@ import {Subcategory} from "../models/subcategory.model";
 import {Injectable} from "@angular/core";
 import {ConnectedToDifferentSubcategoriesTask} from "../models/connected-to-different-subcategories-task";
 import {TaskToManySubcategories} from "../models/task-to-many-subcategories";
+import {throwError} from "rxjs";
 
 @Injectable()
 export class TaskService{
@@ -57,9 +58,13 @@ export class TaskService{
       .set('categoryId', categoryId.toString())
     ).toPromise() as Subcategory;
   }
-  //won;t work
+  async changeCategoriesOrder(categories: Category[]): Promise<any>{
+    return await this.http.put('api/Category/changeOrder', categories)
+      .toPromise();
+  }
+
   async putSubcategory(categoryId: number, subcategoryId: number, sub: Subcategory): Promise<boolean>{
-    const res = await this.http.put('api/Subcategory', sub, new HttpParams()
+    const res = await this.http.put('api/Subcategory/' + subcategoryId.toString(), sub, new HttpParams()
       .set('categoryId', categoryId.toString())
       .set('subcategoryId', subcategoryId.toString())
     ).toPromise();
@@ -97,6 +102,9 @@ export class TaskService{
   }
 
   async postTask(categoryId: number, subcategoryId: number, task: Task): Promise<Task>{
+    if(!categoryId || !subcategoryId || !task) {
+      throwError('Empty ids');
+    }
     return await this.http.post<Task>('api/Task', task, new HttpParams()
       .set('categoryId', categoryId.toString())
       .set('subcategoryId', subcategoryId.toString())
@@ -110,8 +118,11 @@ export class TaskService{
     ).toPromise();
     return this.checkRes(res)
   }
-  //won;t work
+
   async putTask(categoryId: number, subcategoryId: number, taskId: number, task: Task): Promise<boolean>{
+    if(!categoryId || !subcategoryId || !taskId || !task) {
+      throwError('Empty ids');
+    }
     const res = await this.http.put('api/Task', task, new HttpParams()
       .set('categoryId', categoryId.toString())
       .set('subcategoryId', subcategoryId.toString())

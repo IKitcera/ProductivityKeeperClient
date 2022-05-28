@@ -1,0 +1,37 @@
+.container {
+  margin: 2% 5%;
+}
+
+div {
+  font-size: 14px;
+}
+
+div.block {
+  margin: 0 20px;
+}
+h1{
+  margin-left:10px ;
+}
+.block-container{
+  padding: 20px;
+  border: 2px solid #424242;
+  border-radius: 5px;
+  margin-bottom: 5px;
+}
+
+.option{
+  width: 30%;
+}
+
+.option-close{
+  width: 20%;
+}
+
+.grey {
+  color: rgb(60,60,60);
+}
+
+
+.cdk-drag-placeholder {
+  opacity: 0;
+}

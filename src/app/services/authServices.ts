@@ -19,10 +19,8 @@ export class AuthService{
     return  (token && token !== '') as boolean;
   }
 
-  async login(username: string, password: string): Promise<boolean>{
-    let res = true;
-     await this.getToken(username, password).catch( err => res = false);
-     return res;
+  async login(username: string, password: string): Promise<void>{
+     await this.getToken(username, password);
   }
 
   register(username: string, password: string) {

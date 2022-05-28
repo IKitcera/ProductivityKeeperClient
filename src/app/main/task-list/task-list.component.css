@@ -36,11 +36,12 @@
   right: 0;
   top: 5px;
 
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .edit{
   right: -33px;
+  font-size: 13px;
 }
 
 .delete{
@@ -95,10 +96,19 @@
 .m-1{
   margin-left: 5px;
 }
-.small{
+
+.m-2{
+  margin-left: -5px;
+}
+
+.medium-icon{
   font-size: 18px;
   text-align: center;
   margin-top: 5px;
+}
+
+.size17 {
+  font-size: 17px;
 }
 
 .mat-checkbox-checked::ng-deep{

@@ -1,5 +1,8 @@
 import {Component, Inject, Input, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {Task} from "../../models/task.model";
+import {Unit} from "../../models/unit.model";
+import {text} from "d3";
 
 @Component({
   selector: 'app-single-input-dialog',
@@ -10,9 +13,12 @@ export class SingleInputDialogComponent implements OnInit {
 
   input: string;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public labelToShow: string,
+  constructor(@Inject(MAT_DIALOG_DATA) public data: {
+                label: string,
+                text: string,
+              },
               public matDialogRef: MatDialogRef<SingleInputDialogComponent>) {
-    matDialogRef.beforeClosed().subscribe(() => matDialogRef.close(this.input));
+    this.input = this.data.text || '';
   }
 
   ngOnInit(): void {

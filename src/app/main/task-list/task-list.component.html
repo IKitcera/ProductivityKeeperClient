@@ -1,11 +1,14 @@
 <div class="categories-wrap">
   <div fxLayout="row wrap" fxFlexFill fxLayoutAlign="start center" class="categoryNamesList">
     <div *ngFor="let category of unit?.categories">
-      <div *ngIf="activeCategory !== category" class="categoryName" (click)="changeActiveCategory(category)">
+      <div *ngIf="activeCategory !== category && category.isVisible" class="categoryName"
+           (click)="changeActiveCategory(category)"
+            (dblclick)="editCategory(category.id)">
         <p>{{category.name}}</p>
         <mat-icon class="topright" (click)="deleteCategory(category.id)">close</mat-icon>
       </div>
-      <div *ngIf="activeCategory === category" class="categoryName selectedCategoryName">
+      <div *ngIf="activeCategory === category" class="categoryName selectedCategoryName"
+           (dblclick)="editCategory()">
         <p>{{category.name}}</p>
         <mat-icon class="topright" (click)="deleteCategory()">close</mat-icon>
       </div>
@@ -32,8 +35,11 @@
       <mat-expansion-panel expanded="true" class="subcategory" >
         <mat-expansion-panel-header>
           <mat-panel-title>
+            <div fxLayout="row" fxLayoutAlign="start center">
             {{subcategory.name}}
-            <mat-icon class="m-1 small" (click)="deleteSubcategory(subcategory.id)">delete_outline</mat-icon>
+            <mat-icon class="m-1 medium-icon size17" (click)="editSubcategory(subcategory)">edit</mat-icon>
+            <mat-icon class="m-2 medium-icon" (click)="deleteSubcategory(subcategory.id)">delete_outline</mat-icon>
+            </div>
           </mat-panel-title>
         </mat-expansion-panel-header>
         <button mat-mini-fab color="accent" (click)="addTask(subcategory.id)" class="toprightBtn">
@@ -44,7 +50,7 @@
           <div fxLayout="row wrap">
             <div class="task"  fxLayout="row wrap">
             <mat-checkbox class="autowidth autoheight"
-                          [checked]="task.isChecked" (change)="taskChanged(subcategory.id, task, $event)">
+                          [checked]="task.isChecked" (change)="taskCheckedStateChanged(subcategory.id, task, $event)">
             {{task.text}}
             </mat-checkbox>
             <mat-icon class="topright edit" (click)="editTask(subcategory.id, task)">edit</mat-icon>

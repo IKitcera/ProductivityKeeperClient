@@ -25,15 +25,18 @@
       </ngx-mat-datetime-picker>
     </mat-form-field>
   </div>
-  <button mat-stroked-button (click)="connectedDupliate.push({cId: data.unit.categories[0].id, sId: data.unit.categories[0].subcategories[0].id})">
+  <button mat-stroked-button
+          (click)="addConnectedLine()"
+          [disabled]="isAddingDuplicatesDisabled()"
+  >
     Add connected duplicate
   </button>
   <div *ngIf="connectedDupliate.length > 0" >
     <div fxFill fxLayout="row" fxLayoutAlign="space-evenly center" class="divider"
          *ngFor="let item of connectedDupliate">
-      <mat-select #selectedCtg [value]="item.cId" *ngIf="data.unit.categories && data.unit.categories.length > 0"
+      <mat-select #selectedCtg [value]="item.cId" *ngIf="data.unit.categories && !!categories.length"
         (valueChange)=" ctgSelectionChanged(item, $event)">
-        <div *ngFor="let ctg of data.unit.categories">
+        <div *ngFor="let ctg of categories">
           <mat-option [value]="ctg.id" >{{ctg.name}}</mat-option>
         </div>
       </mat-select>

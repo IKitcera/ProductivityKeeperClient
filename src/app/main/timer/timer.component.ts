@@ -6,6 +6,10 @@ import {MatDialog} from "@angular/material/dialog";
 import {EditTimerDialogComponent} from "./edit-timer-dialog/edit-timer-dialog.component";
 import {TimerService} from "../../services/timerService";
 import {ToastrService} from "ngx-toastr";
+import {
+  SimpleConfirmationDialogComponent
+} from "../../common-components/simple-confirmation-dialog/simple-confirmation-dialog.component";
+import {Constants} from "../../models/constants";
 
 @Component({
   selector: 'app-timer',
@@ -91,8 +95,13 @@ export class TimerComponent implements OnInit {
   }
 
     async deleteTimer() {
-      if (this.currentValue.getInSeconds() === 0 || this.currentValue.getInSeconds() > 0
-        && window.confirm("Are you sure about deleting timer? Progress will be lost")) {
+      if (!this.noTimer) {
+        if (this.currentValue.getInSeconds() > 0 ) {
+          const confirmationDialog = this.dialog.open(SimpleConfirmationDialogComponent, {data: {label: Constants.sureAboutDelete + Constants.progressWillBeLost}});
+          if (! await confirmationDialog.afterClosed().toPromise()) {
+            return;
+          }
+        }
         await this.updateTimer(new Timer());
       }
     }

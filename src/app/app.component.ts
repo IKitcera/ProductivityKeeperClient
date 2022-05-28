@@ -19,7 +19,7 @@ export class AppComponent {
   routeChanged(component: any) {
 
     const cast = component as TaskListComponent;
-    if (cast !== null ) {
+    if (cast && cast.loaderStateChanged) {
       cast.loaderStateChanged.subscribe(x => {
         this.isLoading = x;
       })

@@ -1,0 +1,31 @@
+<div class="container">
+
+  <h1>Settings</h1>
+  <div class="block-container">
+    <h2>General</h2>
+  </div>
+  <div class="block-container">
+    <h2>Tasks related</h2>
+    <div class="block" fxLayout="row" *ngIf="hasUnitAnyCategory">
+      <h4 class="option">Change categories order and visibility</h4>
+      <mat-accordion cdkDropList (cdkDropListDropped)="drop($event)" multi>
+
+          <div fxLayout="row" *ngFor="let ctg of categories" cdkDrag>
+            <mat-icon class="grey" cdkDragHandle>drag_indicator</mat-icon>
+            <mat-checkbox [(ngModel)]="ctg.isVisible" mat-card-content> {{ctg.name}} </mat-checkbox>
+          </div>
+
+      </mat-accordion>
+    </div>
+
+    <div class="block" fxLayout="row">
+        <h4 class="option-close">Clear tasks archive</h4>
+        <button [color]="'warn'" mat-stroked-button>Clear</button>
+    </div>
+
+    <div  fxLayout="row">
+      <button [color]="'accent'" mat-stroked-button (click)="saveChanges()">Apply</button>
+    </div>
+  </div>
+
+</div>

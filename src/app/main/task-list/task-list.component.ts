@@ -18,6 +18,11 @@ import {TimerComponent} from "../timer/timer.component";
 import {TaskToManySubcategories} from "../../models/task-to-many-subcategories";
 import {TaskSubcategory} from "../../models/task-subcategory";
 import {id} from "@swimlane/ngx-charts";
+import {StorageService} from "../../services/storageService";
+import {
+  SimpleConfirmationDialogComponent
+} from "../../common-components/simple-confirmation-dialog/simple-confirmation-dialog.component";
+import {Constants} from "../../models/constants";
 
 @Component({
   selector: 'app-task-list',
@@ -36,7 +41,10 @@ export class TaskListComponent implements OnInit {
   unit: Unit = new Unit();
   areTasksLoading = false;
 
-  constructor(private taskService: TaskService, private dialog: MatDialog, private toastr: ToastrService) { }
+  constructor(private taskService: TaskService,
+              private storageService: StorageService,
+              private dialog: MatDialog,
+              private toastr: ToastrService) { }
 
   ngOnInit(): void {
     this.getUnit();
@@ -51,11 +59,31 @@ export class TaskListComponent implements OnInit {
     });
   }
 
-  deleteCategory(id?: number){
+  async deleteCategory(id?: number){
     const identifier = id ?? (this.activeCategory as Category).id;
-    this.taskService.deleteCategory(identifier).then(x => {
-      this.getUnit();
+
+    const confirmationDialog = this.dialog.open(SimpleConfirmationDialogComponent, {data: {label: Constants.sureAboutDelete + Constants.cannotRevert}});
+    const res = await confirmationDialog.afterClosed().toPromise();
+    if (res) {
+      this.taskService.deleteCategory(identifier).then(x => {
+        this.getUnit();
+      });
+    }
+  }
+
+  async editCategory(ctgId: number | null = null){
+    const ctg = ctgId ?
+      this.unit.categories.find(c => c.id === ctgId) as Category :
+      this.activeCategory as Category;
+
+    const lastName = ctg.name;
+    ctg.name = await this.openSimpleDialog('Change category name',ctg.name) || ctg.name;
+
+    this.taskService.putCategory(ctg).catch(x => {
+      ctg.name = lastName;
     });
+
+    this.storageService.saveUnit(this.unit);
   }
 
   async addSubcategory(){
@@ -68,23 +96,55 @@ export class TaskListComponent implements OnInit {
     });
   }
 
-  deleteSubcategory(subId: number){
+  async deleteSubcategory(subId: number){
     const subInd = this.activeCategory?.subcategories.findIndex(sub => sub.id === subId);
     if (subInd === null || subInd === undefined || subInd === -1)
       return;
 
+    const confirmationDialog = this.dialog.open(SimpleConfirmationDialogComponent, {data: {label: Constants.sureAboutDelete + Constants.cannotRevert}});
+    const res = await confirmationDialog.afterClosed().toPromise();
+
+    if(!res)
+      return;
+
+    const subcategory = this.activeCategory?.subcategories[subInd];
+    if(!!subcategory?.tasks.length) {
+      subcategory.tasks.map(task => {
+        this.deleteRelatedTaskLocal(task);
+      })
+    }
+
     const subSave = this.activeCategory?.subcategories as Subcategory[];
     this.activeCategory?.subcategories.splice(subInd,1);
 
-    this.taskService.deleteSubcategory((this.activeCategory as Category).id, subId).catch(x => {
+    this.taskService.deleteSubcategory((this.activeCategory as Category).id, subId)
+      .then(x => this.refreshAllStatistic())
+      .catch(x => {
       let subs = this.activeCategory?.subcategories as Subcategory[];
       subs = subSave;
     });
+
+    this.storageService.saveUnit(this.unit);
   }
 
-  async openSimpleDialog(label: string): Promise<string> {
+  async editSubcategory(subcategory: Subcategory) {
+    const lastName = subcategory.name;
+    subcategory.name = await this.openSimpleDialog(
+      'Change subcategory name',
+      subcategory.name) || subcategory.name;
+
+    this.taskService.putSubcategory(this.activeCategory?.id as number, subcategory.id, subcategory)
+      .catch(err => {
+        subcategory.name = lastName;
+        this.toastr.error(err.message);
+    });
+
+    this.storageService.saveUnit(this.unit);
+  }
+
+  async openSimpleDialog(label: string, text: string | null = null): Promise<any> {
     const dialogRef = this.dialog.open(SingleInputDialogComponent, {
-      data: label,
+      data: {label, text},
       width: '60%'
     });
     return await dialogRef.afterClosed().toPromise() as string || '';
@@ -92,42 +152,49 @@ export class TaskListComponent implements OnInit {
 
   async addTask(subId: number) {
     let task = new Task();
-    task.text = await this.openSimpleDialog("What need to do?");
+    task.text = await this.openSimpleDialog("What need to do?", null);
 
     const sub = this.activeCategory?.subcategories.find(s => s.id === subId);
     sub?.tasks.push(task);
 
     this.taskService.postTask((this.activeCategory as Category).id, subId, task).then(task => {
       this.getSubcategory(subId);
+      this.refreshAllStatistic();
     });
   }
 
   async deleteTask(subId: number, taskId: number){
     const sub = this.activeCategory?.subcategories.find(s => s.id === subId);
-    const taskInd = sub?.tasks.findIndex(t => t.id === taskId);
-
-    if (taskInd === null || taskInd === undefined || taskInd === -1){
-      return;
-    }
+    const taskInd = sub?.tasks.findIndex(t => t.id === taskId) as number;
 
     let tasks = this.activeCategory?.subcategories.find(s => s.id === subId)?.tasks as Task[];
-    const tasksSave = tasks;
+    const task = tasks[taskInd];
 
+    const tasksSave = [...tasks];
+
+    this.deleteRelatedTaskLocal(task);
     tasks.splice(taskInd, 1);
-    this.taskService.deleteTask((this.activeCategory as Category).id, subId, taskId).catch(err => {
-      tasks = tasksSave;
-      this.toastr.error(err.message || 'Error has happened. Task was restored');
+
+    this.taskService.deleteTask((this.activeCategory as Category).id, subId, taskId)
+      .then(x => this.refreshAllStatistic())
+      .catch(err => {
+        tasks = tasksSave;
+        this.toastr.error(err.message || 'Error has happened. Task was restored');
     });
   }
 
-  taskChanged(subId: number, task: Task, value: MatCheckboxChange){
+  taskCheckedStateChanged(subId: number, task: Task, value: MatCheckboxChange){
     task.isChecked = value.checked;
+    if(task.isRepeatable && task.isChecked) {
+      task.timesToRepeat --;
+    }
+
+    this.moveTaskInSubcategoryByIdData(this.activeCategory?.id as number, subId, task);
+
     this.updateRelatedTasksLocal(task);
 
-    this.statistic.activeCtg = this.activeCategory;
-    this.statistic.populateDonutChart();
-
     this.taskService.checkTask(this.activeCategory?.id as number, subId, task.id)
+      .then(x => this.refreshAllStatistic())
       .catch(x => task.isChecked = !task.isChecked);
   }
 
@@ -150,7 +217,7 @@ export class TaskListComponent implements OnInit {
       await this.getUnit();
     } else {
       await this.taskService.putTask((this.activeCategory as Category).id, subId, task.id, task);
-     // await this.getSubcategory(subId);
+      this.refreshAllStatistic();
     }
   }
 
@@ -164,20 +231,24 @@ export class TaskListComponent implements OnInit {
 
   changeActiveCategory(newCategory: Category) {
     this.activeCategory = newCategory;
-    this.statistic.activeCtg = this.activeCategory as Category;
-    this.statistic.populateDonutChart();
+    this.refreshAllStatistic();
   }
 
-  private async getUnit() {
+  private async getUnit(forceReload = true) {
     this.loaderStateChanged.emit(true);
-    this.unit = await this.taskService.getUnit();
+
+    const savedUnit = this.storageService.getUnit();
+    this.unit = forceReload || !savedUnit ?
+      await this.taskService.getUnit() :
+      savedUnit;
+
     this.selectActiveCtg();
     this.timer.timer = this.unit.timer;
     this.statistic.statistic = this.unit.statistic;
     this.loaderStateChanged.emit(false);
     this.timer.refresh();
-    this.statistic.activeCtg = this.activeCategory as Category;
-    this.statistic.refresh(false);
+    this.storageService.saveUnit(this.unit);
+    this.refreshAllStatistic();
   }
 
   private async getActiveCategory() {
@@ -187,6 +258,7 @@ export class TaskListComponent implements OnInit {
     this.activeCategory = this.unit.categories[catId];
 
     this.areTasksLoading = false;
+    this.storageService.saveUnit(this.unit);
     await this.statistic.refresh();
   }
 
@@ -196,6 +268,7 @@ export class TaskListComponent implements OnInit {
     const subIndex = this.unit.categories[catId].subcategories.findIndex(s => s.id === id);
     this.unit.categories[catId].subcategories[subIndex] = await this.taskService.getSubcategory((this.activeCategory as Category).id, id);
     this.areTasksLoading = false;
+    this.storageService.saveUnit(this.unit);
     this.statistic.refresh();
   }
 
@@ -204,28 +277,21 @@ export class TaskListComponent implements OnInit {
     this.unit.categories = await this.taskService.getCategories();
     this.selectActiveCtg();
     this.areTasksLoading = false;
+     this.storageService.saveUnit(this.unit);
     this.statistic.refresh();
   }
 
   private selectActiveCtg() {
-    if (this.unit.categories.length > 0) {
-      const activeCtg = this.unit.categories.find(c => c.id === this.activeCategory?.id);
-      this.activeCategory = this.activeCategory && activeCtg ? activeCtg : this.unit.categories[0];
+    const visibleCategories = this.unit.categories.filter(c => c.isVisible);
+    if (visibleCategories.length > 0) {
+      const activeCtg = visibleCategories.find(c => c.id === this.activeCategory?.id);
+      this.activeCategory = this.activeCategory && activeCtg ? activeCtg : visibleCategories[0];
       this.statistic.activeCtg = this.activeCategory;
     } else {
       this.activeCategory = undefined;
     }
   }
 
-  private deleteRelatedTasksLocal(subId: number, taskId: number) {
-    const relations = this.getRelatedTasks(taskId);
-
-    for(let relation of relations) {
-     const tasks = this.unit.categories.find(c => c.id === relation.categoryId)?.subcategories?.
-        find(s => s.id === relation.subcategoryId)?.tasks;
-    }
-
-  }
 
   private updateRelatedTasksLocal(task: Task) {
     const relation = this.getRelatedTasks(task.id);
@@ -237,12 +303,45 @@ export class TaskListComponent implements OnInit {
       this.unit.categories[cInd].subcategories[sInd].tasks[tInd] = JSON.parse(JSON.stringify(task));
       this.unit.categories[cInd].subcategories[sInd].tasks[tInd].id = r.taskId
 
+      this.moveTaskInSubcategoryByIndexesData(cInd, sInd, tInd);
+    });
+  }
+
+  private deleteRelatedTaskLocal(task: Task) {
+    const relation = this.getRelatedTasks(task.id);
+    relation.map(r => {
+      const cInd = this.unit.categories.findIndex(c =>  c.id === r.categoryId);
+      const sInd = this.unit.categories[cInd].subcategories.findIndex(s => s.id === r.subcategoryId);
+      const tInd = this.unit.categories[cInd].subcategories[sInd].tasks.findIndex(t => t.id === r.taskId);
+
+      this.unit.categories[cInd].subcategories[sInd].tasks.splice(tInd, 1);
     });
   }
 
   private getRelatedTasks(taskId: number): TaskSubcategory[] {
     const relation = this.unit.taskToManySubcategories.find(x => x.taskSubcategories.some(x => x.taskId === taskId))?.taskSubcategories;
     return relation ?? [];
+  }
+
+  private moveTaskInSubcategoryByIdData (ctgId: number, subId: number, task: Task) {
+    const ctgInd = this.unit.categories.findIndex(c => c.id === ctgId) as number;
+    const subInd = this.unit.categories[ctgInd].subcategories.findIndex(s => s.id === subId) as number;
+    const taskInd = this.unit.categories[ctgInd].subcategories[subInd].tasks.findIndex(t => t.id === task.id) as number;
+
+    this.moveTaskInSubcategoryByIndexesData(ctgInd, subInd, taskInd);
+  }
+
+  private moveTaskInSubcategoryByIndexesData(ctgIndex: number, subIndex: number, taskIndex: number) {
+    const taskArr = this.unit.categories[ctgIndex].subcategories[subIndex].tasks as Task [];
+    const newTaskInd = taskArr[taskIndex].isChecked ? taskArr.length - 1 : 0;
+
+    moveItemInArray(taskArr, taskIndex, newTaskInd);
+  }
+
+  private refreshAllStatistic() {
+    this.statistic.activeCtg = this.activeCategory as Category;
+    this.statistic.refresh(false);
+    this.statistic.populateDonutChart();
   }
 }
 
