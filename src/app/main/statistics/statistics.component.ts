@@ -5,6 +5,7 @@ import {GaugeComponent, LegendPosition, LineChartComponent, PieChartComponent, S
 import {finalize} from "rxjs";
 import {Category} from "../../models/category.model";
 import {Task} from "../../models/task.model";
+import {DonePerDay} from "../../models/done-per-day.model";
 
 @Component({
   selector: 'app-statistics',
@@ -21,7 +22,7 @@ export class StatisticsComponent implements OnInit {
   @Input() activeCtg : Category | undefined;
 
   isLoading = false;
-
+  lineChartScale = 1;
   //statistic: UserStatistic = new UserStatistic();
   single = [{'name':'', 'value':0}];
   multi = [
@@ -86,24 +87,7 @@ export class StatisticsComponent implements OnInit {
         }
       ];
 
-      this.multi = [
-        {
-          'name': 'Tasks/Day',
-          'series': this.statistic.perDayStatistic.map(pd => {
-            const date = new Date(pd.date);
-            const tomorrowDate = new Date(pd.date);
-            tomorrowDate.setDate(date.getDate() + 1);
-            const sliceVal = tomorrowDate.toLocaleDateString().slice(0,2) === '01' ||
-              date.toLocaleDateString().slice(0,2) === '01' ? 5 : 2;
-            return {
-              "name": date.toLocaleDateString().slice(0,sliceVal),
-              "value": pd.countOfDone
-            }
-          })
-        }
-      ];
-
-      this.populateDonutChart();
+    this.scaleLinearGraphicsData(this.lineChartScale);
 
       if (this.gChart) {
         this.gChart.textValue = Math.round(this.statistic.percentOfDoneToday * 100) + ' % / \n' +
@@ -163,6 +147,78 @@ export class StatisticsComponent implements OnInit {
       {"name": "Not done", "value": "#93a39f"},
       {"name": "Expired", "value": "#d66d4d"}
     ]
+  }
+
+  scaleLinearGraphicsData(scaleWeek: number): void {
+    this.lineChartScale = scaleWeek;
+
+    const initData = this.statistic.perDayStatistic;
+    const thresholdDate = new Date();
+    thresholdDate.setDate(new Date().getDate() - 7 * scaleWeek - 1);
+
+    let filteredByDate = initData.filter(pd => new Date(pd.date) > thresholdDate);
+    let resultChartData = filteredByDate;
+
+    if (filteredByDate.length > 10) {
+      resultChartData = [];
+
+      let min = new Date(filteredByDate[0].date);
+      let max = new Date(filteredByDate[filteredByDate.length-1].date);
+
+      const differenceInDays = (max.getTime() - min.getTime())/(1000*3600*24);
+      let step = Math.round((differenceInDays < 7*scaleWeek ? differenceInDays : (7*scaleWeek - differenceInDays))/10);
+
+      let lastDonePerDay = new DonePerDay();
+      lastDonePerDay.date = new Date(filteredByDate[0].date);
+      lastDonePerDay.date.setDate(lastDonePerDay.date.getDate() + step);
+
+      let minDate = new Date(min);
+
+      for(let i = 0; i < 10; i ++) {
+        const upRangeDate = new Date(minDate);
+        upRangeDate.setDate(upRangeDate.getDate() + step);
+
+        const filteredByDateRange = filteredByDate.filter(dpd =>
+          (new Date(dpd.date) >= minDate && new Date(dpd.date) <= upRangeDate));
+
+        const resultItem = new DonePerDay();
+        resultItem.date = upRangeDate;
+        resultItem.countOfDone = filteredByDateRange
+          .map(ite => ite.countOfDone)
+          .reduce((x,y) => {
+            const value = x + y;
+            return value && !isNaN(value) ? value : 0;
+          }, 0);
+        if (resultItem.countOfDone > 0) {
+          resultItem.countOfDone /= filteredByDateRange.length;
+        }
+        resultChartData.push(resultItem);
+        minDate = upRangeDate;
+
+      }
+    }
+
+    this.setLinearChart(resultChartData, scaleWeek);
+  }
+
+  private setLinearChart(data: DonePerDay[], scaleWeek: number) {
+    this.multi = [
+      {
+        'name': 'Tasks/Day',
+        'series': data.map(pd => {
+          const date = new Date(pd.date);
+          const tomorrowDate = new Date(pd.date);
+          tomorrowDate.setDate(date.getDate() + 1);
+          const sliceVal = scaleWeek > 4 ||
+          tomorrowDate.toLocaleDateString().slice(0,2) === '01' ||
+          date.toLocaleDateString().slice(0,2) === '01' ? 5 : 2;
+          return {
+            "name": date.toLocaleDateString().slice(0,sliceVal),
+            "value": pd.countOfDone
+          }
+        })
+      }
+    ];
   }
 }
 

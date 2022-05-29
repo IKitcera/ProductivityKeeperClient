@@ -71,6 +71,8 @@
   position: relative;
   max-width: 85%;
   font-size: 15px;
+  font-family: "Helvetica Neue"
+
 }
 
 .tasksWrap{
@@ -95,6 +97,10 @@
 
 .m-1{
   margin-left: 5px;
+}
+
+.usualFrontFamily {
+  font-family: "Helvetica Neue", sans-serif;
 }
 
 .m-2{
@@ -144,12 +150,14 @@
 
 .task-spinner{
   position: absolute;
-  height: 100%;
-  margin-top: 1%;
-  width: 60%;
+  height: 75%;
+  margin-top: 3%;
+  width: 59%;
   left: 3%;
+  margin-bottom: 5%;
 
-  background: #424242;
+  /*background: #424242;*/
+  background: url('src/assets/bg5.png') #424242 no-repeat center ;
   background-size: cover;
   backdrop-filter: brightness(30%) blur(5px);
 }

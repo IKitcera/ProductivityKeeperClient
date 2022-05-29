@@ -28,6 +28,8 @@ export class TimerComponent implements OnInit {
 
   format: TimerFormat = TimerFormat.FullDateTime;
   timerId: number;
+  isLoading = true;
+
   private autosaveId: number;
 
   constructor(private dialog: MatDialog,
@@ -35,6 +37,7 @@ export class TimerComponent implements OnInit {
               private toastr: ToastrService) { }
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.refresh();
   }
 
@@ -244,16 +247,16 @@ export class TimeSpan{
          this.numToStr(this.days, ' ',2) +
          this.numToStr(this.hours, ':',2) +
          this.numToStr(this.minutes, ':',2) +
-         this.numToStr(this.seconds, '', 2);
+         this.numToStr(this.seconds, ' ', 2);
      case TimerFormat.FullTime:
-       return this.numToStr(this.hours, ':',2) +
-         this.numToStr(this.minutes, ':',2) +
-         this.numToStr(this.seconds,'',2);
+       return this.numToStr(this.hours, ' : ',2) +
+         this.numToStr(this.minutes, ' : ',2) +
+         this.numToStr(this.seconds,'  ',2);
      case TimerFormat.FullDayTime:
-       return this.numToStr(this.days, ' ') +
-         this.numToStr(this.hours, ':', 2) +
-         this.numToStr(this.minutes, ':', 2) +
-         this.numToStr(this.seconds, '',2);
+       return this.numToStr(this.days, '  ') +
+         this.numToStr(this.hours, ' : ', 2) +
+         this.numToStr(this.minutes, ' : ', 2) +
+         this.numToStr(this.seconds, '  ',2);
      case TimerFormat.Days:
        return this.numToStr(this.getInDays());
      case TimerFormat.Hours:

@@ -27,7 +27,7 @@ export class LoginComponent implements OnInit {
     }).catch(err => {
       console.log(err);
       this.toastr.error(err.message ?? err ?? 'Login failed');
-      
+
     });
   }
 
@@ -38,17 +38,5 @@ export class LoginComponent implements OnInit {
     }
 
     this.authService.register(this.userName, this.password);
-    /*.then(res => {
-      debugger;
-      if(res) {
-        this.router.navigate([''],{replaceUrl: true});
-
-        this.userName = '';
-        this.password = '';
-        this.passwordConfirmation = '';
-      }
-    }).catch(err => this.toastr.error(err.message));
-
-     */
   }
 }

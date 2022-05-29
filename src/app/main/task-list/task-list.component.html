@@ -1,4 +1,4 @@
-<div class="categories-wrap">
+<div class="categories-wrap" [style.display]="areTasksLoading ? 'none' : 'block'">
   <div fxLayout="row wrap" fxFlexFill fxLayoutAlign="start center" class="categoryNamesList">
     <div *ngFor="let category of unit?.categories">
       <div *ngIf="activeCategory !== category && category.isVisible" class="categoryName"
@@ -13,64 +13,64 @@
         <mat-icon class="topright" (click)="deleteCategory()">close</mat-icon>
       </div>
     </div>
-    <div *ngIf="!unit?.categories || unit?.categories?.length === 0">
+    <div [style.opacity]="areTasksLoading ? 0 : 1"  *ngIf="!unit?.categories || unit?.categories?.length === 0">
       <p>Start from adding new category</p>
     </div>
-    <button class="m-1" color="primary" mat-mini-fab (click)="addCategory()">
+    <button [style.opacity]="areTasksLoading ? 0 : 1"  class="m-1" color="primary" mat-mini-fab (click)="addCategory()">
       <mat-icon>add</mat-icon>
     </button>
   </div>
 </div>
 
 <!--CONTENT-->
-<div class="main-content-wrap" fxLayout="row">
+<div class="main-content-wrap" fxLayout="row" [style.display]="areTasksLoading ? 'none' : 'flex'" >
   <!-- tasks loader -->
   <div class="spinner-wrap task-spinner" *ngIf="areTasksLoading" fxLayoutAlign="center center">
     <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
   </div>
   <!--  TASKS -->
-  <div class="tasksWrap" [style.opacity]="areTasksLoading ? 0.2 : 1" >
-  <mat-accordion cdkDropList (cdkDropListDropped)="drop($event)" multi>
-    <div *ngFor="let subcategory of activeCategory?.subcategories" cdkDrag>
-      <mat-expansion-panel expanded="true" class="subcategory" >
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            <div fxLayout="row" fxLayoutAlign="start center">
-            {{subcategory.name}}
-            <mat-icon class="m-1 medium-icon size17" (click)="editSubcategory(subcategory)">edit</mat-icon>
-            <mat-icon class="m-2 medium-icon" (click)="deleteSubcategory(subcategory.id)">delete_outline</mat-icon>
-            </div>
-          </mat-panel-title>
-        </mat-expansion-panel-header>
-        <button mat-mini-fab color="accent" (click)="addTask(subcategory.id)" class="toprightBtn">
-          <mat-icon>add</mat-icon>
-        </button>
+  <div class="tasksWrap" [style.opacity]="areTasksLoading ? 0 : 1" >
+    <mat-accordion cdkDropList (cdkDropListDropped)="drop($event)" multi>
+      <div *ngFor="let subcategory of activeCategory?.subcategories" cdkDrag>
+        <mat-expansion-panel expanded="true" class="subcategory" >
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <div fxLayout="row" fxLayoutAlign="start center">
+              {{subcategory.name}}
+              <mat-icon class="m-1 medium-icon size17" (click)="editSubcategory(subcategory)">edit</mat-icon>
+              <mat-icon class="m-2 medium-icon" (click)="deleteSubcategory(subcategory.id)">delete_outline</mat-icon>
+              </div>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <button mat-mini-fab color="accent" (click)="addTask(subcategory.id)" class="toprightBtn">
+            <mat-icon>add</mat-icon>
+          </button>
 
-        <div *ngFor="let task of subcategory.tasks">
-          <div fxLayout="row wrap">
-            <div class="task"  fxLayout="row wrap">
-            <mat-checkbox class="autowidth autoheight"
-                          [checked]="task.isChecked" (change)="taskCheckedStateChanged(subcategory.id, task, $event)">
-            {{task.text}}
-            </mat-checkbox>
-            <mat-icon class="topright edit" (click)="editTask(subcategory.id, task)">edit</mat-icon>
-            <mat-icon class="topright delete" (click)="deleteTask(subcategory.id, task.id)">close</mat-icon>
-            </div>
-            <div *ngIf="task.isRepeatable && task.timesToRepeat > 0" class="right repeatable-text " fxLayout="row" fxLayoutAlign="center center">
-              {{'(' + task.timesToRepeat + ' left) - ' + ((task.goalRepeatCount-task.timesToRepeat)/ task.goalRepeatCount | percent)}}
+          <div *ngFor="let task of subcategory.tasks">
+            <div fxLayout="row wrap">
+              <div class="task"  fxLayout="row wrap">
+              <mat-checkbox class="autowidth autoheight"
+                            [checked]="task.isChecked" (change)="taskCheckedStateChanged(subcategory.id, task, $event)">
+              {{task.text}}
+              </mat-checkbox>
+              <mat-icon class="topright edit" (click)="editTask(subcategory.id, task)">edit</mat-icon>
+              <mat-icon class="topright delete" (click)="deleteTask(subcategory.id, task.id)">close</mat-icon>
+              </div>
+              <div *ngIf="task.isRepeatable && task.timesToRepeat > 0" class="right repeatable-text " fxLayout="row" fxLayoutAlign="center center">
+                {{'(' + task.timesToRepeat + ' left) - ' + ((task.goalRepeatCount-task.timesToRepeat)/ task.goalRepeatCount | percent)}}
+              </div>
             </div>
           </div>
-        </div>
-      </mat-expansion-panel>
-    </div>
-    <div fxLayout="row" fxLayoutAlign="space-evenly center" *ngIf="!activeCategory || activeCategory.subcategories.length === 0" >
-      <h3> You don't have any subcategory </h3>
-      <button class="m-1" mat-mini-fab [disabled]="!activeCategory" (click)="addSubcategory()">
-         <mat-icon>add</mat-icon>
-      </button>
-    </div>
-  </mat-accordion>
-  <button matTooltip="Add subcategory" class="rightBtn" color="primary" mat-fab [disabled]="!activeCategory" (click)="addSubcategory()">
+        </mat-expansion-panel>
+      </div>
+      <div fxLayout="row" fxLayoutAlign="space-evenly center" *ngIf="!activeCategory || activeCategory.subcategories.length === 0" >
+        <h3> You don't have any subcategory </h3>
+        <button class="m-1" mat-mini-fab [disabled]="!activeCategory" (click)="addSubcategory()">
+           <mat-icon>add</mat-icon>
+        </button>
+      </div>
+    </mat-accordion>
+  <button [style.opacity]="areTasksLoading ? 0 : 1" matTooltip="Add subcategory" class="rightBtn" color="primary" mat-fab [disabled]="!activeCategory" (click)="addSubcategory()">
     <mat-icon>add</mat-icon>
   </button>
 </div>

@@ -11,11 +11,14 @@ nav{
 }
 
 .spinner-wrap{
-  background: url("src/assets/background.jpg");
-  background-size: cover;
-  position: fixed;
+  background: url("src/assets/bg3.jpg") #151515;
+  image-rendering: pixelated;
+  background-size: 1500px;
+  background-position: center;
+}
 
-  backdrop-filter: brightness(30%) blur(5px);
+img{
+  image-rendering: pixelated;
 }
 
 a{

@@ -235,6 +235,7 @@ export class TaskListComponent implements OnInit {
   }
 
   private async getUnit(forceReload = true) {
+    this.areTasksLoading = true;
     this.loaderStateChanged.emit(true);
 
     const savedUnit = this.storageService.getUnit();
@@ -246,6 +247,9 @@ export class TaskListComponent implements OnInit {
     this.timer.timer = this.unit.timer;
     this.statistic.statistic = this.unit.statistic;
     this.loaderStateChanged.emit(false);
+    this.timer.isLoading = false;
+    this.areTasksLoading = false;
+
     this.timer.refresh();
     this.storageService.saveUnit(this.unit);
     this.refreshAllStatistic();
@@ -340,7 +344,7 @@ export class TaskListComponent implements OnInit {
 
   private refreshAllStatistic() {
     this.statistic.activeCtg = this.activeCategory as Category;
-    this.statistic.refresh(false);
+    this.statistic.refresh(true);
     this.statistic.populateDonutChart();
   }
 }

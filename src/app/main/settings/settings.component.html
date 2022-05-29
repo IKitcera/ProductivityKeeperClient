@@ -3,28 +3,58 @@
   <h1>Settings</h1>
   <div class="block-container">
     <h2>General</h2>
-  </div>
+    <div class="block" fxLayout="row">
+      <h4 class="option">Change Password</h4>
+      <div class="op-value">
+        <div *ngIf="!shouldEnableChangingPassword">
+          <mat-form-field appearance="fill">
+            <mat-label>Enter old password</mat-label>
+            <input name="p" matInput type="text" [(ngModel)]="oldPassword" (keyup.enter)="checkIfPasswordMatches()" type="password">
+          </mat-form-field>
+        </div>
+        <div *ngIf="shouldEnableChangingPassword" fxLayout="column">
+          <mat-form-field  appearance="fill" >
+            <mat-label>Password</mat-label>
+            <input name="p" matInput type="text" [(ngModel)]="newPassword" type="password" required>
+          </mat-form-field>
+          <mat-form-field  appearance="fill">
+            <mat-label>Confirm password</mat-label>
+            <input name="pc" matInput type="text" [(ngModel)]="passwordConfirmation" type="password" required>
+          </mat-form-field>
+          <mat-error *ngIf="(passwordConfirmation !== newPassword) && newPassword && passwordConfirmation">
+            Passwords are different
+          </mat-error>
+
+          <button mat-raised-button
+                  [disabled]="newPassword !== passwordConfirmation"
+                  (click)="changePassword()">
+            Change password
+          </button>
+          </div>
+        </div>
+      </div>
+    </div>
   <div class="block-container">
     <h2>Tasks related</h2>
     <div class="block" fxLayout="row" *ngIf="hasUnitAnyCategory">
       <h4 class="option">Change categories order and visibility</h4>
+      <div class="op-value">
       <mat-accordion cdkDropList (cdkDropListDropped)="drop($event)" multi>
-
           <div fxLayout="row" *ngFor="let ctg of categories" cdkDrag>
             <mat-icon class="grey" cdkDragHandle>drag_indicator</mat-icon>
             <mat-checkbox [(ngModel)]="ctg.isVisible" mat-card-content> {{ctg.name}} </mat-checkbox>
           </div>
-
       </mat-accordion>
+
+        <div  fxLayout="row" fxLayoutAlign="end center" fxLayoutOffset="10px">
+          <button class="btn" [color]="'accent'" mat-flat-button (click)="saveChanges()">Apply</button>
+        </div>
+      </div>
     </div>
 
     <div class="block" fxLayout="row">
         <h4 class="option-close">Clear tasks archive</h4>
-        <button [color]="'warn'" mat-stroked-button>Clear</button>
-    </div>
-
-    <div  fxLayout="row">
-      <button [color]="'accent'" mat-stroked-button (click)="saveChanges()">Apply</button>
+        <button class="btn" [color]="'warn'" mat-flat-button (click)="clearArchive()">Clear</button>
     </div>
   </div>
 

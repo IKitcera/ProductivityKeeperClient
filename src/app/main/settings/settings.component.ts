@@ -6,6 +6,12 @@ import {Unit} from "../../models/unit.model";
 import {TaskService} from "../../services/taskService";
 import {Category} from "../../models/category.model";
 import {ToastrService} from "ngx-toastr";
+import {
+  SimpleConfirmationDialogComponent
+} from "../../common-components/simple-confirmation-dialog/simple-confirmation-dialog.component";
+import {Constants} from "../../models/constants";
+import {MatDialog} from "@angular/material/dialog";
+import {AuthService} from "../../services/authServices";
 
 @Component({
   selector: 'app-settings',
@@ -16,16 +22,21 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   public unit: Unit;
   public categories: Category[];
-  private needChangeOrder = false;
+  public oldPassword: string;
+  public newPassword: string;
+  public passwordConfirmation: string;
+
+  public shouldEnableChangingPassword = false;
+
   get hasUnitAnyCategory(): boolean {
     return  this.unit && this.unit.categories?.length > 0;
   }
 
   constructor(private taskService: TaskService,
               private storageService: StorageService,
-              private  toastr: ToastrService) {
-
-  }
+              private authService: AuthService,
+              private  toastr: ToastrService,
+              private dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.unit = this.storageService.getUnit() as Unit;
@@ -51,5 +62,36 @@ export class SettingsComponent implements OnInit, OnDestroy {
       this.storageService.saveUnit(this.unit);
       this.toastr.success("Changes has been saved");
     }).catch(err => this.toastr.error(err.message ?? "Unknown error"));
+  }
+
+  async clearArchive() {
+    const confirmationDialog = this.dialog.open(SimpleConfirmationDialogComponent, {data: {label: Constants.sureAboutDelete + Constants.progressWillBeLost}});
+    const res = await confirmationDialog.afterClosed().toPromise();
+
+    if(res) {
+      this.taskService.clearTasksArchive()
+        .then(x => this.toastr.info('Archive was cleared'))
+        .catch(err => this.toastr.error(err.message ?? 'Unknown error'));
+    }
+  }
+
+  async checkIfPasswordMatches() {
+    const res = await this.authService.checkIfPasswordMatches(this.oldPassword);
+    this.shouldEnableChangingPassword = res;
+    this.oldPassword = '';
+    if(!res) {
+      this.toastr.error('You\'ve entered a wrong password');
+    }
+  }
+
+  changePassword() {
+    this.authService.changePassword(this.newPassword).then(() => {
+
+    this.toastr.success('Password was successfully changed.');
+    this.newPassword = '';
+    this.shouldEnableChangingPassword = false;
+
+    this.passwordConfirmation = '';
+    }).catch(err => this.passwordConfirmation = '')
   }
 }

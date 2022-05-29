@@ -2,8 +2,12 @@
   margin: 2% 5%;
 }
 
-div {
-  font-size: 14px;
+div>h4 {
+  font-size: 16px;
+}
+
+.mat-form-field{
+  width: 100%;
 }
 
 div.block {
@@ -20,7 +24,11 @@ h1{
 }
 
 .option{
-  width: 30%;
+  width: 40%;
+}
+
+.op-value {
+  width: 40%;
 }
 
 .option-close{
@@ -34,4 +42,8 @@ h1{
 
 .cdk-drag-placeholder {
   opacity: 0;
+}
+
+.btn {
+  padding: 2px 30px;
 }

@@ -62,7 +62,10 @@ export class TaskService{
     return await this.http.put('api/Category/changeOrder', categories)
       .toPromise();
   }
-
+  async clearTasksArchive(): Promise<any> {
+    return await this.http.put('api/Category/clearArchive', null)
+      .toPromise();
+  }
   async putSubcategory(categoryId: number, subcategoryId: number, sub: Subcategory): Promise<boolean>{
     const res = await this.http.put('api/Subcategory/' + subcategoryId.toString(), sub, new HttpParams()
       .set('categoryId', categoryId.toString())
@@ -84,7 +87,7 @@ export class TaskService{
       .set('subcategoryId', subcategoryId.toString())
     ).toPromise() as Task[];
   }
-  //don;t work
+
   async getTask(categoryId: number, subcategoryId: number, taskId: number): Promise<Task>{
     return (await this.http.get<Task>('api/Task', new HttpParams()
       .set('categoryId',categoryId.toString())

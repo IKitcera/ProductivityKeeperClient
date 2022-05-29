@@ -1,37 +1,38 @@
-<div class="container">
-  <div *ngIf="!noTimer" class="timerContent">
-  <div fxLayout="row wrap" class="label" fxLayoutAlign="start center">
-    <h2>
-      <mat-icon>flag</mat-icon>
-      {{timer.label}}
-    </h2>
-  </div>
-  <h4 class="medGray">{{goalValue.toString()}}</h4>
-  <h2 class="centered large">{{currentValue.toString()}}</h2>
-  <div fxLayout="row" fxLayoutAlign="center center">
-    <button mat-stroked-button [disabled]="isTicking" (click)="start()">
-      <mat-icon>play_arrow</mat-icon>
-      <p>Start</p>
-    </button>
-    <button mat-stroked-button [disabled]="!isTicking" (click)="pause()">
-      <mat-icon>pause</mat-icon>
-      <p>Pause</p>
-    </button>
-    <button mat-stroked-button (click)="stop()">
-      <mat-icon>stop</mat-icon>
-      <p>Stop</p>
-    </button>
-  </div>
+<div *ngIf="!noTimer" class="container">
+  <div class="timerContent">
+    <div fxLayout="row wrap" class="label" fxLayoutAlign="start center">
+      <h2>
+        <mat-icon>flag</mat-icon>
+        {{timer.label}}
+      </h2>
+    </div>
+    <h4 class="medGray"><pre>Y-MM-DD&#8195;hh:mm:ss</pre></h4>
+    <h4 class="medGray"><pre><span class="usualFrontFamily">{{goalValue.toString()}}</span></pre></h4>
+    <h2 class="centered large"><pre><span>{{currentValue.toString()}}</span></pre></h2>
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <button mat-stroked-button [disabled]="isTicking" (click)="start()">
+        <mat-icon>play_arrow</mat-icon>
+        <p>Start</p>
+      </button>
+      <button mat-stroked-button [disabled]="!isTicking" (click)="pause()">
+        <mat-icon>pause</mat-icon>
+        <p>Pause</p>
+      </button>
+      <button mat-stroked-button (click)="stop()">
+        <mat-icon>stop</mat-icon>
+        <p>Stop</p>
+      </button>
+    </div>
     <div fxLayout="row" class="topright">
     <mat-icon  (click)="editTimer()">edit</mat-icon>
     <mat-icon  (click)="deleteTimer()">delete_outline</mat-icon>
     </div>
   </div>
+</div>
 
-  <div fxLayout="row" fxLayoutAlign="center center" *ngIf="noTimer">
-    <button color="primary" mat-stroked-button (click)="editTimer()">
-      Add specific timer
-    </button>
-  </div>
+<div fxLayout="row" fxLayoutAlign="center center" *ngIf="!isLoading && noTimer">
+  <button color="primary" mat-stroked-button (click)="editTimer()">
+    Add specific timer
+  </button>
 </div>
 

@@ -7,7 +7,7 @@
   <div fxLayoutAlign="center center">
     <h2>Statistics</h2>
   </div>
-  <div fxLayout="row" fxLayoutAlign="space-evenly">
+  <div fxLayout="row" fxLayoutAlign="space-evenly" fxLayoutGap="20px">
     <div fxLayout="row" fxLayoutAlign="center center">
       <p>Count of done today:{{'\t'}}</p>
       <p class="pl-10">{{statistic.countOfDoneToday}}</p>
@@ -18,7 +18,7 @@
     </div>
   </div>
 
-  <div fxLayout="row" fxLayoutAlign="space-evenly">
+  <div fxLayout="row" fxLayoutAlign="space-evenly" fxLayoutGap="20px">
     <div fxLayout="row" fxLayoutAlign="center center">
       <p>Percent of done today: </p>
       <p class="pl-10">{{statistic.percentOfDoneToday | percent}} </p>
@@ -29,7 +29,7 @@
     </div>
   </div>
 
-  <div fxLayout="row" fxLayoutAlign="space-evenly">
+  <div fxLayout="row" fxLayoutAlign="space-evenly" >
     <div fxLayout="row" fxLayoutAlign="center center">
       <p>Expired total: </p>
       <p class="pl-10">{{statistic.countOfExpiredTotal}}</p>
@@ -78,8 +78,10 @@
       [xAxisLabel]="'Days'"
       [yAxisLabel]="'Count of done tasks'"
       [timeline]="true"
+      [maxXAxisTickLength]="40"
       [results]="multi"
       [legendTitle]="''"
+      [autoScale]="true"
     >
     </ngx-charts-line-chart>
 
@@ -93,5 +95,37 @@
     >
     </ngx-charts-advanced-pie-chart>
   </div>
+    <div fxLayout="row" fxLayoutAlign="end center">
+      <button mat-stroked-button *ngIf="selectedChart === SelectedChart.Line"
+              (click)="scaleLinearGraphicsData(1)"
+              [disabled]="lineChartScale === 1"
+      >
+       1 week
+      </button>
+      <button mat-stroked-button *ngIf="selectedChart === SelectedChart.Line"
+              (click)="scaleLinearGraphicsData(2)"
+              [disabled]="lineChartScale === 2"
+      >
+        2 weeks
+      </button>
+      <button mat-stroked-button *ngIf="selectedChart === SelectedChart.Line"
+              (click)="scaleLinearGraphicsData(4)"
+              [disabled]="lineChartScale === 4"
+      >
+        1 month
+      </button>
+      <button mat-stroked-button *ngIf="selectedChart === SelectedChart.Line"
+              (click)="scaleLinearGraphicsData(25)"
+              [disabled]="lineChartScale === 25"
+      >
+        6 months
+      </button>
+      <button mat-stroked-button *ngIf="selectedChart === SelectedChart.Line"
+              (click)="scaleLinearGraphicsData(51)"
+              [disabled]="lineChartScale === 51"
+      >
+        1 year
+      </button>
+    </div>
   </div>
 </div>

@@ -47,6 +47,29 @@ export class AuthService{
       }));
   }
 
+  async checkIfPasswordMatches(pass: string): Promise<boolean> {
+    if (!this.isAuthorized()) {
+      return false;
+    }
+
+    return await this.http.post<boolean>('api/Account/checkPasswordIfMatch',
+      null,
+      new HttpParams().set('password', pass)
+    ).toPromise() as any as boolean;
+  }
+
+  async changePassword(newPassword: string): Promise<any> {
+    if (!this.isAuthorized()) {
+      return;
+    }
+
+    return this.http.post<any>('api/Account/changePassword',
+      null,
+      new HttpParams().set('newPassword', newPassword)
+    ).toPromise();
+
+  }
+
   private async getToken(username: string, password: string): Promise<void>{
     const res = await this.http.post<any>('token', null, new HttpParams()
       .set('username',username)

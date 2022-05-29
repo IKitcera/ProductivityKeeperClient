@@ -7,7 +7,7 @@
     </mat-form-field>
     <mat-form-field  appearance="fill">
       <mat-label>Password</mat-label>
-      <input matInput name="p" type="text" [(ngModel)]="password" type="password">
+      <input matInput name="p" type="text" [(ngModel)]="password" type="password" (keyup.enter)="Login()">
     </mat-form-field>
     <button fxLayoutAlign="center" mat-flat-button color="accent" (click)="Login()">Login</button>
       <a class="regLogChange" (click)="isRegistration = true">No account? Register</a>
