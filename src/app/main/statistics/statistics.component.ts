@@ -62,10 +62,10 @@ export class StatisticsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-     this.refresh(false).then(() => {
-      this.gChart?.scaleText(true);
-    }, finalize(()=> {
-    }));
+    //  this.refresh(false).then(() => {
+    //   this.gChart?.scaleText(true);
+    // }, finalize(()=> {
+    // }));
 
   }
 
@@ -85,7 +85,7 @@ export class StatisticsComponent implements OnInit {
           "value": this.statistic.percentOfDoneTotal*100
         }
       ];
-    
+
     if (this.gChart) {
       this.gChart.textValue = Math.round(this.statistic.percentOfDoneToday * 100) + ' % / \n' +
         Math.round(this.statistic.percentOfDoneTotal * 100) + ' %';
