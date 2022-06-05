@@ -1,6 +1,5 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
-import {MatCalendar} from "@angular/material/datepicker";
 import {StorageService} from "../../services/storageService";
 import {Unit} from "../../models/unit.model";
 import {TaskService} from "../../services/taskService";
@@ -12,6 +11,12 @@ import {
 import {Constants} from "../../models/constants";
 import {MatDialog} from "@angular/material/dialog";
 import {AuthService} from "../../services/authServices";
+import {Color} from "../../models/color.model";
+import {ColorConverter} from "../../services/color-converter";
+import {ColorPickerDirective, ColorPickerService} from "ngx-color-picker";
+import {Time} from "@angular/common";
+import {TimerFormat} from "../timer/timer.component";
+import {TimerService} from "../../services/timerService";
 
 @Component({
   selector: 'app-settings',
@@ -22,10 +27,12 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   public unit: Unit;
   public categories: Category[];
+  public timerFormat: TimerFormat;
+  public timerFormatEnum = TimerFormat;
   public oldPassword: string;
   public newPassword: string;
   public passwordConfirmation: string;
-
+  public colorConverter = ColorConverter;
   public shouldEnableChangingPassword = false;
 
   get hasUnitAnyCategory(): boolean {
@@ -33,10 +40,12 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   constructor(private taskService: TaskService,
+              private timerService: TimerService,
               private storageService: StorageService,
               private authService: AuthService,
               private  toastr: ToastrService,
-              private dialog: MatDialog) { }
+              private dialog: MatDialog,
+              private colorPicker: ColorPickerService) { }
 
   ngOnInit(): void {
     this.unit = this.storageService.getUnit() as Unit;
@@ -45,7 +54,11 @@ export class SettingsComponent implements OnInit, OnDestroy {
         this.unit = u;
       });
     }
-    this.categories = this.unit.categories;
+    this.categories = [];
+    this.unit.categories.map(c => {
+      this.categories.push(Object.assign(new Category(), c));
+    });
+    this.timerFormat = this.unit.timer.format;
   }
 
   ngOnDestroy(): void {
@@ -93,5 +106,13 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
     this.passwordConfirmation = '';
     }).catch(err => this.passwordConfirmation = '')
+  }
+
+  updateTimerFormat(value: any) {
+    this.timerFormat = value.value;
+    console.log(this.timerFormat);
+    this.timerService.updateFormat(this.timerFormat)
+      .then(() => this.unit.timer.format = this.timerFormat)
+      .catch(() => this.timerFormat = this.unit.timer.format);
   }
 }

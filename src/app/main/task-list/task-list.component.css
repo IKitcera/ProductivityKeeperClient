@@ -37,15 +37,16 @@
   top: 5px;
 
   font-size: 14px;
+  z-index: 1;
 }
 
 .edit{
-  right: -33px;
+  right: 0;
   font-size: 13px;
 }
 
 .delete{
-  right: -48px;
+  right: -15px;
 }
 
 .toprightBtn{
@@ -68,11 +69,34 @@
 }
 
 .task{
-  position: relative;
-  max-width: 85%;
-  font-size: 15px;
-  font-family: "Helvetica Neue"
+  line-height: 15px;
 
+  position: relative;
+  max-width: 97%;
+
+
+  color: #f2f2f2;
+  font-size: 15px;
+  font-family: "Verdana"
+
+}
+
+.taskTxt{
+  width: 100%;
+  margin-right: 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.faded {
+  position: relative;
+  width: 40px;
+  padding-right: 30px;
+  margin-left: -40px;
+  display: inline-block;
+  line-height: 15px;
+  background: linear-gradient(90deg, transparent, #424242);
 }
 
 .tasksWrap{
@@ -91,7 +115,6 @@
 
 .autoheight{
   height: fit-content;
-
   line-break: anywhere;
 }
 
@@ -141,11 +164,29 @@
   color: lightgray;
   border-radius: 5px;
   padding: 1px 3px;
-  margin: 2px 4px;
+  margin:  2px 4px 2px 15px;
   backdrop-filter: brightness(130%);
   min-width: 10px;
   width: fit-content;
-  margin-left: 40px;
+  font-family: 'Arial';
+}
+
+.tag {
+  margin-left: 10px;
+}
+
+.tag-txt {
+  font-size: 13px;
+  padding: 1px 3px;
+  margin: 2px 4px 2px 2px;
+  border-radius: 5px;
+  font-family: 'Arial';
+}
+
+.tag_icon {
+  font-size: 20px;
+  margin-top: 5px;
+  transform: rotate(45deg);
 }
 
 .task-spinner{
@@ -161,3 +202,8 @@
   background-size: cover;
   backdrop-filter: brightness(30%) blur(5px);
 }
+
+.taskWrap{
+  height: 15px;
+}
+

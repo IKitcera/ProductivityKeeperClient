@@ -23,13 +23,13 @@
 </div>
 
 <!--CONTENT-->
-<div class="main-content-wrap" fxLayout="row" [style.display]="areTasksLoading ? 'none' : 'flex'" >
+<div class="main-content-wrap" fxLayout="row" [style.display]="areTasksLoading && showAnotherBackground ? 'none' : 'flex'" >
   <!-- tasks loader -->
-  <div class="spinner-wrap task-spinner" *ngIf="areTasksLoading" fxLayoutAlign="center center">
+  <div class="spinner-wrap task-spinner" *ngIf="areTasksLoading && showAnotherBackground" fxLayoutAlign="center center">
     <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
   </div>
   <!--  TASKS -->
-  <div class="tasksWrap" [style.opacity]="areTasksLoading ? 0 : 1" >
+  <div class="tasksWrap" >
     <mat-accordion cdkDropList (cdkDropListDropped)="drop($event)" multi>
       <div *ngFor="let subcategory of activeCategory?.subcategories" cdkDrag>
         <mat-expansion-panel expanded="true" class="subcategory" >
@@ -47,17 +47,36 @@
           </button>
 
           <div *ngFor="let task of subcategory.tasks">
-            <div fxLayout="row wrap">
-              <div class="task"  fxLayout="row wrap">
-              <mat-checkbox class="autowidth autoheight"
-                            [checked]="task.isChecked" (change)="taskCheckedStateChanged(subcategory.id, task, $event)">
-              {{task.text}}
-              </mat-checkbox>
-              <mat-icon class="topright edit" (click)="editTask(subcategory.id, task)">edit</mat-icon>
-              <mat-icon class="topright delete" (click)="deleteTask(subcategory.id, task.id)">close</mat-icon>
-              </div>
+            <div fxLayout="row wrap taskWrap">
+                <div class="task" fxLayout="row">
+                  <mat-checkbox class="autowidth taskTxt" [checked]="task.isChecked"
+                                (change)="taskCheckedStateChanged(subcategory.id, task, $event)"
+                                [matTooltip]="task.text.length >= 150 ? task.text : ''"
+                  >
+                    {{task.text}}
+                  </mat-checkbox>
+
+                  <mat-icon class="topright edit" (click)="editTask(subcategory.id, task)">edit</mat-icon>
+                  <mat-icon class="topright delete" (click)="deleteTask(subcategory.id, task.id)">close</mat-icon>
+
+                  <div [style.opacity]="task.text.length >= 150 ? 1: 0 "  class="faded"></div>
+                </div>
+
               <div *ngIf="task.isRepeatable && task.timesToRepeat > 0" class="right repeatable-text " fxLayout="row" fxLayoutAlign="center center">
                 {{'(' + task.timesToRepeat + ' left) - ' + ((task.goalRepeatCount-task.timesToRepeat)/ task.goalRepeatCount | percent)}}
+              </div>
+              <div *ngIf="task.relationId" class="tag" fxLayout="row" fxLayoutAlign="center center">
+                <div *ngFor="let tag of getRelatedTags(task.relationId, subcategory)" fxLayout="row" fxLayoutAlign="center center">
+                 <div [matTooltip]="tag.ctg.name || ''" (click)="changeActiveCategory(tag.ctg)">
+                    <mat-icon class="tag_icon"
+                              [style.color]="tag.ctg.c_color">sell</mat-icon>
+                 </div>
+                  <div class="tag-txt" [style.color]="tag.ctg.pure_contrast"
+                       [style.background-color]="tag.ctg.c_color"
+                       (click)="changeActiveCategory(tag.ctg)"
+                  > {{tag.sub}}
+                  </div>
+                </div>
               </div>
             </div>
           </div>

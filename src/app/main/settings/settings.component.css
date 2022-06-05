@@ -47,3 +47,23 @@ h1{
 .btn {
   padding: 2px 30px;
 }
+
+.ctg{
+  width: 400px;
+}
+
+.ctg-color-circle {
+  margin-left: 10px;
+
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid rgb(60,60,60);
+  justify-self: center;
+
+}
+
+.task{
+
+}
+

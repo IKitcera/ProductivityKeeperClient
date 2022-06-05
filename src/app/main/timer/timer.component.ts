@@ -51,10 +51,10 @@ export class TimerComponent implements OnInit {
 
       this.goalValue = new TimeSpan();
       this.goalValue.getFromSeconds(this.timer.goal);
-    }
 
-    this.currentValue.timeFormat = TimerFormat.FullDateTime;
-    this.goalValue.timeFormat = TimerFormat.FullDateTime;
+      this.currentValue.timeFormat = this.timer.format;
+      this.goalValue.timeFormat = this.timer.format;
+    }
   }
 
   addSecond() {
@@ -113,6 +113,27 @@ export class TimerComponent implements OnInit {
       await this.timerService.postTimer(modifiedTimer);
       this.timer = await this.timerService.getTimer();
       this.refresh();
+    }
+
+    getFormatString(): string {
+      switch(this.timer.format) {
+        case TimerFormat.FullDateTime:
+          return 'Y-MM-DD  hh:mm:ss';
+        case TimerFormat.FullTime:
+          return 'hh:mm:ss';
+        case TimerFormat.FullDayTime:
+          return 'DD  hh:mm:ss';
+        case TimerFormat.Days:
+          return 'Days';
+        case TimerFormat.Hours:
+          return 'Hours';
+        case TimerFormat.Minutes:
+          return 'Minutes';
+        case TimerFormat.Seconds:
+          return 'Seconds';
+        default:
+          return '';
+      }
     }
 }
 

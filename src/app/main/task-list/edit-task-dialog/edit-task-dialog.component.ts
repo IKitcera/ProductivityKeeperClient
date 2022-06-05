@@ -20,7 +20,9 @@ export class EditTaskDialogComponent implements OnInit {
   previousRepeatCount: number | undefined;
 
   public get categories(): Category[] {
-    return this.data.unit.categories.filter(c => !!c.subcategories.length);
+    return this.data.unit.categories
+      .filter(c => !!c.subcategories?.filter(s => s.id !== this.data.subcategoryId).length
+      );
   }
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: {
@@ -89,14 +91,14 @@ export class EditTaskDialogComponent implements OnInit {
   }
 
   findCtg(id: number): Category{
-    const ind = this.data.unit.categories.findIndex(categ => categ.id === id);
-    return this.data.unit.categories[ind];
+    return this.categories.find(categ => categ.id === id) as Category;
   }
 
 
   public getSubcategories(categoryId: number): Subcategory[] {
     const subs = this.findCtg(categoryId)?.subcategories
-      .filter(s => s.id !== this.data.subcategoryId);
+      .filter(s => s.id !== this.data.subcategoryId
+      );
     return subs;
   }
 
@@ -121,17 +123,19 @@ export class EditTaskDialogComponent implements OnInit {
   }
 
   isAddingDuplicatesDisabled(): boolean {
-    return !this.getFirstDuplicateIfPossible();
+    return !this.categories.length || !this.getFirstDuplicateIfPossible();
   }
 
   private getFirstDuplicateIfPossible(): IConnectedDuplicate | null {
     let duplicate = null;
-    for (const ctg of this.data.unit.categories) {
-      if (!ctg.subcategories.length) {
+    for (const ctg of this.categories) {
+      const subs = this.getSubcategories(ctg.id);
+      if (!subs.length) {
         continue;
       }
 
-      duplicate = <IConnectedDuplicate>{cId: ctg.id, sId: ctg.subcategories[0].id};
+      duplicate = <IConnectedDuplicate>{cId: ctg.id, sId: subs[0].id};
+      break;
     }
     return duplicate;
   }

@@ -61,9 +61,7 @@
       [startAngle]="0"
       [angleSpan]="360"
       [margin]="[40,0,30,0]"
-      (select)="onSelect($event)"
-      (activate)="onActivate($event)"
-      (deactivate)="onDeactivate($event)"
+      [textValue]="getGaugeText()"
     >
     </ngx-charts-gauge>
 

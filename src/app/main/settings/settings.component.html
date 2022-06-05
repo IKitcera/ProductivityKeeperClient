@@ -40,9 +40,14 @@
       <h4 class="option">Change categories order and visibility</h4>
       <div class="op-value">
       <mat-accordion cdkDropList (cdkDropListDropped)="drop($event)" multi>
-          <div fxLayout="row" *ngFor="let ctg of categories" cdkDrag>
-            <mat-icon class="grey" cdkDragHandle>drag_indicator</mat-icon>
-            <mat-checkbox [(ngModel)]="ctg.isVisible" mat-card-content> {{ctg.name}} </mat-checkbox>
+          <div class="task" fxLayout="row" fxLayoutAlign="start center" *ngFor="let ctg of categories" cdkDrag>
+            <div class="ctg" fxLayout="row" fxLayoutAlign="start center">
+              <mat-icon class="grey" cdkDragHandle>drag_indicator</mat-icon>
+              <mat-checkbox [(ngModel)]="ctg.isVisible" mat-card-content> {{ctg.name}} </mat-checkbox>
+            </div>
+            <div class="ctg-color-circle" [(colorPicker)]="ctg.c_color"
+                 [style.background]="ctg.c_color">
+            </div>
           </div>
       </mat-accordion>
 
@@ -58,4 +63,26 @@
     </div>
   </div>
 
+  <div class="block-container">
+    <h2>Timer related</h2>
+    <div class="block" fxLayout="row" *ngIf="hasUnitAnyCategory">
+      <h4 class="option">Change display format</h4>
+      <div class="op-value">
+        <mat-radio-group [(ngModel)]="timerFormat" (change)="updateTimerFormat($event)" fxLayout="column" fxLayoutGap="5px">
+          <mat-radio-button [value]="timerFormatEnum.FullDateTime">Full Date Time</mat-radio-button>
+          <mat-radio-button [value]="timerFormatEnum.FullTime">Full Time</mat-radio-button>
+          <mat-radio-button [value]="timerFormatEnum.FullDayTime">Full Day Time</mat-radio-button>
+          <mat-radio-button [value]="timerFormatEnum.Days">Days</mat-radio-button>
+          <mat-radio-button [value]="timerFormatEnum.Hours">Hours</mat-radio-button>
+          <mat-radio-button [value]="timerFormatEnum.Minutes">Minutes</mat-radio-button>
+          <mat-radio-button [value]="timerFormatEnum.Seconds">Seconds</mat-radio-button>
+        </mat-radio-group>
+      </div>
+    </div>
+
+    <div class="block" fxLayout="row">
+      <h4 class="option-close">Clear tasks archive</h4>
+      <button class="btn" [color]="'warn'" mat-flat-button (click)="clearArchive()">Clear</button>
+    </div>
+  </div>
 </div>

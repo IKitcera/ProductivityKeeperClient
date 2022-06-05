@@ -50,6 +50,8 @@ import { SettingsComponent } from './main/settings/settings.component';
 import {MatCardModule} from "@angular/material/card";
 import {StorageService} from "./services/storageService";
 import { SimpleConfirmationDialogComponent } from './common-components/simple-confirmation-dialog/simple-confirmation-dialog.component';
+import {ColorPickerModule} from "ngx-color-picker";
+import {MatRadioModule} from "@angular/material/radio";
 const routes: Routes = [
   { path: '', component: TaskListComponent, canActivate: [AuthGuard] },
   { path: 'tasks', redirectTo: '' },
@@ -107,8 +109,10 @@ export function tokenGetter() {
     NgxMatDatetimePickerModule,
     NgxMatTimepickerModule,
     NgxMatNativeDateModule,
+    ColorPickerModule,
     MatProgressSpinnerModule,
-    MatCardModule
+    MatCardModule,
+    MatRadioModule
   ],
   providers: [
     AuthGuard,

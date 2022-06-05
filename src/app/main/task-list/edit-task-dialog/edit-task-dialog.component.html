@@ -34,7 +34,7 @@
   <div *ngIf="connectedDupliate.length > 0" >
     <div fxFill fxLayout="row" fxLayoutAlign="space-evenly center" class="divider"
          *ngFor="let item of connectedDupliate">
-      <mat-select #selectedCtg [value]="item.cId" *ngIf="data.unit.categories && !!categories.length"
+      <mat-select #selectedCtg [value]="item.cId"
         (valueChange)=" ctgSelectionChanged(item, $event)">
         <div *ngFor="let ctg of categories">
           <mat-option [value]="ctg.id" >{{ctg.name}}</mat-option>

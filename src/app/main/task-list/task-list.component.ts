@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, HostListener, OnInit, Output, ViewChild} from '@angular/core';
 import {Category} from "../../models/category.model";
 import {Subcategory} from "../../models/subcategory.model";
 import {Unit} from "../../models/unit.model";
@@ -9,7 +9,7 @@ import {Task} from "../../models/task.model";
 import {MatCheckboxChange} from "@angular/material/checkbox";
 import {EditTaskDialogComponent} from "./edit-task-dialog/edit-task-dialog.component";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
-import {find, Observable} from "rxjs";
+import {BehaviorSubject, find, Observable} from "rxjs";
 import {trigger} from "@angular/animations";
 import {StatisticsComponent} from "../statistics/statistics.component";
 import {ConnectedToDifferentSubcategoriesTask} from "../../models/connected-to-different-subcategories-task";
@@ -33,21 +33,27 @@ export class TaskListComponent implements OnInit {
 
   @ViewChild('stat') statistic: StatisticsComponent;
   @ViewChild('timer') timer: TimerComponent;
-  @Output() loaderStateChanged = new EventEmitter<boolean>();
+  @Output() loaderStateChanged = new BehaviorSubject(false);
 
   updateStat = new Observable<void>();
   activeCategory: Category | undefined;
   // @ts-ignore
   unit: Unit = new Unit();
   areTasksLoading = false;
-
+  showAnotherBackground = false;
   constructor(private taskService: TaskService,
               private storageService: StorageService,
               private dialog: MatDialog,
-              private toastr: ToastrService) { }
+              private toastr: ToastrService) {
+    this.getUnit();
+  }
+
+  @HostListener('window:beforeunload', ['$event']) unloadHandler(event: Event): void {
+    this.loaderStateChanged.next(true);
+  }
 
   ngOnInit(): void {
-    this.getUnit();
+
   }
 
   async addCategory(){
@@ -66,7 +72,7 @@ export class TaskListComponent implements OnInit {
     const res = await confirmationDialog.afterClosed().toPromise();
     if (res) {
       this.taskService.deleteCategory(identifier).then(x => {
-        this.getUnit();
+        this.getUnit(true);
       });
     }
   }
@@ -88,7 +94,7 @@ export class TaskListComponent implements OnInit {
 
   async addSubcategory(){
     let subcategory = new Subcategory();
-    subcategory.name = await this.openSimpleDialog("New subcategory name");
+    subcategory.name = await this.openSimpleDialog("New subcategory name") || '';
     this.activeCategory?.subcategories.push(subcategory);
 
     this.taskService.postSubcategory((this.activeCategory as Category).id, subcategory).then(sub => {
@@ -147,19 +153,22 @@ export class TaskListComponent implements OnInit {
       data: {label, text},
       width: '60%'
     });
-    return await dialogRef.afterClosed().toPromise() as string || '';
+    return await dialogRef.afterClosed().toPromise() as string || null;
   }
 
   async addTask(subId: number) {
     let task = new Task();
     task.text = await this.openSimpleDialog("What need to do?", null);
 
+    if(!task.text) {
+      return;
+    }
     const sub = this.activeCategory?.subcategories.find(s => s.id === subId);
     sub?.tasks.push(task);
 
     this.taskService.postTask((this.activeCategory as Category).id, subId, task).then(task => {
       this.getSubcategory(subId);
-      this.refreshAllStatistic();
+      this.statistic.populateDonutChart();
     });
   }
 
@@ -176,7 +185,10 @@ export class TaskListComponent implements OnInit {
     tasks.splice(taskInd, 1);
 
     this.taskService.deleteTask((this.activeCategory as Category).id, subId, taskId)
-      .then(x => this.refreshAllStatistic())
+      .then(x => {
+        this.statistic.activeCtg = this.activeCategory as Category;
+        this.statistic.populateDonutChart();
+      })
       .catch(err => {
         tasks = tasksSave;
         this.toastr.error(err.message || 'Error has happened. Task was restored');
@@ -194,7 +206,7 @@ export class TaskListComponent implements OnInit {
     this.updateRelatedTasksLocal(task);
 
     this.taskService.checkTask(this.activeCategory?.id as number, subId, task.id)
-      .then(x => this.refreshAllStatistic())
+      .then(x => this.refreshAllStatistic(true))
       .catch(x => task.isChecked = !task.isChecked);
   }
 
@@ -217,7 +229,7 @@ export class TaskListComponent implements OnInit {
       await this.getUnit();
     } else {
       await this.taskService.putTask((this.activeCategory as Category).id, subId, task.id, task);
-      this.refreshAllStatistic();
+      this.refreshAllStatistic(true);
     }
   }
 
@@ -230,13 +242,34 @@ export class TaskListComponent implements OnInit {
   }
 
   changeActiveCategory(newCategory: Category) {
-    this.activeCategory = newCategory;
+    this.activeCategory = this.unit.categories.find(c => c.id === newCategory.id);
     this.refreshAllStatistic();
   }
 
+  getRelatedTags(relationId: number, subcategory: Subcategory): { ctg: Category, sub: string }[] {
+    const fullRelation = this.unit.taskToManySubcategories.find(r => r.id === relationId);
+
+    const tags: {ctg: Category, sub: string}[] = [];
+    if (fullRelation) {
+      fullRelation.taskSubcategories.map(ts => {
+        if (ts.subcategoryId !== subcategory.id) {
+          const ctg = this.unit.categories.find(c => c.id === ts.categoryId);
+          const sub = ctg?.subcategories.find(s => s.id === ts.subcategoryId);
+
+          tags.push({
+            ctg: Object.assign(new Category(), ctg),
+            sub: sub?.name || ''
+          });
+        }
+      });
+    }
+    return tags;
+  }
+
+
   private async getUnit(forceReload = true) {
-    this.areTasksLoading = true;
-    this.loaderStateChanged.emit(true);
+    //this.areTasksLoading = true;
+    this.loaderStateChanged.next(true);
 
     const savedUnit = this.storageService.getUnit();
     this.unit = forceReload || !savedUnit ?
@@ -246,32 +279,38 @@ export class TaskListComponent implements OnInit {
     this.selectActiveCtg();
     this.timer.timer = this.unit.timer;
     this.statistic.statistic = this.unit.statistic;
-    this.loaderStateChanged.emit(false);
-    this.timer.isLoading = false;
-    this.areTasksLoading = false;
+
+    this.storageService.saveUnit(this.unit);
 
     this.timer.refresh();
-    this.storageService.saveUnit(this.unit);
     this.refreshAllStatistic();
+
+    this.timer.isLoading = false;
+    this.loaderStateChanged.next(false);
   }
 
   private async getActiveCategory() {
     this.areTasksLoading = true;
+    this.showAnotherBackground = true;
+
     const catId = this.unit.categories.findIndex(c => c.id === (this.activeCategory as Category).id);
     this.unit.categories[catId] = await this.taskService.getCategory((this.activeCategory as Category).id);
     this.activeCategory = this.unit.categories[catId];
 
     this.areTasksLoading = false;
+    this.showAnotherBackground = false;
     this.storageService.saveUnit(this.unit);
     await this.statistic.refresh();
   }
 
   private async getSubcategory(id: number) {
     this.areTasksLoading = true;
+    this.showAnotherBackground = true;
     const catId = this.unit.categories.findIndex(c => c.id === (this.activeCategory as Category).id);
     const subIndex = this.unit.categories[catId].subcategories.findIndex(s => s.id === id);
     this.unit.categories[catId].subcategories[subIndex] = await this.taskService.getSubcategory((this.activeCategory as Category).id, id);
     this.areTasksLoading = false;
+    this.showAnotherBackground = false;
     this.storageService.saveUnit(this.unit);
     this.statistic.refresh();
   }
@@ -342,11 +381,18 @@ export class TaskListComponent implements OnInit {
     moveItemInArray(taskArr, taskIndex, newTaskInd);
   }
 
-  private refreshAllStatistic() {
+  private refreshAllStatistic(forceReload = false) {
+    // this.statRefreshTimerId ??= setInterval(() => {
+    //   this.statForceRefreshAllowed = true;
+    // }, 60000);
+
+    this.statistic.refresh(forceReload);
     this.statistic.activeCtg = this.activeCategory as Category;
-    this.statistic.refresh(true);
     this.statistic.populateDonutChart();
   }
+
+  statRefreshTimerId: number | null;
+  statForceRefreshAllowed = false
 }
 
 export enum ItemType{

@@ -6,7 +6,7 @@
         {{timer.label}}
       </h2>
     </div>
-    <h4 class="medGray"><pre>Y-MM-DD&#8195;hh:mm:ss</pre></h4>
+    <h4 class="medGray"><pre>{{getFormatString()}}</pre></h4>
     <h4 class="medGray"><pre><span class="usualFrontFamily">{{goalValue.toString()}}</span></pre></h4>
     <h2 class="centered large"><pre><span>{{currentValue.toString()}}</span></pre></h2>
     <div fxLayout="row" fxLayoutAlign="center center">

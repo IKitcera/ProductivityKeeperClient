@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {StatisticService} from "../../services/statisticService";
 import {UserStatistic} from "../../models/user-statistic.model";
 import {GaugeComponent, LegendPosition, LineChartComponent, PieChartComponent, ScaleType} from "@swimlane/ngx-charts"
@@ -14,7 +14,7 @@ import {DonePerDay} from "../../models/done-per-day.model";
 })
 export class StatisticsComponent implements OnInit {
 
-  @ViewChild('gChart') gChart: GaugeComponent;
+  @ViewChild('gChart', {read: ElementRef, static: true}) gChart: GaugeComponent;
   @ViewChild('lChart') lChart: LineChartComponent;
   @ViewChild('pChart') pChart: PieChartComponent;
 
@@ -62,8 +62,7 @@ export class StatisticsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
-    this.refresh(true).then(() => {
+     this.refresh(false).then(() => {
       this.gChart?.scaleText(true);
     }, finalize(()=> {
     }));
@@ -86,16 +85,23 @@ export class StatisticsComponent implements OnInit {
           "value": this.statistic.percentOfDoneTotal*100
         }
       ];
+    
+    if (this.gChart) {
+      this.gChart.textValue = Math.round(this.statistic.percentOfDoneToday * 100) + ' % / \n' +
+        Math.round(this.statistic.percentOfDoneTotal * 100) + ' %';
+      this.gChart.scaleText(true);
+
+    }
 
     this.scaleLinearGraphicsData(this.lineChartScale);
 
-      if (this.gChart) {
-        this.gChart.textValue = Math.round(this.statistic.percentOfDoneToday * 100) + ' % / \n' +
-          Math.round(this.statistic.percentOfDoneTotal * 100) + ' %';
-        this.gChart.scaleText(true);
-      }
-
    // this.isLoading = false;
+  }
+
+  getGaugeText(): string {
+    return this.statistic ? Math.round(this.statistic.percentOfDoneToday * 100) + ' % / \n' +
+      Math.round(this.statistic.percentOfDoneTotal * 100) + ' %' :
+      '-0%-/-0%-';
   }
 
   onSelect(data: any): void {
@@ -103,9 +109,7 @@ export class StatisticsComponent implements OnInit {
   }
 
   onActivate(data: any): void {
-    this.gChart.textValue = Math.round(this.statistic.percentOfDoneToday*100) + ' % / \n' +
-      Math.round(this.statistic.percentOfDoneTotal*100) + ' %';
-    this.gChart.scaleText(true);
+    this.refresh(false);
   }
 
   onDeactivate(data: any): void {

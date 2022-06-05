@@ -26,6 +26,7 @@
     "@auth0/angular-jwt": "^5.0.2",
     "@swimlane/ngx-charts": "^20.1.0",
     "chart.js": "^3.6.0",
+    "ngx-color-picker": "^12.0.1",
     "ngx-toastr": "^14.2.2",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",

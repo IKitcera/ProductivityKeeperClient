@@ -2,6 +2,7 @@ import {Timer} from "../models/timer.model";
 import {HttpService} from "./httpService";
 import {Injectable} from "@angular/core";
 import {HttpParams} from "@angular/common/http";
+import {TimerFormat} from "../main/timer/timer.component";
 
 @Injectable()
 export class TimerService{
@@ -20,5 +21,10 @@ export class TimerService{
   async updateTicked(tickedSeconds: number): Promise<boolean>{
     const res = await this.http.post('update-ticked', null, new HttpParams().set('tickedSeconds', tickedSeconds)).toPromise();
     return res as boolean;
+  }
+
+  async updateFormat(newFormat: TimerFormat): Promise<any> {
+    const res = await this.http.put('api/Timer/update-format', null, new HttpParams().set('newFormat', newFormat)).toPromise();
+    return res;
   }
 }
