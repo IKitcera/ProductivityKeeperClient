@@ -24,10 +24,6 @@ export class LoginComponent implements OnInit {
       this.userName = '';
       this.password = '';
       this.router.navigate([''], {replaceUrl: true});
-    }).catch(err => {
-      console.log(err);
-      this.toastr.error(err.message ?? err ?? 'Login failed');
-
     });
   }
 

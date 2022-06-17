@@ -6,7 +6,7 @@ export class Category {
   id: number;
   name: string;
   color: Color;
-  subcategories: Subcategory[];
+  subcategories: Subcategory[] = [];
   isVisible: boolean;
 
   public get c_color(): string {

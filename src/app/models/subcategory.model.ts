@@ -5,5 +5,5 @@ export class Subcategory{
   id: number;
   name: string;
   color: Color;
-  tasks: Task[];
+  tasks: Task[] = [];
 }

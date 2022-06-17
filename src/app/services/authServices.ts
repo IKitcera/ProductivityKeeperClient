@@ -26,8 +26,14 @@ export class AuthService{
   register(username: string, password: string) {
     this.registrate(username,password)
       .subscribe(x => {
-         this.login(username, password);
-      }, err => this.toastr.error(err.message));
+        console.log('x', x);
+        localStorage.setItem(this.tokenKey, x["accessToken"]);
+        localStorage.setItem(this.userNameKey, username);
+        localStorage.setItem(this.refreshTime, x["lifeTime"]);
+        this.stopRefreshTokenTimer();
+        this.startRefreshTokenTimer();
+        this.router.navigate([''], {replaceUrl: true});
+      });
   }
 
   logout() {
@@ -84,13 +90,13 @@ export class AuthService{
     }
   }
 
-  private registrate(username: string, pass: string): Observable<void> {
+  private registrate(username: string, pass: string): Observable<any> {
 
     const user =  new AbstractUser();
     user.email = username;
     user.hashPassword = pass;
 
-    return this.http.post('registration', user);
+    return this.http.post<any>('registration', user);
   }
 
   private startRefreshTokenTimer() {

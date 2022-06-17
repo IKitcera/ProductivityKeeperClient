@@ -60,7 +60,7 @@ export class TimerComponent implements OnInit {
   addSecond() {
     this.currentValue.addSecond();
     if (this.currentValue.getInSeconds() === this.goalValue.getInSeconds()) {
-      this.toastr.success('Your timer goal is completed', 'Congratulation 🎉!');
+      this.toastr.success('Your timer goal is completed', 'Congratulation! 🎉🎉🎉');
     }
   }
 

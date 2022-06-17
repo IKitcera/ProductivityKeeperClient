@@ -124,10 +124,13 @@ export class StatisticsComponent implements OnInit {
     const tasks : Task [] = [];
 
     this.activeCtg?.subcategories.map(s => s.tasks.map(t => {
-      if (t && (!t.relationId || !tasks.map(ta => ta.relationId).includes(t.relationId)))
+      if (t && (!t.relationId || !tasks.filter(ta => ta.id !== t.id)
+        .map(ta => ta.relationId).includes(t.relationId)))
       tasks.push(t);
     }));
-
+    console.log(tasks[0]);
+    console.log(tasks.filter(t => (t.deadline && t.doneDate && new Date(t.doneDate) >= new Date(t.deadline))
+      || (!t.doneDate && t.deadline && new Date(t.deadline) < new Date() && !t.isChecked)).length || 0)
     this.donutChartData = [
       {
         "name": 'Done',
@@ -139,8 +142,8 @@ export class StatisticsComponent implements OnInit {
       },
       {
         "name": 'Expired',
-        value: tasks.filter(t => (t.deadline && t.doneDate && t.doneDate >= t.deadline)
-          || (!t.doneDate && t.deadline && t.deadline < new Date() && !t.isChecked)).length || 0
+        value: tasks.filter(t => (t.deadline && t.doneDate && new Date(t.doneDate) >= new Date(t.deadline))
+          || (!t.doneDate && t.deadline && new Date(t.deadline) < new Date() && !t.isChecked)).length || 0
       },
     ];
   }

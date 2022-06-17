@@ -173,6 +173,10 @@ export class TaskListComponent implements OnInit {
   }
 
   async deleteTask(subId: number, taskId: number){
+    if(!taskId) {
+      this.toastr.warning('Please wait until previous changes will be applied');
+      return;
+    }
     const sub = this.activeCategory?.subcategories.find(s => s.id === subId);
     const taskInd = sub?.tasks.findIndex(t => t.id === taskId) as number;
 
@@ -201,6 +205,19 @@ export class TaskListComponent implements OnInit {
       task.timesToRepeat --;
     }
 
+    if(task.isChecked)  {
+      const tasks : Task [] = [];
+
+      this.activeCategory?.subcategories.map(s => s.tasks.map(t => {
+        if (t && (!t.relationId || !tasks.filter(ta => ta.id !== t.id)
+          .map(ta => ta.relationId).includes(t.relationId)))
+          tasks.push(t);
+      }));
+
+      if (tasks.filter(t => t.isChecked).length === tasks.length) {
+        this.toastr.success(`You've done all tasks in category ${this.activeCategory?.name}`, 'Congratulation! 🎉🎉🎉');
+      }
+    }
     this.moveTaskInSubcategoryByIdData(this.activeCategory?.id as number, subId, task);
 
     this.updateRelatedTasksLocal(task);
@@ -211,6 +228,10 @@ export class TaskListComponent implements OnInit {
   }
 
   async editTask(subId: number, task: Task){
+    if(!task.id) {
+      this.toastr.warning('Please wait until previous changes will be applied');
+      return;
+    }
     const dialogRef = this.dialog.open(EditTaskDialogComponent, {
       data: {
         task: task,
