@@ -1,22 +1,22 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
-import {StorageService} from "../../services/storageService";
-import {Unit} from "../../models/unit.model";
-import {TaskService} from "../../services/taskService";
-import {Category} from "../../models/category.model";
+import {StorageService} from "../../core/services/storageService";
+import {Unit} from "../../core/models/unit.model";
+import {TaskService} from "../../core/services/taskService";
+import {Category} from "../../core/models/category.model";
 import {ToastrService} from "ngx-toastr";
 import {
   SimpleConfirmationDialogComponent
 } from "../../common-components/simple-confirmation-dialog/simple-confirmation-dialog.component";
-import {Constants} from "../../models/constants";
+import {Constants} from "../../core/models/constants";
 import {MatDialog} from "@angular/material/dialog";
-import {AuthService} from "../../services/authServices";
-import {Color} from "../../models/color.model";
-import {ColorConverter} from "../../services/color-converter";
-import {ColorPickerDirective, ColorPickerService} from "ngx-color-picker";
-import {Time} from "@angular/common";
+import {AuthService} from "../../core/services/authServices";
+import {ColorPickerService} from "ngx-color-picker";
+
 import {TimerFormat} from "../timer/timer.component";
-import {TimerService} from "../../services/timerService";
+import {TimerService} from "../../core/services/timerService";
+import {untilDestroyed} from "../../core/services/until-destroyed";
+import {BehaviorSubject, finalize, Observable, switchMap, tap} from "rxjs";
 
 @Component({
   selector: 'app-settings',
@@ -32,7 +32,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   public oldPassword: string;
   public newPassword: string;
   public passwordConfirmation: string;
-  public colorConverter = ColorConverter;
+//  public colorConverter = ColorConverter;
   public shouldEnableChangingPassword = false;
 
   get hasUnitAnyCategory(): boolean {
@@ -50,9 +50,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.unit = this.storageService.getUnit() as Unit;
     if (!this.unit) {
-      this.taskService.getUnit().then(u => {
-        this.unit = u;
-      });
+      this.taskService.getUnit().pipe(
+        tap(unit => this.unit = unit),
+        untilDestroyed(this)
+      ).subscribe();
     }
     this.categories = [];
     this.unit.categories.map(c => {
@@ -70,22 +71,22 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   async saveChanges() {
-    this.taskService.changeCategoriesOrder(this.categories).then(() => {
-      this.unit.categories = this.categories;
-      this.storageService.saveUnit(this.unit);
-      this.toastr.success("Changes has been saved");
-    }).catch(err => this.toastr.error(err.message ?? "Unknown error"));
+    // this.taskService.changeCategoriesOrder(this.categories).then(() => {
+    //   this.unit.categories = this.categories;
+    //   this.storageService.saveUnit(this.unit);
+    //   this.toastr.success("Changes has been saved");
+    // }).catch(err => this.toastr.error(err.message ?? "Unknown error"));
   }
 
   async clearArchive() {
     const confirmationDialog = this.dialog.open(SimpleConfirmationDialogComponent, {data: {label: Constants.sureAboutDelete + Constants.progressWillBeLost}});
     const res = await confirmationDialog.afterClosed().toPromise();
 
-    if(res) {
-      this.taskService.clearTasksArchive()
-        .then(x => this.toastr.info('Archive was cleared'))
-        .catch(err => this.toastr.error(err.message ?? 'Unknown error'));
-    }
+    // if(res) {
+    //   this.taskService.clearTasksArchive()
+    //     .then(x => this.toastr.info('Archive was cleared'))
+    //     .catch(err => this.toastr.error(err.message ?? 'Unknown error'));
+    // }
   }
 
   async checkIfPasswordMatches() {

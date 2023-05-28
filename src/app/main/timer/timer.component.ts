@@ -1,15 +1,15 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Time} from "@angular/common";
 import { timer } from 'rxjs';
-import {Timer} from "../../models/timer.model";
+import {Timer} from "../../core/models/timer.model";
 import {MatDialog} from "@angular/material/dialog";
 import {EditTimerDialogComponent} from "./edit-timer-dialog/edit-timer-dialog.component";
-import {TimerService} from "../../services/timerService";
+import {TimerService} from "../../core/services/timerService";
 import {ToastrService} from "ngx-toastr";
 import {
   SimpleConfirmationDialogComponent
 } from "../../common-components/simple-confirmation-dialog/simple-confirmation-dialog.component";
-import {Constants} from "../../models/constants";
+import {Constants} from "../../core/models/constants";
 
 @Component({
   selector: 'app-timer',

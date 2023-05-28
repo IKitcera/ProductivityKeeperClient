@@ -19,6 +19,7 @@ export class ErrorInterceptor implements HttpInterceptor {
       }
 
       this.toastr.error(err.error?.message ?? 'Unknown error');
+      console.error(err);
       return throwError(err.error);
     }))
   }

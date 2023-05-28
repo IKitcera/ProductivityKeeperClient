@@ -4,6 +4,7 @@ import {Unit} from "../models/unit.model";
 @Injectable()
 export class StorageService {
   private unit = '_unit';
+  private unitId = '_unit_id';
   constructor() {
   }
 
@@ -15,5 +16,4 @@ export class StorageService {
     const valueString = localStorage.getItem(this.unit);
     return valueString? JSON.parse(valueString) as Unit : null;
   }
-
 }

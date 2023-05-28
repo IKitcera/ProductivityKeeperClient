@@ -3,20 +3,20 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
 import { TaskListComponent } from './main/task-list/task-list.component';
-import { LoginComponent } from './login/login.component';
+import { LoginComponent } from './main/login/login.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatExpansionModule} from "@angular/material/expansion";
 import {MatIconModule} from "@angular/material/icon";
 import {FlexLayoutModule} from "@angular/flex-layout";
 import {RouterModule, Routes} from "@angular/router";
-import {AuthGuard} from "./services/auth-guard";
+import {AuthGuard} from "./core/services/auth-guard";
 import {NotFoundError} from "rxjs";
 import {MatButtonModule} from "@angular/material/button";
 import {JwtModule} from "@auth0/angular-jwt";
-import {AuthService} from "./services/authServices";
-import {TaskService} from "./services/taskService";
-import {HttpService} from "./services/httpService";
+import {AuthService} from "./core/services/authServices";
+import {TaskService} from "./core/services/taskService";
+import {HttpService} from "./core/services/httpService";
 import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from "@angular/common/http";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {FormsModule} from "@angular/forms";
@@ -26,11 +26,11 @@ import { SingleInputDialogComponent } from './common-components/single-input-dia
 import {MatTooltipModule} from "@angular/material/tooltip";
 import { StatisticsComponent } from './main/statistics/statistics.component';
 import { TimerComponent } from './main/timer/timer.component';
-import {ErrorInterceptor} from "./services/error-interceptor";
+import {ErrorInterceptor} from "./core/services/error-interceptor";
 import { EditTimerDialogComponent } from './main/timer/edit-timer-dialog/edit-timer-dialog.component';
 import {MatSelectModule} from "@angular/material/select";
-import {TimerService} from "./services/timerService";
-import {StatisticService} from "./services/statisticService";
+import {TimerService} from "./core/services/timerService";
+import {StatisticService} from "./core/services/statisticService";
 import { EditTaskDialogComponent } from './main/task-list/edit-task-dialog/edit-task-dialog.component';
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import {MatNativeDateModule} from "@angular/material/core";
@@ -48,10 +48,13 @@ import {
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import { SettingsComponent } from './main/settings/settings.component';
 import {MatCardModule} from "@angular/material/card";
-import {StorageService} from "./services/storageService";
+import {StorageService} from "./core/services/storageService";
 import { SimpleConfirmationDialogComponent } from './common-components/simple-confirmation-dialog/simple-confirmation-dialog.component';
 import {ColorPickerModule} from "ngx-color-picker";
 import {MatRadioModule} from "@angular/material/radio";
+import {FilterByPipe} from "./core/pipes/filterBy.pipe";
+import {DialogService} from "./core/services/dialog.service";
+import {FindByPipe} from "./core/pipes/findBy.pipe";
 const routes: Routes = [
   { path: '', component: TaskListComponent, canActivate: [AuthGuard] },
   { path: 'tasks', redirectTo: '' },
@@ -74,7 +77,9 @@ export function tokenGetter() {
     EditTimerDialogComponent,
     EditTaskDialogComponent,
     SettingsComponent,
-    SimpleConfirmationDialogComponent
+    SimpleConfirmationDialogComponent,
+    FilterByPipe,
+    FindByPipe
   ],
   imports: [
     BrowserModule,
@@ -114,6 +119,10 @@ export function tokenGetter() {
     MatCardModule,
     MatRadioModule
   ],
+  exports: [
+    FilterByPipe,
+    FindByPipe
+  ],
   providers: [
     AuthGuard,
     HttpClient,
@@ -123,6 +132,7 @@ export function tokenGetter() {
     TimerService,
     StatisticService,
     StorageService,
+    DialogService,
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }],
   bootstrap: [AppComponent]
 })

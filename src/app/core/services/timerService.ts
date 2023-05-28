@@ -2,7 +2,7 @@ import {Timer} from "../models/timer.model";
 import {HttpService} from "./httpService";
 import {Injectable} from "@angular/core";
 import {HttpParams} from "@angular/common/http";
-import {TimerFormat} from "../main/timer/timer.component";
+import {TimerFormat} from "../../main/timer/timer.component";
 
 @Injectable()
 export class TimerService{

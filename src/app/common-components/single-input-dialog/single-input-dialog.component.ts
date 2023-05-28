@@ -1,7 +1,7 @@
 import {Component, Inject, Input, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {Task} from "../../models/task.model";
-import {Unit} from "../../models/unit.model";
+import {TaskItem} from "../../core/models/task.model";
+import {Unit} from "../../core/models/unit.model";
 import {text} from "d3";
 
 @Component({

@@ -1,11 +1,11 @@
 import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
-import {StatisticService} from "../../services/statisticService";
-import {UserStatistic} from "../../models/user-statistic.model";
+import {StatisticService} from "../../core/services/statisticService";
+import {UserStatistic} from "../../core/models/user-statistic.model";
 import {GaugeComponent, LegendPosition, LineChartComponent, PieChartComponent, ScaleType} from "@swimlane/ngx-charts"
 import {finalize} from "rxjs";
-import {Category} from "../../models/category.model";
-import {Task} from "../../models/task.model";
-import {DonePerDay} from "../../models/done-per-day.model";
+import {Category} from "../../core/models/category.model";
+import {TaskItem} from "../../core/models/task.model";
+import {DonePerDay} from "../../core/models/done-per-day.model";
 
 @Component({
   selector: 'app-statistics',
@@ -62,11 +62,10 @@ export class StatisticsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    //  this.refresh(false).then(() => {
-    //   this.gChart?.scaleText(true);
-    // }, finalize(()=> {
-    // }));
-
+     this.refresh(false).then(() => {
+      this.gChart?.scaleText(true);
+    }, finalize(()=> {
+    }));
   }
 
   async refresh(forceReload = true): Promise<void>{
@@ -117,35 +116,35 @@ export class StatisticsComponent implements OnInit {
   }
 
   public populateDonutChart() : void {
-    if(!this.activeCtg) return;
-
-    if(this.pChart)
-      this.pChart.margins = [0,0,0,0];
-    const tasks : Task [] = [];
-
-    this.activeCtg?.subcategories.map(s => s.tasks.map(t => {
-      if (t && (!t.relationId || !tasks.filter(ta => ta.id !== t.id)
-        .map(ta => ta.relationId).includes(t.relationId)))
-      tasks.push(t);
-    }));
-    console.log(tasks[0]);
-    console.log(tasks.filter(t => (t.deadline && t.doneDate && new Date(t.doneDate) >= new Date(t.deadline))
-      || (!t.doneDate && t.deadline && new Date(t.deadline) < new Date() && !t.isChecked)).length || 0)
-    this.donutChartData = [
-      {
-        "name": 'Done',
-        value: tasks.filter(t => t.isChecked).length || 0
-      },
-      {
-        "name": 'Not done',
-        value: tasks.filter(t => !t.isChecked).length || 0
-      },
-      {
-        "name": 'Expired',
-        value: tasks.filter(t => (t.deadline && t.doneDate && new Date(t.doneDate) >= new Date(t.deadline))
-          || (!t.doneDate && t.deadline && new Date(t.deadline) < new Date() && !t.isChecked)).length || 0
-      },
-    ];
+    // if(!this.activeCtg) return;
+    //
+    // if(this.pChart)
+    //   this.pChart.margins = [0,0,0,0];
+    // const tasks : TaskItem [] = [];
+    //
+    // this.activeCtg?.subcategories.map(s => s.tasks.map(t => {
+    //   if (t && (!t.relationId || !tasks.filter(ta => ta.id !== t.id)
+    //     .map(ta => ta.relationId).includes(t.relationId)))
+    //   tasks.push(t);
+    // }));
+    // console.log(tasks[0]);
+    // console.log(tasks.filter(t => (t.deadline && t.doneDate && new Date(t.doneDate) >= new Date(t.deadline))
+    //   || (!t.doneDate && t.deadline && new Date(t.deadline) < new Date() && !t.isChecked)).length || 0)
+    // this.donutChartData = [
+    //   {
+    //     "name": 'Done',
+    //     value: tasks.filter(t => t.isChecked).length || 0
+    //   },
+    //   {
+    //     "name": 'Not done',
+    //     value: tasks.filter(t => !t.isChecked).length || 0
+    //   },
+    //   {
+    //     "name": 'Expired',
+    //     value: tasks.filter(t => (t.deadline && t.doneDate && new Date(t.doneDate) >= new Date(t.deadline))
+    //       || (!t.doneDate && t.deadline && new Date(t.deadline) < new Date() && !t.isChecked)).length || 0
+    //   },
+    // ];
   }
 
   getCustomColors () {

@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {Timer} from "../../../models/timer.model";
+import {Timer} from "../../../core/models/timer.model";
 import {TimeSpan} from "../timer.component";
 import {Time} from "@angular/common";
 

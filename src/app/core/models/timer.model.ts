@@ -1,4 +1,4 @@
-import {TimerFormat} from "../main/timer/timer.component";
+import {TimerFormat} from "../../main/timer/timer.component";
 
 export class Timer{
   id: number;

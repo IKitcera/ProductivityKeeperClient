@@ -8,5 +8,16 @@ export class Unit{
   categories: Category[];
   timer: Timer;
   statistic: UserStatistic;
-  taskToManySubcategories: TaskToManySubcategories[];
+  statisticId: number;
+
+  constructor(obj?: any) {
+    if (!obj) {
+      return;
+    }
+    this.id = obj.id;
+    this.categories = obj.categories.map(c => Object.assign(new Category(), c));
+    this.timer = obj.timer;
+    this.statistic = obj.statistic;
+    this.statisticId = obj.statisticId;
+  }
 }

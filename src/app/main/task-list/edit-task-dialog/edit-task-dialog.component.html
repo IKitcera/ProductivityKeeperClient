@@ -31,23 +31,26 @@
   >
     Add connected duplicate
   </button>
-  <div *ngIf="connectedDupliate.length > 0" >
+  <div *ngIf="!!connectedDuplicates.length" >
     <div fxFill fxLayout="row" fxLayoutAlign="space-evenly center" class="divider"
-         *ngFor="let item of connectedDupliate">
-      <mat-select #selectedCtg [value]="item.cId"
-        (valueChange)=" ctgSelectionChanged(item, $event)">
+         *ngFor="let item of connectedDuplicates">
+      <mat-select #selectedCtg placeholder="Category"
+                  [value]="item.cId"
+                  (valueChange)="ctgSelectionChanged(item, $event)">
         <div *ngFor="let ctg of categories">
           <mat-option [value]="ctg.id" >{{ctg.name}}</mat-option>
         </div>
       </mat-select>
-      <mat-select [value]="item.sId" [disabled]="!item.cId || !item.sId|| item.sId === -1"
-        (valueChange)=" item.sId = $event">
-        <div *ngFor="let sub of getSubcategories(item.cId)">
+      <mat-select placeholder="Subcategory"
+                  [value]="item.sId"
+                  [disabled]="!item.cId"
+                  (valueChange)=" item.sId = $event">
+        <div *ngFor="let sub of (categories | findBy: 'id': item.cId)?.subcategories || []">
           <mat-option [value]="sub.id">{{sub.name}}</mat-option>
         </div>
       </mat-select>
       <mat-icon (click)="removeConnectedLine(item)">close</mat-icon>
     </div>
   </div>
-  <button mat-stroked-button (click)="close()">Apply</button>
+  <button mat-stroked-button (click)="close(data.task)">Apply</button>
 </div>

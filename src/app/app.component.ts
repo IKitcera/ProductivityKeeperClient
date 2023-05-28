@@ -1,5 +1,5 @@
 import {Component, ViewChild} from '@angular/core';
-import {AuthService} from "./services/authServices";
+import {AuthService} from "./core/services/authServices";
 import {TaskListComponent} from "./main/task-list/task-list.component";
 import {BehaviorSubject} from "rxjs";
 

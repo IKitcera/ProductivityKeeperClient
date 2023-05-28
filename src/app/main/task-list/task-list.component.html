@@ -1,19 +1,19 @@
 <div class="categories-wrap" [style.display]="areTasksLoading ? 'none' : 'block'">
   <div fxLayout="row wrap" fxFlexFill fxLayoutAlign="start center" class="categoryNamesList">
-    <div *ngFor="let category of unit?.categories">
-      <div *ngIf="activeCategory !== category && category.isVisible" class="categoryName"
-           (click)="changeActiveCategory(category)"
+    <div *ngFor="let category of (unit$ | async)?.categories || []">
+      <div *ngIf="(activeCtg$ | async) !== category && category.isVisible" class="categoryName"
+           (click)="this.activeCtg$.next(category)"
             (dblclick)="editCategory(category.id)">
         <p>{{category.name}}</p>
         <mat-icon class="topright" (click)="deleteCategory(category.id)">close</mat-icon>
       </div>
-      <div *ngIf="activeCategory === category" class="categoryName selectedCategoryName"
+      <div *ngIf="(activeCtg$ | async) === category" class="categoryName selectedCategoryName"
            (dblclick)="editCategory()">
         <p>{{category.name}}</p>
         <mat-icon class="topright" (click)="deleteCategory()">close</mat-icon>
       </div>
     </div>
-    <div [style.opacity]="areTasksLoading ? 0 : 1"  *ngIf="!unit?.categories || unit?.categories?.length === 0">
+    <div [style.opacity]="areTasksLoading ? 0 : 1"  *ngIf="!(unit$ | async)?.categories || (unit$ | async)?.categories?.length === 0">
       <p>Start from adding new category</p>
     </div>
     <button [style.opacity]="areTasksLoading ? 0 : 1"  class="m-1" color="primary" mat-mini-fab (click)="addCategory()">
@@ -31,7 +31,7 @@
   <!--  TASKS -->
   <div class="tasksWrap" >
     <mat-accordion cdkDropList (cdkDropListDropped)="drop($event)" multi>
-      <div *ngFor="let subcategory of activeCategory?.subcategories" cdkDrag>
+      <div *ngFor="let subcategory of (activeCtg$ | async)?.subcategories" cdkDrag>
         <mat-expansion-panel expanded="true" class="subcategory" >
           <mat-expansion-panel-header>
             <mat-panel-title>
@@ -59,22 +59,24 @@
                   <mat-icon class="topright edit" (click)="editTask(subcategory.id, task)">edit</mat-icon>
                   <mat-icon class="topright delete" (click)="deleteTask(subcategory.id, task.id)">close</mat-icon>
 
-                  <div [style.opacity]="task.text.length >= 150 ? 1: 0 "  class="faded"></div>
+                  <div [style.opacity]="task.text.length >= 150 ? 1: 0 " class="faded"></div>
                 </div>
 
               <div *ngIf="task.isRepeatable && task.timesToRepeat > 0" class="right repeatable-text " fxLayout="row" fxLayoutAlign="center center">
                 {{'(' + task.timesToRepeat + ' left) - ' + ((task.goalRepeatCount-task.timesToRepeat)/ task.goalRepeatCount | percent)}}
               </div>
-              <div *ngIf="task.relationId" class="tag" fxLayout="row" fxLayoutAlign="center center">
-                <div *ngFor="let tag of getRelatedTags(task.relationId, subcategory)" fxLayout="row" fxLayoutAlign="center center">
-                 <div [matTooltip]="tag.ctg.name || ''" (click)="changeActiveCategory(tag.ctg)">
-                    <mat-icon class="tag_icon"
-                              [style.color]="tag.ctg.c_color">sell</mat-icon>
-                 </div>
-                  <div class="tag-txt" [style.color]="tag.ctg.pure_contrast"
-                       [style.background-color]="tag.ctg.c_color"
-                       (click)="changeActiveCategory(tag.ctg)"
-                  > {{tag.sub}}
+              <div class="tag" fxLayout="row" fxLayoutAlign="center center" *ngFor="let tag of (tags$ | async)
+                | filterBy: 'taskId' : task.id : false
+                | filterBy: 'subcategoryId' : subcategory.id : true
+                ">
+                <div fxLayout="row" fxLayoutAlign="center center">
+                  <div [matTooltip]="tag.text || ''" (click)="changeActiveCategory(tag.categoryId)">
+                    <mat-icon class="tag_icon" [style.color]="tag.colorHex">sell</mat-icon>
+                  </div>
+                  <div class="tag-txt" [style.color]="tag.textColor"
+                       [style.background-color]="tag.colorHex"
+                       (click)="changeActiveCategory(tag.categoryId)">
+                    {{tag.text}}
                   </div>
                 </div>
               </div>
@@ -82,21 +84,21 @@
           </div>
         </mat-expansion-panel>
       </div>
-      <div fxLayout="row" fxLayoutAlign="space-evenly center" *ngIf="!activeCategory || activeCategory.subcategories.length === 0" >
+      <div fxLayout="row" fxLayoutAlign="space-evenly center" *ngIf="!(activeCtg$ | async) || (activeCtg$ | async).subcategories.length === 0" >
         <h3> You don't have any subcategory </h3>
-        <button class="m-1" mat-mini-fab [disabled]="!activeCategory" (click)="addSubcategory()">
+        <button class="m-1" mat-mini-fab [disabled]="!(activeCtg$ | async)" (click)="addSubcategory()">
            <mat-icon>add</mat-icon>
         </button>
       </div>
     </mat-accordion>
-  <button [style.opacity]="areTasksLoading ? 0 : 1" matTooltip="Add subcategory" class="rightBtn" color="primary" mat-fab [disabled]="!activeCategory" (click)="addSubcategory()">
+  <button [style.opacity]="areTasksLoading ? 0 : 1" matTooltip="Add subcategory" class="rightBtn" color="primary" mat-fab [disabled]="!(activeCtg$ | async)" (click)="addSubcategory()">
     <mat-icon>add</mat-icon>
   </button>
 </div>
   <!--  TIMER & STATISTICS-->
   <div fxLayout="column" class="childContainer">
-    <app-timer #timer [timer]="unit.timer"></app-timer>
-    <app-statistics #stat [statistic]="unit.statistic" [activeCtg]="activeCategory"></app-statistics>
+    <app-timer #timer [timer]="(unit$ | async).timer"></app-timer>
+    <app-statistics #stat [statistic]="(unit$ | async).statistic" [activeCtg]="(activeCtg$ | async)"></app-statistics>
   </div>
 
 </div>

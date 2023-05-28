@@ -45,8 +45,8 @@
               <mat-icon class="grey" cdkDragHandle>drag_indicator</mat-icon>
               <mat-checkbox [(ngModel)]="ctg.isVisible" mat-card-content> {{ctg.name}} </mat-checkbox>
             </div>
-            <div class="ctg-color-circle" [(colorPicker)]="ctg.c_color"
-                 [style.background]="ctg.c_color">
+            <div class="ctg-color-circle" [(colorPicker)]="ctg.color"
+                 [style.background]="ctg.color">
             </div>
           </div>
       </mat-accordion>
