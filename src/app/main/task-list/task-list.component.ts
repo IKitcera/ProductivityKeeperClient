@@ -4,7 +4,6 @@ import {Subcategory} from "../../core/models/subcategory.model";
 import {Unit} from "../../core/models/unit.model";
 import {TaskService} from "../../core/services/taskService";
 import {TaskItem} from "../../core/models/task.model";
-import {MatCheckboxChange} from "@angular/material/checkbox";
 import {EditTaskDialogComponent} from "./edit-task-dialog/edit-task-dialog.component";
 import {moveItemInArray} from "@angular/cdk/drag-drop";
 import {BehaviorSubject, EMPTY, finalize, first, map, Observable, switchMap, tap} from "rxjs";
@@ -15,7 +14,6 @@ import {TimerComponent} from "../timer/timer.component";
 import {StorageService} from "../../core/services/storageService";
 import {Constants} from "../../core/models/constants";
 import {untilDestroyed} from "../../core/services/until-destroyed";
-import {observableWrap$} from "../../core/functions/observable-helper.functions";
 import {DialogService} from "../../core/services/dialog.service";
 import {Tag} from "../../core/models/tag.model";
 
@@ -85,7 +83,6 @@ export class TaskListComponent implements OnInit, OnDestroy {
 
     this.unit$.pipe(
       tap(unit => {
-
         // TODO: REFACTOR
         // this.timer.timer = this.unit.timer;
         // this.statistic.statistic = this.unit.statistic;
@@ -99,14 +96,18 @@ export class TaskListComponent implements OnInit, OnDestroy {
       }),
 
       switchMap(_ => this.tagsSource$),
-      tap(x => console.log(x)),
       untilDestroyed(this)
     ).subscribe();
 
 
-    this.activeCtg$.asObservable().pipe(
+    this.activeCtg$.pipe(
       tap(activeCtg => {
-
+        if (this.unit$.value) {
+          const unit = this.unit$.value;
+          const ctgInd = unit.categories.findIndex(c => c.id === activeCtg.id);
+          unit.categories[ctgInd] = activeCtg;
+          this.unit$.next(unit);
+        }
       }),
       untilDestroyed(this)
     ).subscribe();
@@ -157,7 +158,6 @@ export class TaskListComponent implements OnInit, OnDestroy {
   }
 
   addSubcategory(): void {
-    console.log(new Subcategory({categoryId: this.activeCtg$.value.id}));
     let subcategory = new Subcategory({categoryId: this.activeCtg$.value.id});
     this.dialog.openSimpleInputDialog('New subcategory name').pipe(
       tap(res => subcategory.name = res ?? ''),
@@ -196,26 +196,20 @@ export class TaskListComponent implements OnInit, OnDestroy {
       filter(res => !!res?.length),
       map(text => new TaskItem({
         text,
-        subcategories: [new Subcategory({id: subId, categoryId: this.activeCtg$.value?.id})]
+        subcategories: [
+          new Subcategory({id: subId, categoryId: this.activeCtg$.value?.id})
+        ]
       })),
       switchMap(task => this.taskService.addTask(task)),
-      tap(newTask => {
-        const activeCtg = this.activeCtg$.value;
-        const targetSub = activeCtg.subcategories.find(s => s.id === subId);
-        targetSub.tasks.push(newTask);
-        this.activeCtg$.next(activeCtg);
-      })
+      tap(newTask => this.updateUnitWithTaskChanges(newTask, true, false, false))
     ).subscribe();
   }
 
-  deleteTask(subId: number, taskId: number) {
-    this.taskService.deleteTask(taskId).pipe(
+  deleteTask(task: TaskItem) {
+    this.taskService.deleteTask(task.id).pipe(
       tap(_ => {
-        const activeCtg = this.activeCtg$.value;
-        const targetSub = activeCtg.subcategories.find(s => s.id === subId);
-        const taskInd = targetSub.tasks.findIndex(t => t.id === taskId);
-        targetSub.tasks.splice(taskInd, 1);
-        this.activeCtg$.next(activeCtg);
+        task.subcategories = [];
+        this.updateUnitWithTaskChanges(task, false, false, true)
       }),
       catchError(err => {
         this.toastr.error(err.message || 'Error has happened. Task was restored');
@@ -224,56 +218,34 @@ export class TaskListComponent implements OnInit, OnDestroy {
     ).subscribe();
   }
 
-  taskCheckedStateChanged(subId: number, task: TaskItem, value: MatCheckboxChange) {
-    // task.isChecked = value.checked;
-    // if (task.isRepeatable && task.isChecked) {
-    //   task.timesToRepeat--;
-    // }
-    //
-    // if (task.isChecked) {
-    //   const tasks: TaskItem [] = [];
-    //
-    //   this.activeCategory?.subcategories.map(s => s.tasks.map(t => {
-    //     if (t && (!t.relationId || !tasks.filter(ta => ta.id !== t.id)
-    //       .map(ta => ta.relationId).includes(t.relationId)))
-    //       tasks.push(t);
-    //   }));
-    //
-    //   if (tasks.filter(t => t.isChecked).length === tasks.length) {
-    //     this.toastr.success(`You've done all tasks in category ${this.activeCategory?.name}`, 'Congratulation! 🎉🎉🎉');
-    //   }
-    // }
-    // this.moveTaskInSubcategoryByIdData(this.activeCategory?.id as number, subId, task);
-    //
-    // this.updateRelatedTasksLocal(task);
-    //
-    // this.taskService.checkTask(this.activeCategory?.id as number, subId, task.id)
-    //   .then(x => this.refreshAllStatistic(true))
-    //   .catch(x => task.isChecked = !task.isChecked);
+  taskCheckedStateChanged(taskId: number) {
+    this.taskService.changeTaskStatus(taskId).pipe(
+      tap(updatedTask => {
+        this.updateUnitWithTaskChanges(updatedTask, false, true, false);
+
+        const allTasks = (this.activeCtg$.value.subcategories || []).map(x => x.tasks || []).flat();
+        if (!!allTasks.length && allTasks.filter(t => t.isChecked).length === allTasks.length) {
+          this.toastr.success(`You've done all tasks in category ${this.activeCtg$.value.name}`, 'Congratulation! 🎉🎉🎉');
+        }
+      }),
+      untilDestroyed(this)
+    ).subscribe();
   }
 
   editTask(subId: number, task: TaskItem) {
-    //TODO: Refactor dialog T comp
     this.dialog.openDialog(EditTaskDialogComponent, {
       data: {
         task: task,
         unit: this.unit$.value,
+        taskRelations: this.tags$.value.filter(x => x.taskId === task.id),
         categoryId: this.activeCtg$.value.id,
         subcategoryId: subId
       },
       width: '60%'
     }).pipe(
       switchMap(task => this.taskService.updateTask(task)),
-      tap(updatedTask => {
-        const unit = this.unit$.value;
-        for (let sub of updatedTask.subcategories) {
-          const category = unit.categories.find(c => c.id === sub.categoryId);
-          const subcategory = category.subcategories.find(s => s.id === sub.id);
-          const taskInd = subcategory.tasks.findIndex(t => t.id === updatedTask.id);
-          subcategory.tasks[taskInd] = updatedTask;
-        }
-        this.unit$.next(unit);
-      })
+      tap(updatedTask =>
+        this.updateUnitWithTaskChanges(updatedTask, true, true, true))
     ).subscribe();
   }
 
@@ -281,74 +253,19 @@ export class TaskListComponent implements OnInit, OnDestroy {
   drop(event: any) {
     moveItemInArray(this.activeCtg$.value.subcategories, event.previousIndex, event.currentIndex);
 
-    observableWrap$(this.taskService.putCategory(this.activeCtg$.value)).pipe(
+    this.taskService.reorderSubcategories(this.activeCtg$.value.subcategories.map(s => s.id)).pipe(
+      untilDestroyed(this),
       catchError((err) => {
         moveItemInArray(this.activeCtg$.value.subcategories, event.currentIndex, event.previousIndex);
         return EMPTY;
       })
-    )
+    ).subscribe();
   }
 
   changeActiveCategory(ctgId: number) {
-    // this.activeCategory = this.unit.categories.find(c => c.id === newCategory.id);
-    // this.refreshAllStatistic();
-  }
-
-  // getRelatedTags(relationId: number, subcategory: Subcategory): { ctg: Category, sub: string }[] {
-  // const fullRelation = this.unit.taskToManySubcategories.find(r => r.id === relationId);
-  //
-  // const tags: { ctg: Category, sub: string }[] = [];
-  // if (fullRelation) {
-  //   fullRelation.taskSubcategories.map(ts => {
-  //     if (ts.subcategoryId !== subcategory.id) {
-  //       const ctg = this.unit.categories.find(c => c.id === ts.categoryId);
-  //       const sub = ctg?.subcategories.find(s => s.id === ts.subcategoryId);
-  //
-  //       tags.push({
-  //         ctg: Object.assign(new Category(), ctg),
-  //         sub: sub?.name || ''
-  //       });
-  //     }
-  //   });
-  // }
-  // return tags;
-  // }
-
-  private async getSubcategory(id: number) {
-    // this.areTasksLoading = true;
-    // this.showAnotherBackground = true;
-    // const catId = this.unit.categories.findIndex(c => c.id === (this.activeCategory as Category).id);
-    // const subIndex = this.unit.categories[catId].subcategories.findIndex(s => s.id === id);
-    // this.unit.categories[catId].subcategories[subIndex] = await this.taskService.getSubcategory((this.activeCategory as Category).id, id);
-    // this.areTasksLoading = false;
-    // this.showAnotherBackground = false;
-    // this.storageService.saveUnit(this.unit);
-    // this.statistic.refresh();
-  }
-
-  private async getCategories() {
-    // this.areTasksLoading = true;
-    // this.unit.categories = await this.taskService.getCategories();
-    // this.selectActiveCtg();
-    // this.areTasksLoading = false;
-    // this.storageService.saveUnit(this.unit);
-    // this.statistic.refresh();
-  }
-
-
-  private moveTaskInSubcategoryByIdData(ctgId: number, subId: number, task: TaskItem) {
-    // const ctgInd = this.unit.categories.findIndex(c => c.id === ctgId) as number;
-    // const subInd = this.unit.categories[ctgInd].subcategories.findIndex(s => s.id === subId) as number;
-    // const taskInd = this.unit.categories[ctgInd].subcategories[subInd].tasks.findIndex(t => t.id === task.id) as number;
-    //
-    // this.moveTaskInSubcategoryByIndexesData(ctgInd, subInd, taskInd);
-  }
-
-  private moveTaskInSubcategoryByIndexesData(ctgIndex: number, subIndex: number, taskIndex: number) {
-    // const taskArr = this.unit.categories[ctgIndex].subcategories[subIndex].tasks as TaskItem [];
-    // const newTaskInd = taskArr[taskIndex].isChecked ? taskArr.length - 1 : 0;
-    //
-    // moveItemInArray(taskArr, taskIndex, newTaskInd);
+    const targetCtg = this.unit$.value.categories.find(c => c.id === ctgId);
+    this.activeCtg$.next(targetCtg);
+    this.refreshAllStatistic();
   }
 
   private refreshAllStatistic(forceReload = false) {
@@ -356,8 +273,55 @@ export class TaskListComponent implements OnInit, OnDestroy {
     //   this.statForceRefreshAllowed = true;
     // }, 60000);
 
-    this.statistic.refresh(forceReload);
+    //  this.statistic.refresh(forceReload);
     //   this.statistic.activeCtg = this.activeCategory as Category;
-    this.statistic.populateDonutChart();
+    //  this.statistic.populateDonutChart();
+  }
+
+  private updateUnitWithTaskChanges(updatedTask: TaskItem, addRelations: boolean, updateRelations: boolean, deleteRelations: boolean): void {
+    const unit = this.unit$.value;
+    const taskRelations = this.tags$.value.filter(x => x.taskId === updatedTask.id);
+    const relationsToBeRemoved = taskRelations.filter(map => !updatedTask.subcategories
+      .map(s => s.id).includes(map.subcategoryId));
+
+    if (deleteRelations) {
+      for (let tag of relationsToBeRemoved) {
+        const category = unit.categories.find(c => c.id === tag.categoryId);
+        const subcategory = category.subcategories.find(s => s.id === tag.subcategoryId);
+        const taskInd = subcategory.tasks.findIndex(t => t.id === tag.taskId);
+
+        subcategory.tasks.splice(taskInd, 1);
+      }
+    }
+
+    for (let sub of updatedTask.subcategories) {
+      const category = unit.categories.find(c => c.id === sub.categoryId);
+      const subcategory = category.subcategories.find(s => sub.id === s.id);
+      const taskInd = subcategory.tasks.findIndex(t => t.id === updatedTask.id);
+
+      if (taskInd !== -1 && updateRelations) {
+        const prevState = subcategory.tasks[taskInd].isChecked;
+
+        subcategory.tasks[taskInd] = updatedTask;
+
+        if (updatedTask.isChecked !== prevState) {
+          let newPosition = subcategory.tasks.length - 1;
+
+          if (!updatedTask.isChecked) {
+            newPosition -= subcategory.tasks.filter(task => task.isChecked).length;
+          }
+          moveItemInArray(subcategory.tasks, taskInd, newPosition);
+        }
+      } else if (addRelations) {
+        subcategory.tasks.push(updatedTask);
+
+        moveItemInArray(
+          subcategory.tasks,
+          subcategory.tasks.length - 1,
+          subcategory.tasks.length - subcategory.tasks.filter(task => task.isChecked).length - 1
+        );
+      }
+    }
+    this.unit$.next(unit);
   }
 }

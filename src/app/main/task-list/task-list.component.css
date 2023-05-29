@@ -72,18 +72,23 @@
   line-height: 15px;
 
   position: relative;
+  min-width: 250px;
   max-width: 97%;
-
 
   color: #f2f2f2;
   font-size: 15px;
-  font-family: "Verdana"
+  font-family: "Verdana";
 
 }
 
 .taskTxt{
   width: 100%;
-  margin-right: 5px;
+
+
+  margin-right: 20px;
+  padding-right: 10px;
+
+
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -92,15 +97,17 @@
 .faded {
   position: relative;
   width: 40px;
-  padding-right: 30px;
-  margin-left: -40px;
+  margin-left: -60px;
   display: inline-block;
   line-height: 15px;
   background: linear-gradient(90deg, transparent, #424242);
+
+
 }
 
 .tasksWrap{
   position: relative;
+  padding-right: 30px;
   width: 60%;
   margin:2%;
   margin-top: 0;

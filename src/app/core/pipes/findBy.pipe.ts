@@ -6,7 +6,6 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class FindByPipe implements PipeTransform {
 
   transform(items: any[], property: string, value: any): any {
-    console.log(items, property, value)
     if (!items) {
       return [];
     }

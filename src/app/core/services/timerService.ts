@@ -1,30 +1,31 @@
-import {Timer} from "../models/timer.model";
+import { Injectable } from '@angular/core';
+import { HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Timer } from '../models/timer.model';
+import { TimerFormat } from '../../main/timer/timer.component';
 import {HttpService} from "./httpService";
-import {Injectable} from "@angular/core";
-import {HttpParams} from "@angular/common/http";
-import {TimerFormat} from "../../main/timer/timer.component";
 
 @Injectable()
-export class TimerService{
-  constructor(private http: HttpService) { }
+export class TimerService {
+  private apiUrl = 'api/Timer';
 
-  async getTimer(): Promise<Timer> {
-    const res = await this.http.get<Timer>('api/Timer').toPromise();
-    return (res as Timer);
+  constructor(private http: HttpService) {}
+
+  getTimer(): Observable<Timer> {
+    return this.http.get<Timer>(this.apiUrl);
   }
 
-  async postTimer(timer: Timer): Promise<boolean>{
-    const res = await this.http.post('api/Timer', timer).toPromise();
-    return (res as boolean);
+  setTimer(timer: Timer): Observable<Timer> {
+    return this.http.post<Timer>(this.apiUrl, timer);
   }
 
-  async updateTicked(tickedSeconds: number): Promise<boolean>{
-    const res = await this.http.post('update-ticked', null, new HttpParams().set('tickedSeconds', tickedSeconds)).toPromise();
-    return res as boolean;
+  updateTicked(tickedSeconds: number): Observable<boolean> {
+    const params = new HttpParams().set('tickedSeconds', tickedSeconds.toString());
+    return this.http.post<boolean>(`${this.apiUrl}/update-ticked`, null, params);
   }
 
-  async updateFormat(newFormat: TimerFormat): Promise<any> {
-    const res = await this.http.put('api/Timer/update-format', null, new HttpParams().set('newFormat', newFormat)).toPromise();
-    return res;
+  updateFormat(newFormat: TimerFormat): Observable<any> {
+    const params = new HttpParams().set('newFormat', newFormat.toString());
+    return this.http.put<any>(`${this.apiUrl}/update-format`, null, params);
   }
 }

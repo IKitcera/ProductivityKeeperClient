@@ -1,10 +1,11 @@
-import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
+import {Component, Inject, OnDestroy} from '@angular/core';
 import {TaskItem} from "../../../core/models/task.model";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {Category} from "../../../core/models/category.model";
 import {Subcategory} from "../../../core/models/subcategory.model";
 import {Unit} from "../../../core/models/unit.model";
 import {ToastrService} from "ngx-toastr";
+import {Tag} from "../../../core/models/tag.model";
 
 @Component({
   selector: 'app-edit-task-dialog',
@@ -25,6 +26,7 @@ export class EditTaskDialogComponent implements OnDestroy {
   constructor(@Inject(MAT_DIALOG_DATA) public data: {
                 task: TaskItem,
                 unit: Unit,
+                taskRelations: Tag[],
                 categoryId: number,
                 subcategoryId: number
               },
@@ -36,11 +38,12 @@ export class EditTaskDialogComponent implements OnDestroy {
     if (this.data.task.isRepeatable)
       this.previousRepeatCount = this.data.task.timesToRepeat;
 
-    this.connectedDuplicates = this.data.task.tags
+    this.connectedDuplicates = this.data.taskRelations
       .map(tag => ({cId: tag.categoryId, sId: tag.subcategoryId}));
   }
 
-  ngOnDestroy(): void { }
+  ngOnDestroy(): void {
+  }
 
   close(data: any) {
     if (!this.connectedDuplicates?.length) {
@@ -83,10 +86,9 @@ export class EditTaskDialogComponent implements OnDestroy {
 
 
   public getSubcategories(categoryId: number): Subcategory[] {
-    const subs = this.findCtg(categoryId)?.subcategories
+    return this.findCtg(categoryId)?.subcategories
       .filter(s => s.id !== this.data.subcategoryId
       );
-    return subs;
   }
 
   ctgSelectionChanged(item: any, newVal: any) {

@@ -61,6 +61,11 @@ export class TaskService {
     return this.http.put(url, subcategory);
   }
 
+  reorderSubcategories(ids: number[]): Observable<any> {
+    const url = `${this.subcategoryUrl}/reorder`;
+    return this.http.post(url, ids);
+  }
+
   addSubcategory(subcategory: Subcategory): Observable<Subcategory> {
     const url = `${this.subcategoryUrl}`;
     return this.http.post<Subcategory>(url, subcategory);
@@ -84,6 +89,11 @@ export class TaskService {
   updateTask(task: TaskItem): Observable<TaskItem> {
     const url = `${this.taskUrl}/${task.id}`;
     return this.http.put<TaskItem>(url, task);
+  }
+
+  changeTaskStatus(taskId: number): Observable<TaskItem> {
+    const url = `${this.taskUrl}/change-status`;
+    return this.http.post<TaskItem>(url, taskId);
   }
 
   addTask(task: TaskItem): Observable<TaskItem> {

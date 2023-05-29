@@ -1,5 +1,5 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {moveItemInArray} from "@angular/cdk/drag-drop";
 import {StorageService} from "../../core/services/storageService";
 import {Unit} from "../../core/models/unit.model";
 import {TaskService} from "../../core/services/taskService";
@@ -16,7 +16,7 @@ import {ColorPickerService} from "ngx-color-picker";
 import {TimerFormat} from "../timer/timer.component";
 import {TimerService} from "../../core/services/timerService";
 import {untilDestroyed} from "../../core/services/until-destroyed";
-import {BehaviorSubject, finalize, Observable, switchMap, tap} from "rxjs";
+import {tap} from "rxjs";
 
 @Component({
   selector: 'app-settings',
@@ -36,16 +36,17 @@ export class SettingsComponent implements OnInit, OnDestroy {
   public shouldEnableChangingPassword = false;
 
   get hasUnitAnyCategory(): boolean {
-    return  this.unit && this.unit.categories?.length > 0;
+    return this.unit && this.unit.categories?.length > 0;
   }
 
   constructor(private taskService: TaskService,
               private timerService: TimerService,
               private storageService: StorageService,
               private authService: AuthService,
-              private  toastr: ToastrService,
+              private toastr: ToastrService,
               private dialog: MatDialog,
-              private colorPicker: ColorPickerService) { }
+              private colorPicker: ColorPickerService) {
+  }
 
   ngOnInit(): void {
     this.unit = this.storageService.getUnit() as Unit;
@@ -93,7 +94,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     const res = await this.authService.checkIfPasswordMatches(this.oldPassword);
     this.shouldEnableChangingPassword = res;
     this.oldPassword = '';
-    if(!res) {
+    if (!res) {
       this.toastr.error('You\'ve entered a wrong password');
     }
   }
@@ -101,19 +102,19 @@ export class SettingsComponent implements OnInit, OnDestroy {
   changePassword() {
     this.authService.changePassword(this.newPassword).then(() => {
 
-    this.toastr.success('Password was successfully changed.');
-    this.newPassword = '';
-    this.shouldEnableChangingPassword = false;
+      this.toastr.success('Password was successfully changed.');
+      this.newPassword = '';
+      this.shouldEnableChangingPassword = false;
 
-    this.passwordConfirmation = '';
+      this.passwordConfirmation = '';
     }).catch(err => this.passwordConfirmation = '')
   }
 
   updateTimerFormat(value: any) {
-    this.timerFormat = value.value;
-    console.log(this.timerFormat);
-    this.timerService.updateFormat(this.timerFormat)
-      .then(() => this.unit.timer.format = this.timerFormat)
-      .catch(() => this.timerFormat = this.unit.timer.format);
+    // maybe revert
+    this.timerService.updateFormat(value).pipe(
+      tap(_ => this.timerFormat = value.value),
+      untilDestroyed(this)
+    ).subscribe();
   }
 }

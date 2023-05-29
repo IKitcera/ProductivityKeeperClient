@@ -1,26 +1,27 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Time} from "@angular/common";
-import { timer } from 'rxjs';
+import {Component, OnDestroy} from '@angular/core';
+import {BehaviorSubject, of, switchMap, tap} from 'rxjs';
 import {Timer} from "../../core/models/timer.model";
-import {MatDialog} from "@angular/material/dialog";
 import {EditTimerDialogComponent} from "./edit-timer-dialog/edit-timer-dialog.component";
 import {TimerService} from "../../core/services/timerService";
 import {ToastrService} from "ngx-toastr";
-import {
-  SimpleConfirmationDialogComponent
-} from "../../common-components/simple-confirmation-dialog/simple-confirmation-dialog.component";
 import {Constants} from "../../core/models/constants";
+import {untilDestroyed} from "../../core/services/until-destroyed";
+import {DialogService} from "../../core/services/dialog.service";
+import {filter} from "rxjs/operators";
 
 @Component({
   selector: 'app-timer',
   templateUrl: './timer.component.html',
   styleUrls: ['./timer.component.css']
 })
-export class TimerComponent implements OnInit {
+export class TimerComponent implements OnDestroy {
 
-  @Input() timer: Timer;
-  @Output() refreshedTimer: EventEmitter<Timer>;
+//  @Input() timer: Timer;
+  // @Output() refreshedTimer: EventEmitter<Timer>;
 
+  public timerSource$ = this.timerService.getTimer()
+  public timer$ = new BehaviorSubject<Timer>(null);
+  public isLoading$ = new BehaviorSubject<boolean>(true);
   currentValue: TimeSpan = new TimeSpan();
   goalValue: TimeSpan = new TimeSpan();
   isTicking = false;
@@ -28,116 +29,133 @@ export class TimerComponent implements OnInit {
 
   format: TimerFormat = TimerFormat.FullDateTime;
   timerId: number;
-  isLoading = true;
 
   private autosaveId: number;
 
-  constructor(private dialog: MatDialog,
+  constructor(private dialog: DialogService,
               private timerService: TimerService,
-              private toastr: ToastrService) { }
+              private toastr: ToastrService) {
 
-  ngOnInit(): void {
-    this.isLoading = true;
-    this.refresh();
+    this.timerSource$.pipe(
+      tap(timer => this.timer$.next(timer)),
+      untilDestroyed(this)
+    ).subscribe();
+
+
+    this.timer$.pipe(
+      tap(timer => {
+        this.noTimer = !timer || timer.goal === 0 && timer.ticked === 0 &&
+          (!timer.label || timer.label === '');
+
+        if (!this.noTimer) {
+          this.currentValue = new TimeSpan();
+          this.currentValue.getFromSeconds(timer.ticked);
+
+          this.goalValue = new TimeSpan();
+          this.goalValue.getFromSeconds(timer.goal);
+
+          this.currentValue.timeFormat = timer.format;
+          this.goalValue.timeFormat = timer.format;
+        }
+        this.isLoading$.next(false)
+      }),
+      untilDestroyed(this)
+    ).subscribe();
   }
 
-  refresh(): void {
-    this.noTimer = !this.timer || this.timer.goal === 0 && this.timer.ticked === 0 &&
-      (!this.timer.label || this.timer.label === '');
+  ngOnDestroy() {
+  }
 
-    if(!this.noTimer){
-      this.currentValue = new TimeSpan();
-      this.currentValue.getFromSeconds(this.timer.ticked);
+  public start(): void {
+    this.timerId = setInterval(() =>
+      this.addSecond(), 1000); // Will alert every second.
+    this.isTicking = true;
+    this.autosaveId = setInterval(() => {
+      this.timerService.updateTicked(this.currentValue.getInSeconds()).pipe(
+        untilDestroyed(this)
+      ).subscribe();
+    }, 60000);// autosave
+  }
 
-      this.goalValue = new TimeSpan();
-      this.goalValue.getFromSeconds(this.timer.goal);
+  public pause(): void {
+    clearInterval(this.timerId);
+    clearInterval(this.autosaveId);
+    this.isTicking = false;
+    this.timerService.updateTicked(this.currentValue.getInSeconds()).pipe(
+      untilDestroyed(this)
+    ).subscribe();
+  }
 
-      this.currentValue.timeFormat = this.timer.format;
-      this.goalValue.timeFormat = this.timer.format;
+  public stop(): void {
+    clearInterval(this.timerId);
+    clearInterval(this.autosaveId);
+    this.currentValue.reset();
+    this.isTicking = false;
+    this.timerService.updateTicked(this.currentValue.getInSeconds()).pipe(
+      untilDestroyed(this)
+    ).subscribe();
+  }
+
+  public editTimer(): void {
+    this.dialog.openDialog(EditTimerDialogComponent, {
+      data: this.timer$.value
+    }).pipe(
+      tap(modifiedTimer =>
+        modifiedTimer.ticked = this.currentValue.getInSeconds()),
+      switchMap(timer => this.timerService.setTimer(timer)),
+      tap(updateTimer => this.timer$.next(updateTimer)),
+      untilDestroyed(this)
+    ).subscribe();
+  }
+
+  public deleteTimer(): void {
+    if (this.noTimer) {
+      return;
+    }
+
+    const confirmationIfTimerFulfilled$ = this.currentValue.getInSeconds() > 0 ?
+      this.dialog.openSimpleConfirmationDialog(Constants.sureAboutDelete + Constants.progressWillBeLost) :
+      of(true);
+
+
+    confirmationIfTimerFulfilled$.pipe(
+      filter(x => !!x),
+      switchMap(_ => this.timerService.setTimer(new Timer())),
+      tap(updateTimer => this.timer$.next(updateTimer)),
+      untilDestroyed(this)
+    ).subscribe();
+  }
+
+  public getFormatString(): string {
+    switch (this.timer$.value.format) {
+      case TimerFormat.FullDateTime:
+        return 'Y-MM-DD  hh:mm:ss';
+      case TimerFormat.FullTime:
+        return 'hh:mm:ss';
+      case TimerFormat.FullDayTime:
+        return 'DD  hh:mm:ss';
+      case TimerFormat.Days:
+        return 'Days';
+      case TimerFormat.Hours:
+        return 'Hours';
+      case TimerFormat.Minutes:
+        return 'Minutes';
+      case TimerFormat.Seconds:
+        return 'Seconds';
+      default:
+        return '';
     }
   }
 
-  addSecond() {
+  private addSecond(): void {
     this.currentValue.addSecond();
     if (this.currentValue.getInSeconds() === this.goalValue.getInSeconds()) {
       this.toastr.success('Your timer goal is completed', 'Congratulation! 🎉🎉🎉');
     }
   }
-
-  start(){
-    this.timerId = setInterval(()=> this.addSecond() , 1000); // Will alert every second.
-    this.autosaveId = setInterval(() => {
-      this.timerService.updateTicked(this.currentValue.getInSeconds());
-    }, 60000);// autosave
-
-    this.isTicking = true;
-  }
-
-  pause(){
-    clearInterval(this.timerId);
-    clearInterval(this.autosaveId);
-    this.isTicking = false;
-    this.timerService.updateTicked(this.currentValue.getInSeconds());
-  }
-
-  stop(){
-    clearInterval(this.timerId);
-    clearInterval(this.autosaveId);
-    this.currentValue.reset();
-    this.isTicking = false;
-    this.timerService.updateTicked(this.currentValue.getInSeconds());
-  }
-
-  async editTimer(){
-    const matDialogRef = this.dialog.open(EditTimerDialogComponent, {
-      data: this.timer
-    });
-    const modifiedTimer = await matDialogRef.afterClosed().toPromise();
-   modifiedTimer.ticked = this.currentValue.getInSeconds();
-   await this.updateTimer(modifiedTimer);
-  }
-
-    async deleteTimer() {
-      if (!this.noTimer) {
-        if (this.currentValue.getInSeconds() > 0 ) {
-          const confirmationDialog = this.dialog.open(SimpleConfirmationDialogComponent, {data: {label: Constants.sureAboutDelete + Constants.progressWillBeLost}});
-          if (! await confirmationDialog.afterClosed().toPromise()) {
-            return;
-          }
-        }
-        await this.updateTimer(new Timer());
-      }
-    }
-
-    private async updateTimer(modifiedTimer: Timer) {
-      await this.timerService.postTimer(modifiedTimer);
-      this.timer = await this.timerService.getTimer();
-      this.refresh();
-    }
-
-    getFormatString(): string {
-      switch(this.timer.format) {
-        case TimerFormat.FullDateTime:
-          return 'Y-MM-DD  hh:mm:ss';
-        case TimerFormat.FullTime:
-          return 'hh:mm:ss';
-        case TimerFormat.FullDayTime:
-          return 'DD  hh:mm:ss';
-        case TimerFormat.Days:
-          return 'Days';
-        case TimerFormat.Hours:
-          return 'Hours';
-        case TimerFormat.Minutes:
-          return 'Minutes';
-        case TimerFormat.Seconds:
-          return 'Seconds';
-        default:
-          return '';
-      }
-    }
 }
 
-export class TimeSpan{
+export class TimeSpan {
   timeFormat: TimerFormat;
 
   years: number = 0;
@@ -157,13 +175,13 @@ export class TimeSpan{
     this.seconds = seconds;
   }
 
-  getFromMiliseconds(ms: number){
+  getFromMiliseconds(ms: number) {
     this.miliseconds = ms % 1000;
-    this.seconds = Math.trunc( ms /1000);
+    this.seconds = Math.trunc(ms / 1000);
     this.getFromSeconds(this.seconds);
   }
 
-  getFromSeconds(s: number){
+  getFromSeconds(s: number) {
     this.seconds = s;
     this.minutes = Math.trunc(this.seconds / 60);
     this.seconds = this.seconds % 60;
@@ -178,120 +196,120 @@ export class TimeSpan{
     this.month = this.month % 12;
   }
 
-  addSecond(){
+  addSecond() {
     this.seconds += 1;
-    if(this.seconds === 60) {
+    if (this.seconds === 60) {
       this.seconds = 0;
       this.addMinute();
     }
   }
 
-  addMinute(){
+  addMinute() {
     this.minutes += 1;
-    if(this.minutes === 60){
+    if (this.minutes === 60) {
       this.minutes = 0;
       this.addHour();
     }
   }
 
-  addHour(){
+  addHour() {
     this.hours += 1;
-    if(this.hours === 24){
+    if (this.hours === 24) {
       this.hours = 0;
       this.addDay();
     }
   }
 
-  addDay(){
+  addDay() {
     this.days += 1;
-    if (this.days >= 30){
+    if (this.days >= 30) {
       this.days = 0;
       this.addMonth();
     }
   }
 
-  addMonth(){
+  addMonth() {
     this.month += 1;
-    if (this.month === 12){
+    if (this.month === 12) {
       this.month = 0;
       this.addYear();
     }
   }
 
-  addYear(){
+  addYear() {
     this.years += 1;
   }
 
-  getInDays(){
+  getInDays() {
     return this.days +
-      this.month*30 +
-      this.years*12*30;
+      this.month * 30 +
+      this.years * 12 * 30;
   }
 
-  getInHours(){
+  getInHours() {
     return this.hours +
-      this.days*24 +
-      this.month*30*24 +
-      this.years*12*30*24;
+      this.days * 24 +
+      this.month * 30 * 24 +
+      this.years * 12 * 30 * 24;
   }
 
-  getInMinutes(){
+  getInMinutes() {
     return this.minutes +
-      this.hours*60 +
-      this.days*24*60 +
-      this.month*30*24*60 +
-      this.years*12*30*24*60;
+      this.hours * 60 +
+      this.days * 24 * 60 +
+      this.month * 30 * 24 * 60 +
+      this.years * 12 * 30 * 24 * 60;
   }
 
-  getInSeconds(){
+  getInSeconds() {
     return this.seconds +
-      this.minutes*60 +
-      this.hours*3600 +
-      this.days*24*3600 +
-      this.month*30*24*3600+
-      this.years*12*30*24*3600;
+      this.minutes * 60 +
+      this.hours * 3600 +
+      this.days * 24 * 3600 +
+      this.month * 30 * 24 * 3600 +
+      this.years * 12 * 30 * 24 * 3600;
   }
 
-  getInMiliseconds(){
+  getInMiliseconds() {
     return this.getInSeconds() * 1000;
   }
 
-  private numToStr(n:number, nextChar='', digitsCount: number | 'unlimited' = "unlimited"):string {
+  private numToStr(n: number, nextChar = '', digitsCount: number | 'unlimited' = "unlimited"): string {
     return (digitsCount !== 'unlimited' ? ('0' + n).slice(-1 * digitsCount) : n) + nextChar;
   }
 
-  public toString = () : string => {
-    switch(this.timeFormat){
-     case TimerFormat.FullDateTime:
-       return this.numToStr(this.years, '-') +
-         this.numToStr(this.month,'-',2) +
-         this.numToStr(this.days, ' ',2) +
-         this.numToStr(this.hours, ':',2) +
-         this.numToStr(this.minutes, ':',2) +
-         this.numToStr(this.seconds, ' ', 2);
-     case TimerFormat.FullTime:
-       return this.numToStr(this.hours, ' : ',2) +
-         this.numToStr(this.minutes, ' : ',2) +
-         this.numToStr(this.seconds,'  ',2);
-     case TimerFormat.FullDayTime:
-       return this.numToStr(this.days, '  ') +
-         this.numToStr(this.hours, ' : ', 2) +
-         this.numToStr(this.minutes, ' : ', 2) +
-         this.numToStr(this.seconds, '  ',2);
-     case TimerFormat.Days:
-       return this.numToStr(this.getInDays());
-     case TimerFormat.Hours:
-      return this.numToStr(this.getInHours());
-     case TimerFormat.Minutes:
-       return this.numToStr(this.getInMinutes())
-     case TimerFormat.Seconds:
-       return this.numToStr(this.getInSeconds());
-     default:
-       return '';
-   }
+  public toString = (): string => {
+    switch (this.timeFormat) {
+      case TimerFormat.FullDateTime:
+        return this.numToStr(this.years, '-') +
+          this.numToStr(this.month, '-', 2) +
+          this.numToStr(this.days, ' ', 2) +
+          this.numToStr(this.hours, ':', 2) +
+          this.numToStr(this.minutes, ':', 2) +
+          this.numToStr(this.seconds, ' ', 2);
+      case TimerFormat.FullTime:
+        return this.numToStr(this.hours, ' : ', 2) +
+          this.numToStr(this.minutes, ' : ', 2) +
+          this.numToStr(this.seconds, '  ', 2);
+      case TimerFormat.FullDayTime:
+        return this.numToStr(this.days, '  ') +
+          this.numToStr(this.hours, ' : ', 2) +
+          this.numToStr(this.minutes, ' : ', 2) +
+          this.numToStr(this.seconds, '  ', 2);
+      case TimerFormat.Days:
+        return this.numToStr(this.getInDays());
+      case TimerFormat.Hours:
+        return this.numToStr(this.getInHours());
+      case TimerFormat.Minutes:
+        return this.numToStr(this.getInMinutes())
+      case TimerFormat.Seconds:
+        return this.numToStr(this.getInSeconds());
+      default:
+        return '';
+    }
   }
 
-  reset(){
+  reset() {
     this.years = 0;
     this.days = 0;
     this.month = 0;
@@ -313,8 +331,8 @@ export class TimeSpan{
   }
 }
 
-export enum TimerFormat{
-   FullDateTime,
+export enum TimerFormat {
+  FullDateTime,
   FullTime,
   FullDayTime,
   Days,

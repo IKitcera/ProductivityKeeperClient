@@ -1,9 +1,14 @@
+<!--      SPINNER-->
+<div class="spinner-wrap task-spinner stat-spinner" *ngIf="isLoading$ | async" fxLayoutAlign="center center">
+  <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+</div>
+
 <div *ngIf="!noTimer" class="container">
   <div class="timerContent">
     <div fxLayout="row wrap" class="label" fxLayoutAlign="start center">
       <h2>
         <mat-icon>flag</mat-icon>
-        {{timer.label}}
+        {{(timer$ | async).label}}
       </h2>
     </div>
     <h4 class="medGray"><pre>{{getFormatString()}}</pre></h4>
@@ -30,7 +35,7 @@
   </div>
 </div>
 
-<div fxLayout="row" fxLayoutAlign="center center" *ngIf="!isLoading && noTimer">
+<div fxLayout="row" fxLayoutAlign="center center" *ngIf="!(isLoading$ | async) && noTimer">
   <button color="primary" mat-stroked-button (click)="editTimer()">
     Add specific timer
   </button>

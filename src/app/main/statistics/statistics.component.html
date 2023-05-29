@@ -3,41 +3,41 @@
   <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
 </div>
 <!--     CONTENT-->
-<div *ngIf="statistic && !isLoading" class="container">
+<div *ngIf="(statistic$ | async) && !isLoading" class="container">
   <div fxLayoutAlign="center center">
     <h2>Statistics</h2>
   </div>
   <div fxLayout="row" fxLayoutAlign="space-evenly" fxLayoutGap="20px">
     <div fxLayout="row" fxLayoutAlign="center center">
       <p>Count of done today:{{'\t'}}</p>
-      <p class="pl-10">{{statistic.countOfDoneToday}}</p>
+      <p class="pl-10">{{(statistic$ | async).countOfDoneToday}}</p>
     </div>
     <div fxLayout="row" fxLayoutAlign="center center">
       <p>Count of done total:{{'\t'}}</p>
-      <p class="pl-10">{{statistic.countOfDoneTotal}}</p>
+      <p class="pl-10">{{(statistic$ | async).countOfDoneTotal}}</p>
     </div>
   </div>
 
   <div fxLayout="row" fxLayoutAlign="space-evenly" fxLayoutGap="20px">
     <div fxLayout="row" fxLayoutAlign="center center">
       <p>Percent of done today: </p>
-      <p class="pl-10">{{statistic.percentOfDoneToday | percent}} </p>
+      <p class="pl-10">{{(statistic$ | async).percentOfDoneToday | percent}} </p>
     </div>
     <div fxLayout="row" fxLayoutAlign="center center">
       <p>Percent of done total: </p>
-      <p class="pl-10">{{statistic.percentOfDoneTotal| percent}} </p>
+      <p class="pl-10">{{(statistic$ | async).percentOfDoneTotal| percent}} </p>
     </div>
   </div>
 
   <div fxLayout="row" fxLayoutAlign="space-evenly" >
     <div fxLayout="row" fxLayoutAlign="center center">
       <p>Expired total: </p>
-      <p class="pl-10">{{statistic.countOfExpiredTotal}}</p>
+      <p class="pl-10">{{(statistic$ | async).countOfExpiredTotal}}</p>
     </div>
   </div>
   <div>
     <div fxLayout="row" fxLayoutAlign="end center" >
-      <button mat-icon-button [disabled]="selectedChart === SelectedChart.Gauge" (click)="selectedChart = SelectedChart.Gauge; refresh()">
+      <button mat-icon-button [disabled]="selectedChart === SelectedChart.Gauge" (click)="selectedChart = SelectedChart.Gauge; statisticSource$.subscribe()">
         <mat-icon>incomplete_circle</mat-icon>
       </button>
       <button mat-icon-button [disabled]="selectedChart === SelectedChart.Line" (click)="selectedChart = SelectedChart.Line;">

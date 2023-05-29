@@ -1,30 +1,38 @@
-import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Input, OnDestroy, ViewChild} from '@angular/core';
 import {StatisticService} from "../../core/services/statisticService";
 import {UserStatistic} from "../../core/models/user-statistic.model";
-import {GaugeComponent, LegendPosition, LineChartComponent, PieChartComponent, ScaleType} from "@swimlane/ngx-charts"
-import {finalize} from "rxjs";
+import {GaugeComponent, LegendPosition, LineChartComponent, PieChartComponent} from "@swimlane/ngx-charts"
+import {BehaviorSubject, tap} from "rxjs";
 import {Category} from "../../core/models/category.model";
-import {TaskItem} from "../../core/models/task.model";
 import {DonePerDay} from "../../core/models/done-per-day.model";
+import {filter} from "rxjs/operators";
 
 @Component({
   selector: 'app-statistics',
   templateUrl: './statistics.component.html',
   styleUrls: ['./statistics.component.css']
 })
-export class StatisticsComponent implements OnInit {
+export class StatisticsComponent implements OnDestroy, AfterViewInit {
 
   @ViewChild('gChart', {read: ElementRef, static: true}) gChart: GaugeComponent;
   @ViewChild('lChart') lChart: LineChartComponent;
   @ViewChild('pChart') pChart: PieChartComponent;
 
-  @Input() statistic : UserStatistic;
-  @Input() activeCtg : Category | undefined;
+ // @Input() statistic: UserStatistic;
 
+  @Input() set activeCtg(category: Category) {
+    this.activeCategory = category;
+    this.populateDonutChart();
+  }
+
+  private activeCategory: Category;
+  public statisticSource$ = this.analytic.getStatistics();
+  public statistic$ = new BehaviorSubject<UserStatistic>(null);
+
+  // TODO: Replace with behaviour subj
   isLoading = false;
   lineChartScale = 1;
-  //statistic: UserStatistic = new UserStatistic();
-  single = [{'name':'', 'value':0}];
+  single = [{'name': '', 'value': 0}];
   multi = [
     {
       'name': '',
@@ -59,95 +67,75 @@ export class StatisticsComponent implements OnInit {
   selectedChart = SelectedChart.Gauge;
 
   constructor(private analytic: StatisticService) {
+    this.statisticSource$.pipe(
+      tap(stat => this.statistic$.next(stat))
+    ).subscribe();
   }
 
-  ngOnInit(): void {
-     this.refresh(false).then(() => {
-      this.gChart?.scaleText(true);
-    }, finalize(()=> {
-    }));
-  }
 
-  async refresh(forceReload = true): Promise<void>{
-    if (forceReload || !this.statistic) {
-      //this.isLoading = true;
-      const x = await this.analytic.getStatistics().finally(()=> {/*this.isLoading = false*/});
-      this.statistic = x;
-    }
-      this.single = [
-        {
-          "name": "Today",
-          "value": this.statistic.percentOfDoneToday*100
-        },
-        {
-          "name": "Total",
-          "value": this.statistic.percentOfDoneTotal*100
+  ngAfterViewInit() {
+    this.statistic$.pipe(
+      filter(x => !!x),
+      tap(statistic => {
+        this.single = [
+          {
+            "name": "Today",
+            "value": statistic.percentOfDoneToday * 100
+          },
+          {
+            "name": "Total",
+            "value": statistic.percentOfDoneTotal * 100
+          }
+        ];
+
+        if (this.gChart) {
+          this.gChart.textValue = Math.round(statistic.percentOfDoneToday * 100) + ' % / \n' +
+            Math.round(statistic.percentOfDoneTotal * 100) + ' %';
+          this.gChart.scaleText(true);
+
         }
-      ];
 
-    if (this.gChart) {
-      this.gChart.textValue = Math.round(this.statistic.percentOfDoneToday * 100) + ' % / \n' +
-        Math.round(this.statistic.percentOfDoneTotal * 100) + ' %';
-      this.gChart.scaleText(true);
+        this.scaleLinearGraphicsData(this.lineChartScale);
+      })
+    ).subscribe();
+  }
 
-    }
 
-    this.scaleLinearGraphicsData(this.lineChartScale);
+  ngOnDestroy() {
 
-   // this.isLoading = false;
   }
 
   getGaugeText(): string {
-    return this.statistic ? Math.round(this.statistic.percentOfDoneToday * 100) + ' % / \n' +
-      Math.round(this.statistic.percentOfDoneTotal * 100) + ' %' :
+    return this.statistic$.value ? Math.round(this.statistic$.value.percentOfDoneToday * 100) + ' % / \n' +
+      Math.round(this.statistic$.value.percentOfDoneTotal * 100) + ' %' :
       '-0%-/-0%-';
   }
 
-  onSelect(data: any): void {
+  public populateDonutChart(): void {
+    if (!this.activeCategory) return;
 
+    if (this.pChart)
+      this.pChart.margins = [0, 0, 0, 0];
+    const tasks = (this.activeCategory.subcategories || []).map(s => s.tasks || []).flat();
+
+    this.donutChartData = [
+      {
+        "name": 'Done',
+        value: tasks.filter(t => t.isChecked).length || 0
+      },
+      {
+        "name": 'Not done',
+        value: tasks.filter(t => !t.isChecked).length || 0
+      },
+      {
+        "name": 'Expired',
+        value: tasks.filter(t => (t.deadline && t.doneDate && new Date(t.doneDate) >= new Date(t.deadline))
+          || (!t.doneDate && t.deadline && new Date(t.deadline) < new Date() && !t.isChecked)).length || 0
+      },
+    ];
   }
 
-  onActivate(data: any): void {
-    this.refresh(false);
-  }
-
-  onDeactivate(data: any): void {
-    this.gChart.textValue = ' -0%-/-0%- ';
-  }
-
-  public populateDonutChart() : void {
-    // if(!this.activeCtg) return;
-    //
-    // if(this.pChart)
-    //   this.pChart.margins = [0,0,0,0];
-    // const tasks : TaskItem [] = [];
-    //
-    // this.activeCtg?.subcategories.map(s => s.tasks.map(t => {
-    //   if (t && (!t.relationId || !tasks.filter(ta => ta.id !== t.id)
-    //     .map(ta => ta.relationId).includes(t.relationId)))
-    //   tasks.push(t);
-    // }));
-    // console.log(tasks[0]);
-    // console.log(tasks.filter(t => (t.deadline && t.doneDate && new Date(t.doneDate) >= new Date(t.deadline))
-    //   || (!t.doneDate && t.deadline && new Date(t.deadline) < new Date() && !t.isChecked)).length || 0)
-    // this.donutChartData = [
-    //   {
-    //     "name": 'Done',
-    //     value: tasks.filter(t => t.isChecked).length || 0
-    //   },
-    //   {
-    //     "name": 'Not done',
-    //     value: tasks.filter(t => !t.isChecked).length || 0
-    //   },
-    //   {
-    //     "name": 'Expired',
-    //     value: tasks.filter(t => (t.deadline && t.doneDate && new Date(t.doneDate) >= new Date(t.deadline))
-    //       || (!t.doneDate && t.deadline && new Date(t.deadline) < new Date() && !t.isChecked)).length || 0
-    //   },
-    // ];
-  }
-
-  getCustomColors () {
+  getCustomColors() {
     return [
       {"name": "Done", "value": "#32a88b"},
       {"name": "Not done", "value": "#93a39f"},
@@ -158,7 +146,7 @@ export class StatisticsComponent implements OnInit {
   scaleLinearGraphicsData(scaleWeek: number): void {
     this.lineChartScale = scaleWeek;
 
-    const initData = this.statistic.perDayStatistic;
+    const initData = this.statistic$.value.perDayStatistic;
     const thresholdDate = new Date();
     thresholdDate.setDate(new Date().getDate() - 7 * scaleWeek - 1);
 
@@ -169,10 +157,10 @@ export class StatisticsComponent implements OnInit {
       resultChartData = [];
 
       let min = new Date(filteredByDate[0].date);
-      let max = new Date(filteredByDate[filteredByDate.length-1].date);
+      let max = new Date(filteredByDate[filteredByDate.length - 1].date);
 
-      const differenceInDays = (max.getTime() - min.getTime())/(1000*3600*24);
-      let step = Math.round((differenceInDays < 7*scaleWeek ? differenceInDays : (7*scaleWeek - differenceInDays))/10);
+      const differenceInDays = (max.getTime() - min.getTime()) / (1000 * 3600 * 24);
+      let step = Math.round((differenceInDays < 7 * scaleWeek ? differenceInDays : (7 * scaleWeek - differenceInDays)) / 10);
 
       let lastDonePerDay = new DonePerDay();
       lastDonePerDay.date = new Date(filteredByDate[0].date);
@@ -180,7 +168,7 @@ export class StatisticsComponent implements OnInit {
 
       let minDate = new Date(min);
 
-      for(let i = 0; i < 10; i ++) {
+      for (let i = 0; i < 10; i++) {
         const upRangeDate = new Date(minDate);
         upRangeDate.setDate(upRangeDate.getDate() + step);
 
@@ -191,7 +179,7 @@ export class StatisticsComponent implements OnInit {
         resultItem.date = upRangeDate;
         resultItem.countOfDone = filteredByDateRange
           .map(ite => ite.countOfDone)
-          .reduce((x,y) => {
+          .reduce((x, y) => {
             const value = x + y;
             return value && !isNaN(value) ? value : 0;
           }, 0);
@@ -216,10 +204,10 @@ export class StatisticsComponent implements OnInit {
           const tomorrowDate = new Date(pd.date);
           tomorrowDate.setDate(date.getDate() + 1);
           const sliceVal = scaleWeek > 4 ||
-          tomorrowDate.toLocaleDateString().slice(0,2) === '01' ||
-          date.toLocaleDateString().slice(0,2) === '01' ? 5 : 2;
+          tomorrowDate.toLocaleDateString().slice(0, 2) === '01' ||
+          date.toLocaleDateString().slice(0, 2) === '01' ? 5 : 2;
           return {
-            "name": date.toLocaleDateString().slice(0,sliceVal),
+            "name": date.toLocaleDateString().slice(0, sliceVal),
             "value": pd.countOfDone
           }
         })
@@ -227,7 +215,6 @@ export class StatisticsComponent implements OnInit {
     ];
   }
 }
-
 
 
 export enum SelectedChart {
