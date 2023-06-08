@@ -12,8 +12,13 @@ export class AuthService{
   private userNameKey = '_userName';
   private refreshTime = '_refreshTime';
 
+  public get token(): string {
+    return localStorage.getItem(this.tokenKey)
+  }
+
   constructor(private http: HttpService, private router: Router, private toastr: ToastrService) {
   }
+
   isAuthorized(): boolean {
     const token = localStorage.getItem(this.tokenKey);
     return  (token && token !== '') as boolean;

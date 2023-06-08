@@ -3,7 +3,7 @@ import {Subcategory} from "./subcategory.model";
 export class Category {
   id: number;
   name: string;
-  color: string;
+  colorHex: string;
   unitId: number
   subcategories: Subcategory[] = [];
   isVisible: boolean;
@@ -14,7 +14,7 @@ export class Category {
     }
     this.id = obj.id;
     this.name = obj.name;
-    this.color = obj.color;
+    this.colorHex = obj.color;
     this.unitId = obj.unitId;
     this.subcategories = obj.subcategories?.map(s => new Subcategory(s)) ?? [];
     this.isVisible = obj.isVisible;

@@ -21,8 +21,8 @@ export class TaskService {
     return this.http.get<Unit>(url);
   }
 
-  getJustCategories(unitId: number): Observable<Category[]> {
-    const url = `${this.categoryUrl}/Categories?unitId=${unitId}`;
+  getJustCategories(): Observable<Category[]> {
+    const url = `${this.categoryUrl}/Categories`;
     return this.http.get<Category[]>(url);
   }
 
@@ -39,6 +39,11 @@ export class TaskService {
   postCategory(category: Category): Observable<Category> {
     const url = `${this.categoryUrl}`;
     return this.http.post<Category>(url, category);
+  }
+
+  reorderCategories(categories: Category[]): Observable<any> {
+    const url = `${this.categoryUrl}/reorder`;
+    return this.http.post(url, categories);
   }
 
   deleteCategory(categoryId: number): Observable<void> {

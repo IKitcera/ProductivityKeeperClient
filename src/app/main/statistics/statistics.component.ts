@@ -6,11 +6,15 @@ import {BehaviorSubject, tap} from "rxjs";
 import {Category} from "../../core/models/category.model";
 import {DonePerDay} from "../../core/models/done-per-day.model";
 import {filter} from "rxjs/operators";
+import {ChartHubService} from "../../core/services/hubs/chart-hub.service";
+import {untilDestroyed} from "../../core/services/until-destroyed";
+import {SignalRService} from "../../core/services/hubs/signalr.service";
 
 @Component({
   selector: 'app-statistics',
   templateUrl: './statistics.component.html',
-  styleUrls: ['./statistics.component.css']
+  styleUrls: ['./statistics.component.css'],
+  providers: [ChartHubService]
 })
 export class StatisticsComponent implements OnDestroy, AfterViewInit {
 
@@ -66,10 +70,22 @@ export class StatisticsComponent implements OnDestroy, AfterViewInit {
   SelectedChart = SelectedChart;
   selectedChart = SelectedChart.Gauge;
 
-  constructor(private analytic: StatisticService) {
+  constructor(
+    private analytic: StatisticService,
+    private chartHub: ChartHubService
+  ) {
     this.statisticSource$.pipe(
-      tap(stat => this.statistic$.next(stat))
+      tap(stat => this.statistic$.next(stat)),
+      untilDestroyed(this)
     ).subscribe();
+
+    this.chartHub.statistic$.pipe(
+      tap(stat => this.statistic$.next(stat)),
+      untilDestroyed(this)
+    ).subscribe();
+
+
+    this.chartHub.start();
   }
 
 
@@ -102,7 +118,7 @@ export class StatisticsComponent implements OnDestroy, AfterViewInit {
 
 
   ngOnDestroy() {
-
+    this.chartHub.stop();
   }
 
   getGaugeText(): string {
@@ -188,15 +204,14 @@ export class StatisticsComponent implements OnDestroy, AfterViewInit {
         }
         resultChartData.push(resultItem);
         minDate = upRangeDate;
-
       }
     }
-
     this.setLinearChart(resultChartData, scaleWeek);
   }
 
   private setLinearChart(data: DonePerDay[], scaleWeek: number) {
-    this.multi = [
+    const formatDate = (date: Date) => date.toLocaleDateString('uk');
+      this.multi = [
       {
         'name': 'Tasks/Day',
         'series': data.map(pd => {
@@ -204,10 +219,10 @@ export class StatisticsComponent implements OnDestroy, AfterViewInit {
           const tomorrowDate = new Date(pd.date);
           tomorrowDate.setDate(date.getDate() + 1);
           const sliceVal = scaleWeek > 4 ||
-          tomorrowDate.toLocaleDateString().slice(0, 2) === '01' ||
-          date.toLocaleDateString().slice(0, 2) === '01' ? 5 : 2;
+          formatDate(tomorrowDate).slice(0, 2) === '01' ||
+          formatDate(date).slice(0, 2) === '01' ? 5 : 2;
           return {
-            "name": date.toLocaleDateString().slice(0, sliceVal),
+            "name": formatDate(date).slice(0, sliceVal),
             "value": pd.countOfDone
           }
         })

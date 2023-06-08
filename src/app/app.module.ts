@@ -55,6 +55,7 @@ import {MatRadioModule} from "@angular/material/radio";
 import {FilterByPipe} from "./core/pipes/filterBy.pipe";
 import {DialogService} from "./core/services/dialog.service";
 import {FindByPipe} from "./core/pipes/findBy.pipe";
+import {SignalRService} from "./core/services/hubs/signalr.service";
 const routes: Routes = [
   { path: '', component: TaskListComponent, canActivate: [AuthGuard] },
   { path: 'tasks', redirectTo: '' },

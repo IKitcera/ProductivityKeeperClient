@@ -36,7 +36,7 @@
     </div>
   <div class="block-container">
     <h2>Tasks related</h2>
-    <div class="block" fxLayout="row" *ngIf="hasUnitAnyCategory">
+    <div class="block" fxLayout="row" *ngIf="!!categories?.length">
       <h4 class="option">Change categories order and visibility</h4>
       <div class="op-value">
       <mat-accordion cdkDropList (cdkDropListDropped)="drop($event)" multi>
@@ -45,8 +45,8 @@
               <mat-icon class="grey" cdkDragHandle>drag_indicator</mat-icon>
               <mat-checkbox [(ngModel)]="ctg.isVisible" mat-card-content> {{ctg.name}} </mat-checkbox>
             </div>
-            <div class="ctg-color-circle" [(colorPicker)]="ctg.color"
-                 [style.background]="ctg.color">
+            <div class="ctg-color-circle" [(colorPicker)]="ctg.colorHex"
+                 [style.background]="ctg.colorHex">
             </div>
           </div>
       </mat-accordion>
@@ -65,10 +65,10 @@
 
   <div class="block-container">
     <h2>Timer related</h2>
-    <div class="block" fxLayout="row" *ngIf="hasUnitAnyCategory">
+    <div class="block" fxLayout="row">
       <h4 class="option">Change display format</h4>
       <div class="op-value">
-        <mat-radio-group [(ngModel)]="timerFormat" (change)="updateTimerFormat($event)" fxLayout="column" fxLayoutGap="5px">
+        <mat-radio-group [(ngModel)]="timerFormat" (change)="updateTimerFormat($event.value)" fxLayout="column" fxLayoutGap="5px">
           <mat-radio-button [value]="timerFormatEnum.FullDateTime">Full Date Time</mat-radio-button>
           <mat-radio-button [value]="timerFormatEnum.FullTime">Full Time</mat-radio-button>
           <mat-radio-button [value]="timerFormatEnum.FullDayTime">Full Day Time</mat-radio-button>

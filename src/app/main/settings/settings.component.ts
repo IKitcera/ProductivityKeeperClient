@@ -17,6 +17,7 @@ import {TimerFormat} from "../timer/timer.component";
 import {TimerService} from "../../core/services/timerService";
 import {untilDestroyed} from "../../core/services/until-destroyed";
 import {tap} from "rxjs";
+import {DialogService} from "../../core/services/dialog.service";
 
 @Component({
   selector: 'app-settings',
@@ -24,8 +25,6 @@ import {tap} from "rxjs";
   styleUrls: ['./settings.component.css']
 })
 export class SettingsComponent implements OnInit, OnDestroy {
-
-  public unit: Unit;
   public categories: Category[];
   public timerFormat: TimerFormat;
   public timerFormatEnum = TimerFormat;
@@ -34,33 +33,25 @@ export class SettingsComponent implements OnInit, OnDestroy {
   public passwordConfirmation: string;
 //  public colorConverter = ColorConverter;
   public shouldEnableChangingPassword = false;
-
-  get hasUnitAnyCategory(): boolean {
-    return this.unit && this.unit.categories?.length > 0;
-  }
-
   constructor(private taskService: TaskService,
               private timerService: TimerService,
               private storageService: StorageService,
               private authService: AuthService,
               private toastr: ToastrService,
-              private dialog: MatDialog,
+              private dialog: DialogService,
               private colorPicker: ColorPickerService) {
   }
 
   ngOnInit(): void {
-    this.unit = this.storageService.getUnit() as Unit;
-    if (!this.unit) {
-      this.taskService.getUnit().pipe(
-        tap(unit => this.unit = unit),
-        untilDestroyed(this)
-      ).subscribe();
-    }
-    this.categories = [];
-    this.unit.categories.map(c => {
-      this.categories.push(Object.assign(new Category(), c));
-    });
-    this.timerFormat = this.unit.timer.format;
+    this.taskService.getJustCategories().pipe(
+      tap(ctgArr => this.categories = ctgArr),
+      untilDestroyed(this)
+    ).subscribe();
+
+    this.timerService.getTimer().pipe(
+      tap(timer => this.timerFormat = timer.format),
+      untilDestroyed(this)
+    ).subscribe();
   }
 
   ngOnDestroy(): void {
@@ -71,23 +62,16 @@ export class SettingsComponent implements OnInit, OnDestroy {
     moveItemInArray(this.categories, event.previousIndex, event.currentIndex);
   }
 
-  async saveChanges() {
-    // this.taskService.changeCategoriesOrder(this.categories).then(() => {
-    //   this.unit.categories = this.categories;
-    //   this.storageService.saveUnit(this.unit);
-    //   this.toastr.success("Changes has been saved");
-    // }).catch(err => this.toastr.error(err.message ?? "Unknown error"));
+  saveChanges() {
+    this.taskService.reorderCategories(this.categories).pipe(
+      tap(_ => this.toastr.success("Changes has been saved"))
+    ).subscribe();
   }
 
-  async clearArchive() {
-    const confirmationDialog = this.dialog.open(SimpleConfirmationDialogComponent, {data: {label: Constants.sureAboutDelete + Constants.progressWillBeLost}});
-    const res = await confirmationDialog.afterClosed().toPromise();
-
-    // if(res) {
-    //   this.taskService.clearTasksArchive()
-    //     .then(x => this.toastr.info('Archive was cleared'))
-    //     .catch(err => this.toastr.error(err.message ?? 'Unknown error'));
-    // }
+  clearArchive() {
+    this.dialog.openSimpleConfirmationDialog(Constants.sureAboutDelete + Constants.progressWillBeLost).pipe(
+      tap(_ => this.toastr.info('Archive was cleared'))
+    ).subscribe();
   }
 
   async checkIfPasswordMatches() {
@@ -113,7 +97,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   updateTimerFormat(value: any) {
     // maybe revert
     this.timerService.updateFormat(value).pipe(
-      tap(_ => this.timerFormat = value.value),
+      tap(_ => this.timerFormat = value),
       untilDestroyed(this)
     ).subscribe();
   }
