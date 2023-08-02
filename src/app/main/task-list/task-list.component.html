@@ -29,16 +29,20 @@
     <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
   </div>
   <!--  TASKS -->
-  <div class="tasksWrap" >
-    <mat-accordion cdkDropList (cdkDropListDropped)="drop($event)" multi>
-      <div *ngFor="let subcategory of (activeCtg$ | async)?.subcategories" cdkDrag>
-        <mat-expansion-panel expanded="true" class="subcategory" >
+  <div class="tasksWrap" id="subcategories"
+       cdkDropList
+       [cdkDropListData]="(activeCtg$ | async)?.subcategories"
+       (cdkDropListDropped)="dropSubcategory($event)">
+    <mat-accordion multi cdkDropListGroup>
+      <div cdkDrag [cdkDragData]="subcategory"
+           *ngFor="let subcategory of (activeCtg$ | async)?.subcategories">
+        <mat-expansion-panel expanded="true" class="subcategory">
           <mat-expansion-panel-header>
             <mat-panel-title>
               <div fxLayout="row" fxLayoutAlign="start center">
-              {{subcategory.name}}
-              <mat-icon class="m-1 medium-icon size17" (click)="editSubcategory(subcategory)">edit</mat-icon>
-              <mat-icon class="m-2 medium-icon" (click)="deleteSubcategory(subcategory.id)">delete_outline</mat-icon>
+                {{subcategory.name}}
+                <mat-icon class="m-1 medium-icon size17" (click)="editSubcategory(subcategory)">edit</mat-icon>
+                <mat-icon class="m-2 medium-icon" (click)="deleteSubcategory(subcategory.id)">delete_outline</mat-icon>
               </div>
             </mat-panel-title>
           </mat-expansion-panel-header>
@@ -46,38 +50,46 @@
             <mat-icon>add</mat-icon>
           </button>
 
-          <div *ngFor="let task of subcategory.tasks">
-            <div fxLayout="row wrap taskWrap">
-                <div class="task mr-10" fxLayout="row" fxLayoutAlign>
+          <div class="tasks-list" id="tasks"
+               cdkDropList
+               cdkDropListOrientation="vertical"
+               cdkDropListLockAxis="y"
+               [cdkDropListData]="subcategory.tasks"
+               (cdkDropListDropped)="dropTask($event)">
+            <div cdkDrag
+                 cdkDragLockAxis="y"
+                 [cdkDragData]="task"
+                 *ngFor="let task of subcategory.tasks">
+              <div fxLayout="row wrap taskWrap">
+                <div class="task" fxLayout="row wrap" fxLayoutAlign>
                   <mat-checkbox class="autowidth taskTxt" [checked]="task.isChecked"
                                 (change)="taskCheckedStateChanged(task.id)"
-                                [matTooltip]="task.text.length >= 20 ? task.text : ''"
-                  >
-                   {{task.text}}
+                                [matTooltip]="task.text.length >= 20 ? task.text : ''">
+                    {{task.text}}
                   </mat-checkbox>
-
+                  <div [ngClass]="{'faded': task.text.length >= 25}"></div>
                   <mat-icon class="topright edit" (click)="editTask(subcategory.id, task)">edit</mat-icon>
                   <mat-icon class="topright delete" (click)="deleteTask(task)">close</mat-icon>
-
-                  <div [ngClass]="{'faded': task.text.length >= 20}"></div>
                 </div>
 
-              <div *ngIf="task.isRepeatable && task.timesToRepeat > 0" class="right repeatable-text " fxLayout="row" fxLayoutAlign="center center">
-                {{'(' + task.timesToRepeat + ' left) - ' + ((task.goalRepeatCount-task.timesToRepeat)/ task.goalRepeatCount | percent)}}
-              </div>
-              <div class="tag" fxLayout fxLayoutAlign *ngFor="let tag of (tags$ | async)
-                | filterBy: 'taskId' : task.id : false
-                | filterBy: 'subcategoryId' : subcategory.id : true
-                ">
-                <div fxLayout fxLayoutAlign>
-                  <div [matTooltip]="tag.text || ''" (click)="changeActiveCategory(tag.categoryId)">
-                    <mat-icon class="tag_icon" [style.color]="tag.colorHex">sell</mat-icon>
-                  </div>
-                  <div class="tag-txt"
-                       [style.background-color]="tag.colorHex"
-                       [style.color]="tag.textColorHex"
-                       (click)="changeActiveCategory(tag.categoryId)">
-                    {{tag.text}}
+                <div *ngIf="task.isRepeatable && task.timesToRepeat > 0" class="right repeatable-text " fxLayout="row" fxLayoutAlign="center center">
+                  {{'(' + task.timesToRepeat + ' left) - ' + ((task.goalRepeatCount-task.timesToRepeat)/ task.goalRepeatCount | percent)}}
+                </div>
+
+                <div class="tag" fxLayout fxLayoutAlign
+                     *ngFor="let tag of (tags$ | async)
+                     | filterBy: 'taskId' : task.id : false
+                     | filterBy: 'subcategoryId' : subcategory.id : true">
+                  <div fxLayout fxLayoutAlign>
+                    <div [matTooltip]="tag.text || ''" (click)="changeActiveCategory(tag.categoryId)">
+                      <mat-icon class="tag_icon" [style.color]="tag.colorHex">sell</mat-icon>
+                    </div>
+                    <div class="tag-txt"
+                         [style.background-color]="tag.colorHex"
+                         [style.color]="tag.textColorHex"
+                         (click)="changeActiveCategory(tag.categoryId)">
+                      {{tag.text}}
+                    </div>
                   </div>
                 </div>
               </div>

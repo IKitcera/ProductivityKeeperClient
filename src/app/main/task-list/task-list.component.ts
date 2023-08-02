@@ -5,7 +5,7 @@ import {Unit} from "../../core/models/unit.model";
 import {TaskService} from "../../core/services/taskService";
 import {TaskItem} from "../../core/models/task.model";
 import {EditTaskDialogComponent} from "./edit-task-dialog/edit-task-dialog.component";
-import {moveItemInArray} from "@angular/cdk/drag-drop";
+import {CdkDrag, CdkDropList, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
 import {BehaviorSubject, EMPTY, finalize, first, map, Observable, switchMap, tap} from "rxjs";
 import {catchError, filter} from 'rxjs/operators';
 import {StatisticsComponent} from "../statistics/statistics.component";
@@ -22,7 +22,7 @@ import {Tag} from "../../core/models/tag.model";
   templateUrl: './task-list.component.html',
   styleUrls: ['./task-list.component.css']
 })
-export class TaskListComponent implements OnInit, OnDestroy {
+export class TaskListComponent implements OnDestroy {
 
   @ViewChild('stat') statistic: StatisticsComponent;
   @ViewChild('timer') timer: TimerComponent;
@@ -54,10 +54,6 @@ export class TaskListComponent implements OnInit, OnDestroy {
 
   @HostListener('window:beforeunload', ['$event']) unloadHandler(event: Event): void {
     this.loaderStateChanged.next(true);
-  }
-
-  ngOnInit(): void {
-
   }
 
   ngOnDestroy() {
@@ -137,6 +133,8 @@ export class TaskListComponent implements OnInit, OnDestroy {
         unit.categories.splice(unit.categories.findIndex(c => c.id === id), 1);
         this.unit$.next(unit);
       }),
+      map(_ => (this.unit$.value.categories?.filter(c => c.isVisible)[0]) || null),
+      tap(activeCtg => this.activeCtg$.next(activeCtg)),
     ).subscribe();
   }
 
@@ -249,8 +247,8 @@ export class TaskListComponent implements OnInit, OnDestroy {
     ).subscribe();
   }
 
-  // TODO: Make for dropping to other categories
-  drop(event: any) {
+  dropSubcategory(event: any) {
+    console.log(event);
     moveItemInArray(this.activeCtg$.value.subcategories, event.previousIndex, event.currentIndex);
 
     this.taskService.reorderSubcategories(this.activeCtg$.value.subcategories.map(s => s.id)).pipe(
@@ -262,20 +260,36 @@ export class TaskListComponent implements OnInit, OnDestroy {
     ).subscribe();
   }
 
+  dropTask(event: any,): void {
+    if (event.currentIndex === event.previousIndex && event.previousContainer === event.container) {
+      return;
+    }
+
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+
+
+
+      this.taskService.reorderTasks(event.container.data.map(s => s.id)).pipe(
+        untilDestroyed(this),
+        catchError((err) => {
+          moveItemInArray(this.activeCtg$.value.subcategories, event.currentIndex, event.previousIndex);
+          return EMPTY;
+        })
+      ).subscribe();
+    } else {
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
+    }
+  }
+
   changeActiveCategory(ctgId: number) {
     const targetCtg = this.unit$.value.categories.find(c => c.id === ctgId);
     this.activeCtg$.next(targetCtg);
-    this.refreshAllStatistic();
-  }
-
-  private refreshAllStatistic(forceReload = false) {
-    // this.statRefreshTimerId ??= setInterval(() => {
-    //   this.statForceRefreshAllowed = true;
-    // }, 60000);
-
-    //  this.statistic.refresh(forceReload);
-    //   this.statistic.activeCtg = this.activeCategory as Category;
-    //  this.statistic.populateDonutChart();
   }
 
   private updateUnitWithTaskChanges(updatedTask: TaskItem, addRelations: boolean, updateRelations: boolean, deleteRelations: boolean): void {

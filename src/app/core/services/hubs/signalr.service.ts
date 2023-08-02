@@ -32,7 +32,10 @@ export abstract class SignalRService {
     this.client = new HubConnectionBuilder()
       .withUrl(this.hubUrl, {
         transport: HttpTransportType.LongPolling,
-        accessTokenFactory: () => this.auth.token
+        // skipNegotiation: true,
+        accessTokenFactory: () => {
+          return this.auth.token;
+        }
       })
       .withAutomaticReconnect()
       .build();

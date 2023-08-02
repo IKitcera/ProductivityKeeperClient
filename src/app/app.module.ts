@@ -95,7 +95,7 @@ export function tokenGetter() {
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
-        allowedDomains: ['localhost:65070']
+        allowedDomains: ['localhost:65070', 'localhost:44398']
       }
     }),
     MatButtonModule,

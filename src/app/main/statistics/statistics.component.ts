@@ -84,6 +84,10 @@ export class StatisticsComponent implements OnDestroy, AfterViewInit {
       untilDestroyed(this)
     ).subscribe();
 
+    this.statistic$.pipe(
+      untilDestroyed(this)
+    ).subscribe();
+
 
     this.chartHub.start();
   }

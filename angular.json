@@ -72,7 +72,8 @@
               "browserTarget": "ProductivityKeeperClient:build:production"
             },
             "development": {
-              "browserTarget": "ProductivityKeeperClient:build:development"
+              "browserTarget": "ProductivityKeeperClient:build:development",
+              "port": 4201
             }
           },
           "defaultConfiguration": "development"

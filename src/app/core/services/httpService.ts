@@ -5,7 +5,7 @@ import {Injectable} from "@angular/core";
 @Injectable()
 export class HttpService{
 
-  private basePath = 'http://localhost:65070'; // move to const
+  private basePath = 'https://localhost:44398'; // move to const
   constructor(private http: HttpClient) {
   }
   public get<T>(additionalPath: string, httpOp = new HttpParams()): Observable<T>{

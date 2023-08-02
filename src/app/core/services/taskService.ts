@@ -101,6 +101,11 @@ export class TaskService {
     return this.http.post<TaskItem>(url, taskId);
   }
 
+  reorderTasks(ids: number[]): Observable<any> {
+    const url = `${this.taskUrl}/reorder`;
+    return this.http.post(url, ids);
+  }
+
   addTask(task: TaskItem): Observable<TaskItem> {
     return this.http.post<TaskItem>(this.taskUrl, task);
   }

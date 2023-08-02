@@ -104,8 +104,10 @@ export class AuthService{
     return this.http.post<any>('registration', user);
   }
 
+  // not working piece of code
   private startRefreshTokenTimer() {
     const liveTime = parseInt(localStorage.getItem(this.refreshTime) as string);
+
     const timeout = (liveTime*60-1) * 1000;
     this.refreshTokenTimeout = setTimeout(() => this.refreshToken().subscribe(), timeout);
   }
