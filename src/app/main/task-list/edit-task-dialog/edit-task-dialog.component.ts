@@ -6,6 +6,7 @@ import {Subcategory} from "../../../core/models/subcategory.model";
 import {Unit} from "../../../core/models/unit.model";
 import {ToastrService} from "ngx-toastr";
 import {Tag} from "../../../core/models/tag.model";
+import {IConnectedDuplicate} from "../../../core/interfaces/connected-duplicate.interface";
 
 @Component({
   selector: 'app-edit-task-dialog',
@@ -127,9 +128,4 @@ export class EditTaskDialogComponent implements OnDestroy {
     }
     return duplicate;
   }
-}
-
-interface IConnectedDuplicate {
-  cId: number;
-  sId: number;
 }

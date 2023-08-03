@@ -55,7 +55,8 @@
                cdkDropListOrientation="vertical"
                cdkDropListLockAxis="y"
                [cdkDropListData]="subcategory.tasks"
-               (cdkDropListDropped)="dropTask($event)">
+               [cdkDropListEnterPredicate]="tasksDropListEnterPredicate(subcategory.id)"
+               (cdkDropListDropped)="dropTask($event, subcategory.id)">
             <div cdkDrag
                  cdkDragLockAxis="y"
                  [cdkDragData]="task"

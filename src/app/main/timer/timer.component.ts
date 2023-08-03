@@ -1,5 +1,5 @@
 import {Component, OnDestroy} from '@angular/core';
-import {BehaviorSubject, of, switchMap, tap} from 'rxjs';
+import {BehaviorSubject, first, of, switchMap, tap} from 'rxjs';
 import {Timer} from "../../core/models/timer.model";
 import {EditTimerDialogComponent} from "./edit-timer-dialog/edit-timer-dialog.component";
 import {TimerService} from "../../core/services/timerService";
@@ -89,10 +89,16 @@ export class TimerComponent implements OnDestroy {
   public stop(): void {
     clearInterval(this.timerId);
     clearInterval(this.autosaveId);
+
+    const timer = this.timer$.value;
+    timer.goal -= this.currentValue.getInSeconds();
+    timer.ticked = 0;
+
     this.currentValue.reset();
     this.isTicking = false;
-    this.timerService.updateTicked(this.currentValue.getInSeconds()).pipe(
-      untilDestroyed(this)
+    this.timerService.setTimer(timer).pipe(
+      first(),
+      tap(updatedTimer => this.timer$.next(updatedTimer))
     ).subscribe();
   }
 
@@ -112,11 +118,9 @@ export class TimerComponent implements OnDestroy {
     if (this.noTimer) {
       return;
     }
-
     const confirmationIfTimerFulfilled$ = this.currentValue.getInSeconds() > 0 ?
       this.dialog.openSimpleConfirmationDialog(Constants.sureAboutDelete + Constants.progressWillBeLost) :
       of(true);
-
 
     confirmationIfTimerFulfilled$.pipe(
       filter(x => !!x),

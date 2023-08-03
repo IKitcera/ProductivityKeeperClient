@@ -1,12 +1,12 @@
-import {Component, HostListener, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, HostListener, OnDestroy, Output, ViewChild} from '@angular/core';
 import {Category} from "../../core/models/category.model";
 import {Subcategory} from "../../core/models/subcategory.model";
 import {Unit} from "../../core/models/unit.model";
 import {TaskService} from "../../core/services/taskService";
 import {TaskItem} from "../../core/models/task.model";
 import {EditTaskDialogComponent} from "./edit-task-dialog/edit-task-dialog.component";
-import {CdkDrag, CdkDropList, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
-import {BehaviorSubject, EMPTY, finalize, first, map, Observable, switchMap, tap} from "rxjs";
+import {CdkDrag, CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
+import {BehaviorSubject, EMPTY, finalize, first, map, Observable, of, switchMap, tap} from "rxjs";
 import {catchError, filter} from 'rxjs/operators';
 import {StatisticsComponent} from "../statistics/statistics.component";
 import {ToastrService} from "ngx-toastr";
@@ -16,6 +16,7 @@ import {Constants} from "../../core/models/constants";
 import {untilDestroyed} from "../../core/services/until-destroyed";
 import {DialogService} from "../../core/services/dialog.service";
 import {Tag} from "../../core/models/tag.model";
+import {IConnectedDuplicate} from "../../core/interfaces/connected-duplicate.interface";
 
 @Component({
   selector: 'app-task-list',
@@ -52,7 +53,7 @@ export class TaskListComponent implements OnDestroy {
     this.listenChanges();
   }
 
-  @HostListener('window:beforeunload', ['$event']) unloadHandler(event: Event): void {
+  @HostListener('window:beforeunload', ['$event']) unloadHandler(): void {
     this.loaderStateChanged.next(true);
   }
 
@@ -78,7 +79,7 @@ export class TaskListComponent implements OnDestroy {
   private listenChanges() {
 
     this.unit$.pipe(
-      tap(unit => {
+      tap(_ => {
         // TODO: REFACTOR
         // this.timer.timer = this.unit.timer;
         // this.statistic.statistic = this.unit.statistic;
@@ -172,7 +173,7 @@ export class TaskListComponent implements OnDestroy {
     this.dialog.openSimpleConfirmationDialog(Constants.sureAboutDelete + Constants.cannotRevert).pipe(
       filter(res => !!res),
       switchMap(_ => this.taskService.deleteSubcategory(subId)),
-      tap(res => this.activeCtg$.value.subcategories.splice(
+      tap(_ => this.activeCtg$.value.subcategories.splice(
         this.activeCtg$.value.subcategories.findIndex(sub => sub.id === subId),
         1
       )),
@@ -204,11 +205,24 @@ export class TaskListComponent implements OnDestroy {
   }
 
   deleteTask(task: TaskItem) {
-    this.taskService.deleteTask(task.id).pipe(
+    let confirmedDeleteMessage: string;
+    if (this.tags$.value.filter(tag => tag.taskId === task.id).length > 1) {
+      confirmedDeleteMessage = 'This task has some relations, so it\'ll be removed form other places. Confirm delete?';
+    } else if (task.isRepeatable) {
+      confirmedDeleteMessage = 'The task is repeatable. Are you sure?';
+    }
+
+    const allowDelete$ = confirmedDeleteMessage
+      ? this.dialog.openSimpleConfirmationDialog(confirmedDeleteMessage)
+      : of(true);
+
+    allowDelete$.pipe(
+      switchMap(_ => this.taskService.deleteTask(task.id)),
       tap(_ => {
         task.subcategories = [];
         this.updateUnitWithTaskChanges(task, false, false, true)
       }),
+      untilDestroyed(this),
       catchError(err => {
         this.toastr.error(err.message || 'Error has happened. Task was restored');
         return EMPTY;
@@ -248,44 +262,95 @@ export class TaskListComponent implements OnDestroy {
   }
 
   dropSubcategory(event: any) {
-    console.log(event);
     moveItemInArray(this.activeCtg$.value.subcategories, event.previousIndex, event.currentIndex);
 
     this.taskService.reorderSubcategories(this.activeCtg$.value.subcategories.map(s => s.id)).pipe(
       untilDestroyed(this),
       catchError((err) => {
         moveItemInArray(this.activeCtg$.value.subcategories, event.currentIndex, event.previousIndex);
-        return EMPTY;
+        throw err;
       })
     ).subscribe();
   }
 
-  dropTask(event: any,): void {
-    if (event.currentIndex === event.previousIndex && event.previousContainer === event.container) {
+  dropTask(event: CdkDragDrop<TaskItem[]>, newSubId: number): void {
+    if (event.previousContainer === event.container) {
+      if (event.currentIndex === event.previousIndex) {
+        return;
+      }
+      moveItemInArray(
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex
+      );
+
+      this.taskService.reorderTasks(event.container.data.map(s => s.id)).pipe(
+        first(),
+        catchError((err) => {
+          moveItemInArray(
+            this.activeCtg$.value.subcategories,
+            event.currentIndex,
+            event.previousIndex
+          );
+          throw err;
+        })
+      ).subscribe();
       return;
     }
 
-    if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    // check goes while entering drag
+    transferArrayItem(
+      event.previousContainer.data,
+      event.container.data,
+      event.previousIndex,
+      event.currentIndex,
+    );
 
+    const droppedTask = event.item.data;
+    const connectedDuplicatesByTask = this.tags$.value
+      .filter(tag => tag.taskId === droppedTask.id)
+      .map(tag => ({cId: this.activeCtg$.value.id, sId: tag.subcategoryId} as IConnectedDuplicate));
 
+    const oldSubId = this.activeCtg$.value.subcategories
+      .find(s => connectedDuplicatesByTask.map(cd => cd.sId).includes(s.id)
+        && !s.tasks.map(t => t?.id)?.includes(droppedTask.id))
+      .id;
 
-      this.taskService.reorderTasks(event.container.data.map(s => s.id)).pipe(
-        untilDestroyed(this),
-        catchError((err) => {
-          moveItemInArray(this.activeCtg$.value.subcategories, event.currentIndex, event.previousIndex);
-          return EMPTY;
-        })
-      ).subscribe();
-    } else {
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex,
-      );
-    }
+    connectedDuplicatesByTask.splice(
+      connectedDuplicatesByTask.findIndex(cd => cd.sId === oldSubId),
+      1
+    );
+    connectedDuplicatesByTask.push({
+      sId: newSubId,
+      cId: this.activeCtg$.value.id
+    });
+    droppedTask.subcategories = connectedDuplicatesByTask
+      .map(pair => new Subcategory({id: pair.sId, categoryId: pair.cId}));
+
+    this.taskService.updateTask(droppedTask).pipe(
+      tap(updatedTask => console.log(updatedTask)),
+      tap(updatedTask =>
+        this.updateUnitWithTaskChanges(updatedTask, false, true, false)),
+      first(),
+      catchError((err) => {
+        transferArrayItem(
+          event.container.data,
+          event.previousContainer.data,
+          event.currentIndex,
+          event.previousIndex,
+        );
+        throw err;
+      })
+    ).subscribe();
+
   }
+
+  tasksDropListEnterPredicate(newSubId: number) {
+    return (item: CdkDrag<TaskItem>) => this.tags$.value
+      .filter(tag => tag.taskId === item.data.id)
+      .every(tag => tag.subcategoryId !== newSubId)
+  }
+
 
   changeActiveCategory(ctgId: number) {
     const targetCtg = this.unit$.value.categories.find(c => c.id === ctgId);

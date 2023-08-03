@@ -31,6 +31,10 @@
   display: none;
 }
 
+.full-width {
+  width: 100%;
+}
+
 .topright{
   position:absolute;
   right: 0;
@@ -93,7 +97,7 @@
 
   color: #f2f2f2;
   font-size: 15px;
-  font-family: "Verdana";
+  font-family: "Verdana", serif;
 
 }
 
@@ -193,7 +197,7 @@
   backdrop-filter: brightness(130%);
   min-width: 10px;
   width: fit-content;
-  font-family: 'Arial';
+  font-family: 'Arial', serif;
 
   max-height: 27px;
 }
@@ -212,7 +216,7 @@
   padding: 1px 3px;
   margin: 2px 4px 2px 2px;
   border-radius: 5px;
-  font-family: 'Arial';
+  font-family: 'Arial', serif;
 }
 
 .tag_icon {
