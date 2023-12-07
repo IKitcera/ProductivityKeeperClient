@@ -41,6 +41,10 @@
             <mat-panel-title>
               <div fxLayout="row" fxLayoutAlign="start center">
                 {{subcategory.name}}
+                <mat-icon class="warning-icon"
+                          [matTooltip]="'Estimated duration (' + getTasksEstimatedDuration(subcategory.tasks) + ' hrs) is greater than 14 hours'"
+                          *ngIf="getTasksEstimatedDuration(subcategory.tasks) > 14"
+                >warning</mat-icon>
                 <mat-icon class="m-1 medium-icon size17" (click)="editSubcategory(subcategory)">edit</mat-icon>
                 <mat-icon class="m-2 medium-icon" (click)="deleteSubcategory(subcategory.id)">delete_outline</mat-icon>
               </div>

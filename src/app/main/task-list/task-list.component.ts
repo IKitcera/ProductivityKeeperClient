@@ -17,6 +17,7 @@ import {untilDestroyed} from "../../core/services/until-destroyed";
 import {DialogService} from "../../core/services/dialog.service";
 import {Tag} from "../../core/models/tag.model";
 import {IConnectedDuplicate} from "../../core/interfaces/connected-duplicate.interface";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-task-list',
@@ -47,7 +48,8 @@ export class TaskListComponent implements OnDestroy {
   constructor(private taskService: TaskService,
               private storageService: StorageService,
               private dialog: DialogService,
-              private toastr: ToastrService) {
+              private toastr: ToastrService,
+              private activatedRoute: ActivatedRoute) {
 
     this.initData();
     this.listenChanges();
@@ -402,5 +404,12 @@ export class TaskListComponent implements OnDestroy {
       }
     }
     this.unit$.next(unit);
+  }
+
+  public getTasksEstimatedDuration(tasks: TaskItem[]): number {
+    return tasks
+      ?.reduce(
+        (a,b) => a + b.executionDuration || 0,
+        0) || 0;
   }
 }

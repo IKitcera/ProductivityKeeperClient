@@ -15,15 +15,24 @@
       </mat-form-field>
     </div>
 
-    <mat-form-field>
-      <input matInput placeholder="Choose a deadline" (click)="picker.open()" name="nnnn"
-             [(ngModel)]="data.task.deadline"  [ngxMatDatetimePicker]="picker" >
-      <mat-datepicker-toggle matSuffix [for]="$any(picker)"></mat-datepicker-toggle>
-      <ngx-mat-datetime-picker #picker [showSeconds]="false"
-                               [color]="'primary'"
-                               [disableMinute]="false" [hideTime]="false">
-      </ngx-mat-datetime-picker>
-    </mat-form-field>
+
+
+    <div fxLayout="row" fxLayoutAlign="space-between center">
+      <mat-form-field [style.width]="'85px'"  [style.margin-right]="'10px'">
+        <input matInput placeholder="Duration (hr)" type="number" min="0"
+               [(ngModel)]="data.task.executionDuration">
+      </mat-form-field>
+
+      <mat-form-field [style.margin-bottom]="'7px'">
+        <input matInput placeholder="Choose a deadline" (click)="picker.open()" name="nnnn"
+               [(ngModel)]="data.task.deadline"  [ngxMatDatetimePicker]="picker" >
+        <mat-datepicker-toggle matSuffix [for]="$any(picker)"></mat-datepicker-toggle>
+        <ngx-mat-datetime-picker #picker [showSeconds]="false"
+                                 [color]="'primary'"
+                                 [disableMinute]="false" [hideTime]="false">
+        </ngx-mat-datetime-picker>
+      </mat-form-field>
+    </div>
   </div>
   <button mat-stroked-button
           (click)="addConnectedLine()"

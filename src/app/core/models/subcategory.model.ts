@@ -1,6 +1,5 @@
 import {TaskItem} from "./task.model";
 import {Category} from "./category.model";
-import {TaskListComponent} from "../../main/task-list/task-list.component";
 
 export class Subcategory {
   id: number;

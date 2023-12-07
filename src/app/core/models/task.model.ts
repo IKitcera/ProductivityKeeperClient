@@ -7,6 +7,7 @@ export class TaskItem {
   isChecked: boolean;
   deadline: Date | string | null;
   doneDate: Date | string | null;
+  executionDuration: number | null;
   isRepeatable: boolean;
   timesToRepeat: number;
   goalRepeatCount: number;

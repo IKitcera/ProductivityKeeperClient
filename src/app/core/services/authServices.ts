@@ -2,9 +2,10 @@ import {HttpService} from "./httpService";
 import {HttpHeaders, HttpParams} from "@angular/common/http";
 import {AbstractUser} from "../models/abstract-user.model";
 import {Injectable} from "@angular/core";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {map, Observable, tap} from "rxjs";
 import {ToastrService} from "ngx-toastr";
+import {catchError} from "rxjs/operators";
 
 @Injectable()
 export class AuthService{
@@ -16,7 +17,11 @@ export class AuthService{
     return localStorage.getItem(this.tokenKey)
   }
 
-  constructor(private http: HttpService, private router: Router, private toastr: ToastrService) {
+  constructor(
+    private http: HttpService,
+    private router: Router,
+    private toastr: ToastrService,
+    private activatedRoute: ActivatedRoute) {
   }
 
   isAuthorized(): boolean {
@@ -48,14 +53,31 @@ export class AuthService{
   }
 
   refreshToken(): Observable<any> {
-    return this.http.post<any>(`refresh-token`, {} )
-      .pipe(tap(tokenObj => {
-        this.startRefreshTokenTimer();
-        localStorage.setItem(this.tokenKey, tokenObj.accessToken);
-        localStorage.setItem(this.refreshTime, tokenObj.lifeTime);
-        this.stopRefreshTokenTimer();
-        this.startRefreshTokenTimer();
-      }));
+    return this.http.post<any>(`refresh-token`, {}).pipe(
+        tap(tokenObj => {
+          this.startRefreshTokenTimer();
+          localStorage.setItem(this.tokenKey, tokenObj.accessToken);
+          localStorage.setItem(this.refreshTime, tokenObj.lifeTime);
+
+          console.log(tokenObj);
+          this.stopRefreshTokenTimer();
+          this.startRefreshTokenTimer();
+
+          requestAnimationFrame(() => {
+            this.router.navigate([], {relativeTo: this.activatedRoute}).then(x => {
+              if (x) {
+                window.location.reload();
+              }
+            });
+          });
+
+        }),
+      catchError(err => {
+        this.toastr.error(err.message);
+        this.logout();
+        throw err;
+      })
+    );
   }
 
   async checkIfPasswordMatches(pass: string): Promise<boolean> {

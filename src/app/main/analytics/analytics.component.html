@@ -1,0 +1,104 @@
+<!--      SPINNER-->
+<div class="spinner-wrap" *ngIf="isLoading$ | async" fxLayoutAlign="center center">
+  <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+</div>
+
+<div class="container">
+  <h2 fxLayout fxLayoutAlign="center center"> Progress prediction </h2>
+  <div fxLayout fxLayoutAlign="space-evenly center">
+    <div *ngIf="statWithPredictions.length">
+      <p>The chart displays history with red and predicted progress with lightblue. Try to exceed the expectations</p>
+
+      <div class="chart">
+      <ngx-charts-line-chart #compareLinearChart
+                             [scheme]="'cool'"
+                             [rangeFillOpacity]="0.15"
+                             [showXAxisLabel]="false"
+                             [showYAxisLabel]="true"
+                             [xAxis]="true"
+                             [yAxis]="true"
+                             [xAxisLabel]="'Days'"
+                             [yAxisLabel]="'Count of done tasks'"
+                             [timeline]="true"
+                             [showGridLines]="false"
+                             [showRefLabels]="true"
+                             [legendPosition]="legendPosition"
+                             [legend]="true"
+                             [maxXAxisTickLength]="40"
+                             [results]="statWithPredictions"
+                             [legendTitle]="'Progress prediction'"
+                             [autoScale]="true"
+                             [referenceLines]="statWithPredictionsRefLines"
+                             [showRefLines]="true"
+                             [curve]="curveBasis"
+      >
+      </ngx-charts-line-chart>
+      </div>
+    </div>
+
+    <div *ngIf="areaStatWithPredictions.length">
+      <p>The chart displays same values with filled colors, try to stay in the green zone.
+        Beware of burnouts. </p>
+
+      <div class="chart">
+        <ngx-charts-area-chart #compareLinearChart
+                               [scheme]="'neons'"
+                               [schemeType]="ScaleType.Linear"
+                               [showXAxisLabel]="false"
+                               [showYAxisLabel]="true"
+                               [yAxis]="true"
+                               [xAxisLabel]="'Days'"
+                               [yAxisLabel]="'Count of done tasks'"
+                               [timeline]="true"
+                               [showGridLines]="true"
+                               [legendPosition]="legendPosition"
+                               [legend]="true"
+                               [maxXAxisTickLength]="10"
+                               [results]="areaStatWithPredictions"
+                               [legendTitle]="'Progress prediction'"
+                               [autoScale]="true"
+                               [curve]="curveBasis"
+        >
+        </ngx-charts-area-chart>
+      </div>
+    </div>
+  </div>
+
+  <div fxLayout fxLayoutAlign="space-evenly center">
+      <div>
+        <h2> Averagely you're doing better than {{betterThanAvg | percent}} of users</h2>
+        <div class="chart">
+          <ngx-charts-line-chart *ngIf="usersAvgDistributionChart"
+            [scheme]="'neons'"
+            [showXAxisLabel]="true"
+            [showYAxisLabel]="true"
+            [xAxis]="true"
+            [yAxis]="true"
+            [xAxisLabel]="'Count'"
+            [yAxisLabel]="'Density'"
+            [results]="usersAvgDistributionChart"
+            [curve]="curveBasis"
+            [autoScale]="true">
+          </ngx-charts-line-chart>
+        </div>
+      </div>
+
+      <div>
+        <h2> Today you're doing better than {{betterThanToday | percent}} of users</h2>
+        <div class="chart">
+          <ngx-charts-line-chart *ngIf="usersTodayDistributionChart"
+            [scheme]="'neons'"
+            [showXAxisLabel]="true"
+            [showYAxisLabel]="true"
+            [xAxis]="true"
+            [yAxis]="true"
+            [xAxisLabel]="'Count'"
+            [yAxisLabel]="'Density'"
+            [results]="usersTodayDistributionChart"
+            [curve]="curveBasis"
+            [autoScale]="true">
+          </ngx-charts-line-chart>
+        </div>
+      </div>
+    </div>
+</div>
