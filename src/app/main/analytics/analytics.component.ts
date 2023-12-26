@@ -74,7 +74,6 @@ export class AnalyticsComponent implements OnDestroy {
       isPrediction
     }))
     input.storedItems = input.storedItems.slice(input.storedItems.length - 40, input.storedItems.length);
-    console.log(input.forecastedItems)
 
     this.statWithPredictions = [
       {

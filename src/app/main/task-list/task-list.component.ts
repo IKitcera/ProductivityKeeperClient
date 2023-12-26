@@ -6,7 +6,7 @@ import {TaskService} from "../../core/services/taskService";
 import {TaskItem} from "../../core/models/task.model";
 import {EditTaskDialogComponent} from "./edit-task-dialog/edit-task-dialog.component";
 import {CdkDrag, CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
-import {BehaviorSubject, EMPTY, finalize, first, map, Observable, of, switchMap, tap} from "rxjs";
+import {BehaviorSubject, EMPTY, finalize, first, from, map, Observable, of, switchMap, tap} from "rxjs";
 import {catchError, filter} from 'rxjs/operators';
 import {StatisticsComponent} from "../statistics/statistics.component";
 import {ToastrService} from "ngx-toastr";
@@ -53,6 +53,8 @@ export class TaskListComponent implements OnDestroy {
 
     this.initData();
     this.listenChanges();
+
+    this.showNotification();
   }
 
   @HostListener('window:beforeunload', ['$event']) unloadHandler(): void {
@@ -79,21 +81,7 @@ export class TaskListComponent implements OnDestroy {
   }
 
   private listenChanges() {
-
     this.unit$.pipe(
-      tap(_ => {
-        // TODO: REFACTOR
-        // this.timer.timer = this.unit.timer;
-        // this.statistic.statistic = this.unit.statistic;
-        //
-        // this.storageService.saveUnit(unit);
-        //
-        // this.timer.refresh();
-        //   this.refreshAllStatistic();
-
-        //this.timer.isLoading = false;
-      }),
-
       switchMap(_ => this.tagsSource$),
       untilDestroyed(this)
     ).subscribe();
@@ -330,7 +318,6 @@ export class TaskListComponent implements OnDestroy {
       .map(pair => new Subcategory({id: pair.sId, categoryId: pair.cId}));
 
     this.taskService.updateTask(droppedTask).pipe(
-      tap(updatedTask => console.log(updatedTask)),
       tap(updatedTask =>
         this.updateUnitWithTaskChanges(updatedTask, false, true, false)),
       first(),
@@ -409,7 +396,94 @@ export class TaskListComponent implements OnDestroy {
   public getTasksEstimatedDuration(tasks: TaskItem[]): number {
     return tasks
       ?.reduce(
-        (a,b) => a + b.executionDuration || 0,
+        (a, b) => a + b.executionDuration || 0,
         0) || 0;
+  }
+
+
+  public showNotification() {
+    console.log(Notification.permission, 'is sequre context', window.isSecureContext);
+
+    const registerWorker$ = from(navigator.serviceWorker.register("/offline-worker.js"));
+
+
+
+    const listenNotifications = () => from(navigator.serviceWorker.ready).pipe(
+      tap(registration => {
+        console.log('rrr', registration)
+        requestAnimationFrame(() => {
+          console.log('here');
+          const n = new Notification("My first notification", {
+            body: "Buzz! Buzz!",
+            icon: "src/assets/ntf-reminder.png",
+            vibrate: [200, 100, 200, 100, 200, 100, 200],
+            tag: "vibration-sample",
+          });
+
+        });
+        requestAnimationFrame(() => {
+          console.log('here');
+          const n = new Notification("My 2nd notification", {
+            body: "Buzz! Buzz!"
+          });
+        })
+      }),
+      switchMap(registration => from(registration.showNotification("Vibration Sample", {
+          body: "Buzz! Buzz!",
+          icon: "src/assets/ntf-reminder.png",
+          vibrate: [200, 100, 200, 100, 200, 100, 200],
+          tag: "vibration-sample",
+        })
+      )),
+      untilDestroyed(this)
+    );
+
+    const permission$ = Notification.permission === 'granted'
+      ? of('granted')
+      : from(Notification.requestPermission());
+
+    permission$.pipe(
+      tap(registration => {
+        console.log('rrr1', registration)
+      }),
+    //  filter(result => result === 'granted'),
+      switchMap(_ => listenNotifications()),
+      untilDestroyed(this)
+    ).subscribe();
+
+    registerWorker$.pipe(tap(swr => {
+      swr.addEventListener("updatefound", () => {
+        const installingWorker = swr.installing;
+        console.log(
+          "A new service worker is being installed:",
+          installingWorker,
+        );
+      })
+    })).subscribe();
+
+    console.log("serviceWorker" in navigator);
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/sw.js")
+        .then((registration) => {
+          registration.addEventListener("updatefound", () => {
+            // If updatefound is fired, it means that there's
+            // a new service worker being installed.
+            const installingWorker = registration.installing;
+            console.log(
+              "A new service worker is being installed:",
+              installingWorker,
+            );
+
+            // You can listen for changes to the installing service worker's
+            // state via installingWorker.onstatechange
+          });
+        })
+        .catch((error) => {
+          console.error(`Service worker registration failed: ${error}`);
+        });
+    } else {
+      console.error("Service workers are not supported.");
+    }
   }
 }

@@ -1,12 +1,13 @@
 import {Observable} from "rxjs";
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {Injectable} from "@angular/core";
+import {Inject, Injectable} from "@angular/core";
+import {Config} from "../../../configs/config";
 
 @Injectable()
 export class HttpService{
 
-  private basePath = 'https://localhost:44398'; // move to const
-  constructor(private http: HttpClient) {
+  private basePath = this.apiUrl;
+  constructor(private http: HttpClient, @Inject('API_URL') private apiUrl: string) {
   }
   public get<T>(additionalPath: string, httpOp = new HttpParams()): Observable<T>{
     return this.http.get<T>(this.basePath + '/' + additionalPath, {params:httpOp});

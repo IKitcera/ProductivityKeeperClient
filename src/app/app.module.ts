@@ -58,6 +58,8 @@ import {FilterByPipe} from "./core/pipes/filterBy.pipe";
 import {DialogService} from "./core/services/dialog.service";
 import {FindByPipe} from "./core/pipes/findBy.pipe";
 import {AnalyticsComponent} from './main/analytics/analytics.component';
+import {Config} from '../configs/config';
+import { environment } from '../environments/environment'
 
 const routes: Routes = [
   {path: '', component: TaskListComponent, canActivate: [AuthGuard]},
@@ -140,7 +142,9 @@ export function tokenGetter() {
     StatisticService,
     StorageService,
     DialogService,
-    {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true}],
+    {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
+    { provide: 'API_URL', useValue: Config.apiUrl },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {
