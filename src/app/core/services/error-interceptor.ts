@@ -12,11 +12,11 @@ export class ErrorInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(request).pipe(catchError(err => {
       console.log(err)
-      if ([401].includes(err.status) && this.authService.isAuthorized()) {
-        // auto logout if 401 or 403 response returned from api
-        this.authService.refreshToken().subscribe();
-        return EMPTY;
-      }
+      // if ([401].includes(err.status) && this.authService.isAuthorized()) {
+      //   // auto logout if 401 or 403 response returned from api
+      //   this.authService.refreshToken().subscribe();
+      //   return EMPTY;
+      // }
 
       this.toastr.error(err.error?.message ?? 'Unknown error');
       return throwError(err.error);

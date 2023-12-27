@@ -59,7 +59,9 @@ import {DialogService} from "./core/services/dialog.service";
 import {FindByPipe} from "./core/pipes/findBy.pipe";
 import {AnalyticsComponent} from './main/analytics/analytics.component';
 import {Config} from '../configs/config';
-import { environment } from '../environments/environment'
+import { environment } from '../environments/environment';
+import { ServiceWorkerModule } from '@angular/service-worker'
+import {NotificationsService} from "./core/services/notifications.service";
 
 const routes: Routes = [
   {path: '', component: TaskListComponent, canActivate: [AuthGuard]},
@@ -126,7 +128,8 @@ export function tokenGetter() {
     ColorPickerModule,
     MatProgressSpinnerModule,
     MatCardModule,
-    MatRadioModule
+    MatRadioModule,
+    ServiceWorkerModule.register('/ngsw-worker.js', { enabled: true })
   ],
   exports: [
     FilterByPipe,
@@ -142,6 +145,7 @@ export function tokenGetter() {
     StatisticService,
     StorageService,
     DialogService,
+    NotificationsService,
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
     { provide: 'API_URL', useValue: Config.apiUrl },
   ],

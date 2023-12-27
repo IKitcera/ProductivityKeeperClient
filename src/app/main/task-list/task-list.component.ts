@@ -18,6 +18,9 @@ import {DialogService} from "../../core/services/dialog.service";
 import {Tag} from "../../core/models/tag.model";
 import {IConnectedDuplicate} from "../../core/interfaces/connected-duplicate.interface";
 import {ActivatedRoute} from "@angular/router";
+import {SwPush} from "@angular/service-worker";
+import {Config} from "../../../configs/config";
+import {NotificationsService} from "../../core/services/notifications.service";
 
 @Component({
   selector: 'app-task-list',
@@ -46,15 +49,12 @@ export class TaskListComponent implements OnDestroy {
 
 
   constructor(private taskService: TaskService,
-              private storageService: StorageService,
               private dialog: DialogService,
               private toastr: ToastrService,
-              private activatedRoute: ActivatedRoute) {
+              private notificationsService: NotificationsService) {
 
     this.initData();
     this.listenChanges();
-
-    this.showNotification();
   }
 
   @HostListener('window:beforeunload', ['$event']) unloadHandler(): void {
@@ -246,6 +246,7 @@ export class TaskListComponent implements OnDestroy {
       width: '60%'
     }).pipe(
       switchMap(task => this.taskService.updateTask(task)),
+      tap(task => this.notificationsService.scheduleNotification(task, 1)),
       tap(updatedTask =>
         this.updateUnitWithTaskChanges(updatedTask, true, true, true))
     ).subscribe();
@@ -398,92 +399,5 @@ export class TaskListComponent implements OnDestroy {
       ?.reduce(
         (a, b) => a + b.executionDuration || 0,
         0) || 0;
-  }
-
-
-  public showNotification() {
-    console.log(Notification.permission, 'is sequre context', window.isSecureContext);
-
-    const registerWorker$ = from(navigator.serviceWorker.register("/offline-worker.js"));
-
-
-
-    const listenNotifications = () => from(navigator.serviceWorker.ready).pipe(
-      tap(registration => {
-        console.log('rrr', registration)
-        requestAnimationFrame(() => {
-          console.log('here');
-          const n = new Notification("My first notification", {
-            body: "Buzz! Buzz!",
-            icon: "src/assets/ntf-reminder.png",
-            vibrate: [200, 100, 200, 100, 200, 100, 200],
-            tag: "vibration-sample",
-          });
-
-        });
-        requestAnimationFrame(() => {
-          console.log('here');
-          const n = new Notification("My 2nd notification", {
-            body: "Buzz! Buzz!"
-          });
-        })
-      }),
-      switchMap(registration => from(registration.showNotification("Vibration Sample", {
-          body: "Buzz! Buzz!",
-          icon: "src/assets/ntf-reminder.png",
-          vibrate: [200, 100, 200, 100, 200, 100, 200],
-          tag: "vibration-sample",
-        })
-      )),
-      untilDestroyed(this)
-    );
-
-    const permission$ = Notification.permission === 'granted'
-      ? of('granted')
-      : from(Notification.requestPermission());
-
-    permission$.pipe(
-      tap(registration => {
-        console.log('rrr1', registration)
-      }),
-    //  filter(result => result === 'granted'),
-      switchMap(_ => listenNotifications()),
-      untilDestroyed(this)
-    ).subscribe();
-
-    registerWorker$.pipe(tap(swr => {
-      swr.addEventListener("updatefound", () => {
-        const installingWorker = swr.installing;
-        console.log(
-          "A new service worker is being installed:",
-          installingWorker,
-        );
-      })
-    })).subscribe();
-
-    console.log("serviceWorker" in navigator);
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker
-        .register("/sw.js")
-        .then((registration) => {
-          registration.addEventListener("updatefound", () => {
-            // If updatefound is fired, it means that there's
-            // a new service worker being installed.
-            const installingWorker = registration.installing;
-            console.log(
-              "A new service worker is being installed:",
-              installingWorker,
-            );
-
-            // You can listen for changes to the installing service worker's
-            // state via installingWorker.onstatechange
-          });
-        })
-        .catch((error) => {
-          console.error(`Service worker registration failed: ${error}`);
-        });
-    } else {
-      console.error("Service workers are not supported.");
-    }
   }
 }

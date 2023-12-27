@@ -41,7 +41,9 @@
             <mat-panel-title>
               <div fxLayout="row" fxLayoutAlign="start center">
                 <!-- TODO: optimize -->
-                {{subcategory.name}} <i>{{getTasksEstimatedDuration(subcategory.tasks) > 0 ? ' ('+ getTasksEstimatedDuration(subcategory.tasks) + ' hrs)' : ''}}</i>
+                <span>
+                  {{subcategory.name}} &emsp; <i>{{getTasksEstimatedDuration(subcategory.tasks) > 0 ? '('+ getTasksEstimatedDuration(subcategory.tasks) + ' hrs)' : ''}}</i>
+                </span>
                 <mat-icon class="warning-icon"
                           [matTooltip]="'Estimated duration (' + getTasksEstimatedDuration(subcategory.tasks) + ' hrs) is greater than 14 hours'"
                           *ngIf="getTasksEstimatedDuration(subcategory.tasks) > 14"
