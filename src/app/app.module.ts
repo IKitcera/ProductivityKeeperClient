@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {LOCALE_ID, NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 
 import {AppComponent} from './app.component';
@@ -62,6 +62,7 @@ import {Config} from '../configs/config';
 import { environment } from '../environments/environment';
 import { ServiceWorkerModule } from '@angular/service-worker'
 import {NotificationsService} from "./core/services/notifications.service";
+import {MinsToDisplayPipe} from "./core/pipes/minsToDisplay.pipe";
 
 const routes: Routes = [
   {path: '', component: TaskListComponent, canActivate: [AuthGuard]},
@@ -129,7 +130,8 @@ export function tokenGetter() {
     MatProgressSpinnerModule,
     MatCardModule,
     MatRadioModule,
-    ServiceWorkerModule.register('/ngsw-worker.js', { enabled: true })
+    ServiceWorkerModule.register('/ngsw-worker.js', {enabled: true}),
+    MinsToDisplayPipe
   ],
   exports: [
     FilterByPipe,
@@ -148,6 +150,7 @@ export function tokenGetter() {
     NotificationsService,
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
     { provide: 'API_URL', useValue: Config.apiUrl },
+    {provide: LOCALE_ID, useValue: 'en-CA' }
   ],
   bootstrap: [AppComponent]
 })

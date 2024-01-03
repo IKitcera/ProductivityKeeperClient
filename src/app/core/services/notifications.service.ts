@@ -1,4 +1,4 @@
-import {Injectable} from "@angular/core";
+import {Inject, Injectable, InjectionToken, LOCALE_ID} from "@angular/core";
 import {TaskItem} from "../models/task.model";
 import {from, Observable, of, switchMap, tap} from "rxjs";
 import {Config} from "../../../configs/config";
@@ -11,7 +11,13 @@ export class NotificationsService {
   // We must manage existing intervals updates
   private existingTimeouts = new Map<number, any>();
 
-  constructor(private sw: SwPush) {
+  constructor(private sw: SwPush, @Inject(LOCALE_ID) private locale: string) {
+    this.sw.messages.pipe(
+      tap(m => {
+        console.log('in sub message', m);
+
+      })
+    ).subscribe();
   }
 
   public showNotification(task: TaskItem): Observable<any> {
@@ -21,12 +27,15 @@ export class NotificationsService {
       })
     ).pipe(
       tap(_ => {
+        const title = `${task.text} 📌`;
+
+        const body = `${new Date(task.deadline).toLocaleString(this.locale)} ${task.executionDuration ? '(' + task.executionDuration.toString() + ' hrs)' : ''}`;
         const notification = new Notification(
-          "Get the job done 📌", {
-            body: task.text,
+          title, {
+            body,
             icon: "assets/ntf-reminder.png",
             vibrate: [50, 100, 120, 100, 50, 100, 50],
-            tag: "vibration-sample",
+            tag: task.tags.map(t => t.text).join(', ')
           });
       })
     );

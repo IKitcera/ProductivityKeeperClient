@@ -36,6 +36,28 @@
     </div>
   <div class="block-container">
     <h2>Tasks related</h2>
+    <div class="block" fxLayout="row">
+      <h4 class="option" fxLayout="row" fxLayoutAlign>Set notification reminder in
+        <mat-icon>notifications_active</mat-icon>
+      </h4>
+      <div class="op-value autowidth">
+        <mat-select #selectedReminder [value]="getNotificationReminder()"
+                    (selectionChange)="changedNotificationReminder($event.value)">
+          <mat-option #o1 [value]="10">{{o1.value | minsToDisplay }}</mat-option>
+          <mat-option #o2 [value]="30">{{o2.value | minsToDisplay }}</mat-option>
+          <mat-option #o3 [value]="60">{{o3.value | minsToDisplay }}</mat-option>
+          <mat-option #o4 [value]="120">{{o4.value | minsToDisplay }}</mat-option>
+          <mat-option #o5 [value]="1440">{{o5.value | minsToDisplay }}</mat-option>
+          <mat-option #oc [style.height.px]="60" [value]="reminderInput.value">
+            <mat-form-field>
+              <input #reminderInput matInput placeholder="Custom timespan (min)" type="number"
+                     [value]="selectedReminder.value"/>
+            </mat-form-field>
+          </mat-option>
+        </mat-select>
+      </div>
+    </div>
+
     <div class="block" fxLayout="row" *ngIf="!!categories?.length">
       <h4 class="option">Change categories order and visibility</h4>
       <div class="op-value">

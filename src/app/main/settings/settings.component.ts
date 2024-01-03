@@ -1,15 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {moveItemInArray} from "@angular/cdk/drag-drop";
 import {StorageService} from "../../core/services/storageService";
-import {Unit} from "../../core/models/unit.model";
 import {TaskService} from "../../core/services/taskService";
 import {Category} from "../../core/models/category.model";
 import {ToastrService} from "ngx-toastr";
-import {
-  SimpleConfirmationDialogComponent
-} from "../../common-components/simple-confirmation-dialog/simple-confirmation-dialog.component";
 import {Constants} from "../../core/models/constants";
-import {MatDialog} from "@angular/material/dialog";
 import {AuthService} from "../../core/services/authServices";
 import {ColorPickerService} from "ngx-color-picker";
 
@@ -33,6 +28,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   public passwordConfirmation: string;
 //  public colorConverter = ColorConverter;
   public shouldEnableChangingPassword = false;
+
   constructor(private taskService: TaskService,
               private timerService: TimerService,
               private storageService: StorageService,
@@ -100,5 +96,13 @@ export class SettingsComponent implements OnInit, OnDestroy {
       tap(_ => this.timerFormat = value),
       untilDestroyed(this)
     ).subscribe();
+  }
+
+  public changedNotificationReminder(value: number): void {
+    this.storageService.saveNotificationTime(value);
+  }
+
+  public getNotificationReminder(): number {
+    return this.storageService.getNotificationTime();
   }
 }

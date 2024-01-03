@@ -4,16 +4,16 @@ import {Unit} from "../models/unit.model";
 @Injectable()
 export class StorageService {
   private unit = '_unit';
-  private unitId = '_unit_id';
+  private minBeforeDeadline = '_minBeforeDeadline';
   constructor() {
   }
 
-  saveUnit(unit: Unit): void {
-    localStorage.setItem(this.unit,  JSON.stringify(unit));
+  saveNotificationTime(minBeforeDeadline: number): void {
+    localStorage.setItem(this.minBeforeDeadline,  JSON.stringify(minBeforeDeadline ?? 30));
   }
 
-  getUnit(): any {
-    const valueString = localStorage.getItem(this.unit);
-    return valueString? JSON.parse(valueString) as Unit : null;
+  getNotificationTime(minBeforeDeadlineDefault: number = 30): any {
+    const valueString = localStorage.getItem(this.minBeforeDeadline);
+    return valueString ? +JSON.parse(valueString) : minBeforeDeadlineDefault;
   }
 }

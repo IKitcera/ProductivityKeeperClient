@@ -70,7 +70,7 @@
                  *ngFor="let task of subcategory.tasks">
               <div fxLayout="row wrap taskWrap">
                 <div class="task" fxLayout="row wrap" fxLayoutAlign>
-                  <mat-checkbox class="autowidth taskTxt" [checked]="task.isChecked"
+                  <mat-checkbox class="fullwidth taskTxt" [checked]="task.isChecked"
                                 (change)="taskCheckedStateChanged(task.id)"
                                 [matTooltip]="task.text.length >= 20 ? task.text : ''">
                     {{task.text}}

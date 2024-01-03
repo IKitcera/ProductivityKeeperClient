@@ -6,20 +6,16 @@ import {TaskService} from "../../core/services/taskService";
 import {TaskItem} from "../../core/models/task.model";
 import {EditTaskDialogComponent} from "./edit-task-dialog/edit-task-dialog.component";
 import {CdkDrag, CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
-import {BehaviorSubject, EMPTY, finalize, first, from, map, Observable, of, switchMap, tap} from "rxjs";
+import {BehaviorSubject, EMPTY, finalize, first, map, of, switchMap, tap} from "rxjs";
 import {catchError, filter} from 'rxjs/operators';
 import {StatisticsComponent} from "../statistics/statistics.component";
 import {ToastrService} from "ngx-toastr";
 import {TimerComponent} from "../timer/timer.component";
-import {StorageService} from "../../core/services/storageService";
 import {Constants} from "../../core/models/constants";
 import {untilDestroyed} from "../../core/services/until-destroyed";
 import {DialogService} from "../../core/services/dialog.service";
 import {Tag} from "../../core/models/tag.model";
 import {IConnectedDuplicate} from "../../core/interfaces/connected-duplicate.interface";
-import {ActivatedRoute} from "@angular/router";
-import {SwPush} from "@angular/service-worker";
-import {Config} from "../../../configs/config";
 import {NotificationsService} from "../../core/services/notifications.service";
 
 @Component({
@@ -33,12 +29,8 @@ export class TaskListComponent implements OnDestroy {
   @ViewChild('timer') timer: TimerComponent;
   @Output() loaderStateChanged = new BehaviorSubject(false);
 
-  updateStat = new Observable<void>();
   areTasksLoading = false;
   showAnotherBackground = false;
-  statRefreshTimerId: number | null;
-  statForceRefreshAllowed = false
-
 
   unit$ = new BehaviorSubject<Unit>(null);
   activeCtg$ = new BehaviorSubject<Category>(null);
