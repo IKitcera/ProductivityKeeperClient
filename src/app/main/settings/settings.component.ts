@@ -16,6 +16,7 @@ import {DialogService} from "../../core/services/dialog.service";
 import {DOCUMENT} from "@angular/common";
 import {StorageConstants} from "../../core/constants/storage-constants";
 import {Theme} from "../../core/enums/theme.enum";
+import {findEnumByValueFn} from "../../core/functions/find-enum-by-value.fuction";
 
 @Component({
   selector: 'app-settings',
@@ -127,7 +128,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       Theme.Dark,
       (key, value) => Theme[value]
     );
-    console.log(existingTheme, 'ex theme')
+
     if (existingTheme) {
       this.document.documentElement.classList.remove(this.getThemeName(existingTheme));
     }
@@ -137,18 +138,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   public getSelectedTheme(): Theme {
-    //TODO: Move later
-    const findEnumByValue = (currVal: Theme) => {
-      const vals = Object.values(Theme);
-      console.log(vals, 'i', vals.indexOf(currVal))
-      return Theme[vals.indexOf(currVal)];
-    };
-
-    return this.storageService.retrieveProp<Theme>(StorageConstants.selectedTheme, Theme.Dark,
-      (key, value) => {
-        console.log(value, findEnumByValue(value));
-        return findEnumByValue(value);
-      });
+    return this.storageService.retrieveProp<Theme>(
+      StorageConstants.selectedTheme,
+      Theme.Dark,
+      (key, value) => findEnumByValueFn(Theme, value));
   }
 
   private getThemeName(theme: Theme): string {

@@ -11,7 +11,6 @@ export class StorageService {
   public retrieveProp<T>(key: string, defaultVal?: T, valueReviver?: (key: string, value: any) => T): T {
     const valueString = localStorage.getItem(key);
     const parsedValue = valueString ? JSON.parse(valueString, valueReviver) : defaultVal;
-    console.log(parsedValue);
     return parsedValue as T;
   }
 }

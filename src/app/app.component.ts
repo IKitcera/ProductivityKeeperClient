@@ -6,6 +6,7 @@ import {StorageConstants} from "./core/constants/storage-constants";
 import {DOCUMENT} from "@angular/common";
 import {StorageService} from "./core/services/storageService";
 import {Theme} from "./core/enums/theme.enum";
+import {findEnumByValueFn} from "./core/functions/find-enum-by-value.fuction";
 
 @Component({
   selector: 'app-root',
@@ -25,7 +26,7 @@ export class AppComponent {
     const existingTheme= storageService.retrieveProp<Theme>(
       StorageConstants.selectedTheme,
       Theme.Dark,
-      (key, value) => Theme[value]
+      (key, value) =>  findEnumByValueFn(Theme, value)
     );
     document.documentElement.classList.add(`${existingTheme}-theme`);
   }
