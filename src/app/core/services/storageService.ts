@@ -1,19 +1,17 @@
 import {Injectable} from "@angular/core";
 import {Unit} from "../models/unit.model";
+import {StorageConstants} from "../constants/storage-constants";
 
 @Injectable()
 export class StorageService {
-  private unit = '_unit';
-  private minBeforeDeadline = '_minBeforeDeadline';
-  constructor() {
+  public setProp(key: string, value: string): void {
+    localStorage.setItem(key, value);
   }
 
-  saveNotificationTime(minBeforeDeadline: number): void {
-    localStorage.setItem(this.minBeforeDeadline,  JSON.stringify(minBeforeDeadline ?? 30));
-  }
-
-  getNotificationTime(minBeforeDeadlineDefault: number = 30): any {
-    const valueString = localStorage.getItem(this.minBeforeDeadline);
-    return valueString ? +JSON.parse(valueString) : minBeforeDeadlineDefault;
+  public retrieveProp<T>(key: string, defaultVal?: T, valueReviver?: (key: string, value: any) => T): T {
+    const valueString = localStorage.getItem(key);
+    const parsedValue = valueString ? JSON.parse(valueString, valueReviver) : defaultVal;
+    console.log(parsedValue);
+    return parsedValue as T;
   }
 }

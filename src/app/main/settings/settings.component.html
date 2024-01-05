@@ -9,15 +9,16 @@
         <div *ngIf="!shouldEnableChangingPassword">
           <mat-form-field appearance="fill">
             <mat-label>Enter old password</mat-label>
-            <input name="p" matInput type="text" [(ngModel)]="oldPassword" (keyup.enter)="checkIfPasswordMatches()" type="password">
+            <input name="p" matInput type="text" [(ngModel)]="oldPassword" (keyup.enter)="checkIfPasswordMatches()"
+                   type="password">
           </mat-form-field>
         </div>
         <div *ngIf="shouldEnableChangingPassword" fxLayout="column">
-          <mat-form-field  appearance="fill" >
+          <mat-form-field appearance="fill">
             <mat-label>Password</mat-label>
             <input name="p" matInput type="text" [(ngModel)]="newPassword" type="password" required>
           </mat-form-field>
-          <mat-form-field  appearance="fill">
+          <mat-form-field appearance="fill">
             <mat-label>Confirm password</mat-label>
             <input name="pc" matInput type="text" [(ngModel)]="passwordConfirmation" type="password" required>
           </mat-form-field>
@@ -30,10 +31,11 @@
                   (click)="changePassword()">
             Change password
           </button>
-          </div>
         </div>
       </div>
     </div>
+  </div>
+
   <div class="block-container">
     <h2>Tasks related</h2>
     <div class="block" fxLayout="row">
@@ -43,14 +45,15 @@
       <div class="op-value autowidth">
         <mat-select #selectedReminder [value]="getNotificationReminder()"
                     (selectionChange)="changedNotificationReminder($event.value)">
-          <mat-option #o1 [value]="10">{{o1.value | minsToDisplay }}</mat-option>
-          <mat-option #o2 [value]="30">{{o2.value | minsToDisplay }}</mat-option>
-          <mat-option #o3 [value]="60">{{o3.value | minsToDisplay }}</mat-option>
-          <mat-option #o4 [value]="120">{{o4.value | minsToDisplay }}</mat-option>
-          <mat-option #o5 [value]="1440">{{o5.value | minsToDisplay }}</mat-option>
+          <mat-option #o1 [value]="10">{{ o1.value | minsToDisplay }}</mat-option>
+          <mat-option #o2 [value]="30">{{ o2.value | minsToDisplay }}</mat-option>
+          <mat-option #o3 [value]="60">{{ o3.value | minsToDisplay }}</mat-option>
+          <mat-option #o4 [value]="120">{{ o4.value | minsToDisplay }}</mat-option>
+          <mat-option #o5 [value]="1440">{{ o5.value | minsToDisplay }}</mat-option>
           <mat-option #oc [style.height.px]="60" [value]="reminderInput.value">
             <mat-form-field>
               <input #reminderInput matInput placeholder="Custom timespan (min)" type="number"
+                     [min]="0"
                      [value]="selectedReminder.value"/>
             </mat-form-field>
           </mat-option>
@@ -58,30 +61,65 @@
       </div>
     </div>
 
+    <div class="block" fxLayout="row">
+      <h4 class="option" fxLayout="row" fxLayoutAlign>Estimated capacity
+        <mat-icon>timelapse</mat-icon>
+      </h4>
+      <div class="op-value autowidth">
+        <mat-select #selectedCapacity [value]="capacityInput.value"
+                    (selectionChange)="changedEstimatedCapacity($event.value)">
+          <mat-option #co1 [value]="3">{{ co1.value.toString() + ' hrs' }}</mat-option>
+          <mat-option #co2 [value]="8">{{ co2.value.toString() + ' hrs' }}</mat-option>
+          <mat-option #co3 [value]="14">{{ co3.value.toString() + ' hrs' }}</mat-option>
+          <mat-option #co4 [value]="16">{{ co4.value.toString() + ' hrs' }}</mat-option>
+          <mat-option #coc [style.height.px]="60" [value]="capacityInput.value">
+            <mat-form-field>
+              <input #capacityInput matInput placeholder="Custom capacity(hrs)" type="number"
+                     [min]="1"
+                     [max]="24"
+                     [value]="getEstimatedCapacity()"/>
+            </mat-form-field>
+          </mat-option>
+        </mat-select>
+      </div>
+    </div>
+
+    <div class="block" fxLayout="row">
+      <h4 class="option" fxLayout="row" fxLayoutAlign>
+        Select UI theme
+      </h4>
+      <div class="op-value autowidth">
+        <mat-radio-group [value]="getSelectedTheme()" (change)="selectedThemeChanged($event.value)" fxLayoutGap="10px">
+          <mat-radio-button #rb1 [value]="Theme.Dark">{{rb1.value}}</mat-radio-button>
+          <mat-radio-button #rb2 [value]="Theme.Light">{{rb2.value}}</mat-radio-button>
+        </mat-radio-group>
+      </div>
+    </div>
+
     <div class="block" fxLayout="row" *ngIf="!!categories?.length">
       <h4 class="option">Change categories order and visibility</h4>
       <div class="op-value">
-      <mat-accordion cdkDropList (cdkDropListDropped)="drop($event)" multi>
+        <mat-accordion cdkDropList (cdkDropListDropped)="drop($event)" multi>
           <div class="task" fxLayout="row" fxLayoutAlign="start center" *ngFor="let ctg of categories" cdkDrag>
             <div class="ctg" fxLayout="row" fxLayoutAlign="start center">
               <mat-icon class="grey" cdkDragHandle>drag_indicator</mat-icon>
-              <mat-checkbox [(ngModel)]="ctg.isVisible" mat-card-content> {{ctg.name}} </mat-checkbox>
+              <mat-checkbox [(ngModel)]="ctg.isVisible" mat-card-content> {{ ctg.name }}</mat-checkbox>
             </div>
             <div class="ctg-color-circle" [(colorPicker)]="ctg.colorHex"
                  [style.background]="ctg.colorHex">
             </div>
           </div>
-      </mat-accordion>
+        </mat-accordion>
 
-        <div  fxLayout="row" fxLayoutAlign="end center" fxLayoutOffset="10px">
+        <div fxLayout="row" fxLayoutAlign="end center" fxLayoutOffset="10px">
           <button class="btn" [color]="'accent'" mat-flat-button (click)="saveChanges()">Apply</button>
         </div>
       </div>
     </div>
 
     <div class="block" fxLayout="row">
-        <h4 class="option-close">Clear tasks archive</h4>
-        <button class="btn" [color]="'warn'" mat-flat-button (click)="clearArchive()">Clear</button>
+      <h4 class="option-close">Clear tasks archive</h4>
+      <button class="btn" [color]="'warn'" mat-flat-button (click)="clearArchive()">Clear</button>
     </div>
   </div>
 
@@ -90,7 +128,8 @@
     <div class="block" fxLayout="row">
       <h4 class="option">Change display format</h4>
       <div class="op-value">
-        <mat-radio-group [(ngModel)]="timerFormat" (change)="updateTimerFormat($event.value)" fxLayout="column" fxLayoutGap="5px">
+        <mat-radio-group [(ngModel)]="timerFormat" (change)="updateTimerFormat($event.value)" fxLayout="column"
+                         fxLayoutGap="5px">
           <mat-radio-button [value]="timerFormatEnum.FullDateTime">Full Date Time</mat-radio-button>
           <mat-radio-button [value]="timerFormatEnum.FullTime">Full Time</mat-radio-button>
           <mat-radio-button [value]="timerFormatEnum.FullDayTime">Full Day Time</mat-radio-button>

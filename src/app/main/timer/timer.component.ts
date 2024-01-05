@@ -135,9 +135,9 @@ export class TimerComponent implements OnDestroy {
       case TimerFormat.FullDateTime:
         return 'Y-MM-DD  hh:mm:ss';
       case TimerFormat.FullTime:
-        return 'hh:mm:ss';
+        return 'hh : mm : ss';
       case TimerFormat.FullDayTime:
-        return 'DD  hh:mm:ss';
+        return 'DD  hh : mm : ss';
       case TimerFormat.Days:
         return 'Days';
       case TimerFormat.Hours:

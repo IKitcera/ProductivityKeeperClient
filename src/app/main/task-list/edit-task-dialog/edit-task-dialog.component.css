@@ -22,3 +22,26 @@ input::-webkit-inner-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
+
+.reset-icon {
+  transform: rotate(-180deg);
+}
+
+.prop-group {
+  display: flex;
+  align-content: center;
+  justify-content: space-between;
+  place: space-between center;
+  border: 1px solid lightgray;
+  border-radius: 5px;
+  height: 80px;
+  padding: 10px;
+  flex-direction: row;
+  background: #555555;
+
+}
+.prop-group-label {
+  top: -50%;
+  background: #424242;
+  color: lightgray;
+}

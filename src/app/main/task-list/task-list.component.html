@@ -45,8 +45,8 @@
                   {{subcategory.name}} &emsp; <i>{{getTasksEstimatedDuration(subcategory.tasks) > 0 ? '('+ getTasksEstimatedDuration(subcategory.tasks) + ' hrs)' : ''}}</i>
                 </span>
                 <mat-icon class="warning-icon"
-                          [matTooltip]="'Estimated duration (' + getTasksEstimatedDuration(subcategory.tasks) + ' hrs) is greater than 14 hours'"
-                          *ngIf="getTasksEstimatedDuration(subcategory.tasks) > 14"
+                          [matTooltip]="'Estimated duration (' + getTasksEstimatedDuration(subcategory.tasks) + ' hrs) is greater than ' + estimatedCapacityInHrs.toString() + ' hours'"
+                          *ngIf="getTasksEstimatedDuration(subcategory.tasks) > estimatedCapacityInHrs"
                 >warning</mat-icon>
                 <mat-icon class="m-1 medium-icon size17" (click)="editSubcategory(subcategory)">edit</mat-icon>
                 <mat-icon class="m-2 medium-icon" (click)="deleteSubcategory(subcategory.id)">delete_outline</mat-icon>
@@ -72,10 +72,10 @@
                 <div class="task" fxLayout="row wrap" fxLayoutAlign>
                   <mat-checkbox class="fullwidth taskTxt" [checked]="task.isChecked"
                                 (change)="taskCheckedStateChanged(task.id)"
-                                [matTooltip]="task.text.length >= 20 ? task.text : ''">
-                    {{task.text}}
+                                [matTooltip]="task.text.length >= maxTaskCharachters ? task.text : ''">
+                    <div>{{task.text}}</div>
                   </mat-checkbox>
-                  <div [ngClass]="{'faded': task.text.length >= 25}"></div>
+                  <div [ngClass]="{'faded': task.text.length >= maxTaskCharachters}"></div>
                   <mat-icon class="topright edit" (click)="editTask(subcategory.id, task)">edit</mat-icon>
                   <mat-icon class="topright delete" (click)="deleteTask(task)">close</mat-icon>
                 </div>

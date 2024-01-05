@@ -98,33 +98,38 @@
   color: #f2f2f2;
   font-size: 15px;
   font-family: "Verdana", serif;
-
 }
 
 .taskTxt{
   width: 100%;
 
-
   margin-right: 30px;
 
-
+  padding-right: 30px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 ::ng-deep label.mat-checkbox-layout {
   height: auto;
+
+}
+
+::ng-deep.mat-checkbox-layout .mat-checkbox-label {
+  line-height: 24px;
+  max-width: 50vw;
 }
 
 .faded {
-  position: relative;
   width: 40px;
+  height: 20px;
+  position: absolute;
   margin-left: -60px;
+  right: 25px;
+  top: 0;
   display: inline-block;
   line-height: 15px;
   background: linear-gradient(90deg, transparent, #424242);
-
-
 }
 
 .tasksWrap{

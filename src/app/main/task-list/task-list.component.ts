@@ -17,6 +17,8 @@ import {DialogService} from "../../core/services/dialog.service";
 import {Tag} from "../../core/models/tag.model";
 import {IConnectedDuplicate} from "../../core/interfaces/connected-duplicate.interface";
 import {NotificationsService} from "../../core/services/notifications.service";
+import {StorageService} from "../../core/services/storageService";
+import {StorageConstants} from "../../core/constants/storage-constants";
 
 @Component({
   selector: 'app-task-list',
@@ -39,14 +41,22 @@ export class TaskListComponent implements OnDestroy {
     tap(tags => this.tags$.next(tags))
   );
 
+  public readonly maxTaskCharachters = 140;
+  public readonly estimatedCapacityInHrs;
 
   constructor(private taskService: TaskService,
               private dialog: DialogService,
               private toastr: ToastrService,
-              private notificationsService: NotificationsService) {
+              private notificationsService: NotificationsService,
+              storageService: StorageService) {
 
     this.initData();
     this.listenChanges();
+
+    this.estimatedCapacityInHrs = storageService.retrieveProp<number>(
+      StorageConstants.estimatedCapacityHrs,
+      14,
+      (key, value) => +value);
   }
 
   @HostListener('window:beforeunload', ['$event']) unloadHandler(): void {

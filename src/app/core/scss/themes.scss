@@ -1,0 +1,66 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+// Palettes
+$primary: mat.define-palette(mat.$purple-palette, 500);
+$accent: mat.define-palette(mat.$green-palette, A200);
+$warn: mat.define-palette(mat.$red-palette);
+//
+//$typography: mat.define-typography-config(
+//  $font-family: 'Roboto,Helvetica Neue,Arial,sans-serif',
+//  $headline-1: mat.define-typography-level($font-size: 24px),
+//  $headline-2: mat.define-typography-level($font-size: 20px),
+//  $headline-3: mat.define-typography-level($font-size: 16px),
+//  $headline-4: mat.define-typography-level($font-size: 14px),
+//  $headline-5: mat.define-typography-level($font-size: 13px),
+//  $headline-6: mat.define-typography-level($font-size: 12px),
+//  $body-2: mat.define-typography-level($font-size: 14px),
+//  $body-1: mat.define-typography-level($font-size: 14px),
+//  $button: mat.define-typography-level($font-size: 14px),
+//);
+//
+//@include mat.all-component-typographies($typography);
+//@include mat.typography-hierarchy($typography);
+
+
+
+$theme-light: mat.define-light-theme((
+  color: (
+    primary: mat.define-palette(mat.$red-palette, 400),
+    accent: mat.define-palette(mat.$deep-purple-palette, 600),
+    warn: mat.define-palette(mat.$amber-palette)
+  ),
+  typography: mat.define-typography-config(),
+  density: 0)
+);
+
+
+$theme-dark: mat.define-dark-theme((
+  color: (
+    primary: $primary,
+    accent: $accent,
+    warn: $warn
+  ),
+  typography:  mat.define-typography-config(),
+  density: 0)
+);
+
+.light-theme {
+  @include mat.all-component-themes($theme-light);
+  @include mat.all-component-colors($theme-light);
+
+  background: antiquewhite;
+  color: #222222;
+
+  ::ng-deep.mat-expansion-panel {
+    background: peachpuff !important;
+    color: #222222 !important;
+  }
+}
+.dark-theme {
+  @include mat.all-component-themes($theme-dark);
+  @include mat.all-component-colors($theme-dark);
+
+  background: slategray;
+}

@@ -17,6 +17,7 @@ export class EditTaskDialogComponent implements OnDestroy {
 
   connectedDuplicates: IConnectedDuplicate [] = [];
   previousRepeatCount: number | undefined;
+  shouldResetRepeatableTask = false;
 
   public get categories(): Category[] {
     return this.data.unit.categories
@@ -73,11 +74,18 @@ export class EditTaskDialogComponent implements OnDestroy {
     }
 
     if (this.data.task.isRepeatable) {
-      const compl = this.previousRepeatCount as number || 0 - this.data.task.timesToRepeat;
+      if (this.shouldResetRepeatableTask) {
+        this.data.task.timesToRepeat = this.data.task.goalRepeatCount;
+        this.data.task.isChecked = false;
+        return;
+      }
 
-      this.data.task.timesToRepeat = compl > 0 ?
-        this.data.task.goalRepeatCount - compl :
-        this.data.task.goalRepeatCount;
+      if (!this.previousRepeatCount) {
+        this.previousRepeatCount = this.data.task.goalRepeatCount;
+      }
+      const compl = this.data.task.goalRepeatCount - this.previousRepeatCount;
+
+      this.data.task.timesToRepeat = this.data.task.goalRepeatCount - compl;
     }
   }
 
@@ -127,5 +135,9 @@ export class EditTaskDialogComponent implements OnDestroy {
       break;
     }
     return duplicate;
+  }
+
+  resetRepeatingCount(): void {
+    this.shouldResetRepeatableTask = true;
   }
 }

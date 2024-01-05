@@ -1,7 +1,11 @@
-import {Component, ViewChild} from '@angular/core';
+import {Component, Inject, ViewChild} from '@angular/core';
 import {AuthService} from "./core/services/authServices";
 import {TaskListComponent} from "./main/task-list/task-list.component";
 import {BehaviorSubject} from "rxjs";
+import {StorageConstants} from "./core/constants/storage-constants";
+import {DOCUMENT} from "@angular/common";
+import {StorageService} from "./core/services/storageService";
+import {Theme} from "./core/enums/theme.enum";
 
 @Component({
   selector: 'app-root',
@@ -13,9 +17,18 @@ export class AppComponent {
   title = 'ProductivityKeeperClient';
   isLoading = new BehaviorSubject(false);
 
-  constructor(public authService: AuthService) {
+  constructor(
+    public authService: AuthService,
+    storageService: StorageService,
+    @Inject(DOCUMENT) document: Document
+  ) {
+    const existingTheme= storageService.retrieveProp<Theme>(
+      StorageConstants.selectedTheme,
+      Theme.Dark,
+      (key, value) => Theme[value]
+    );
+    document.documentElement.classList.add(`${existingTheme}-theme`);
   }
-
 
   routeChanged(component: any) {
     const cast = component as TaskListComponent;
@@ -28,6 +41,4 @@ export class AppComponent {
       this.isLoading.next(false);
     }
   }
-
-
 }

@@ -4,7 +4,10 @@ html, body { height: 100%; }
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
-  background: slategrey;
+  /*background: slategrey;*/
+
+  scrollbar-width: thin;          /* "auto" or "thin" */
+  scrollbar-color: #424242 transparent;   /* scroll thumb and track */
 }
 
 .fullwidth{
@@ -14,4 +17,19 @@ body {
 .autowidth {
   min-width: 200px;
   width: auto !important;
+}
+
+body::-webkit-scrollbar {
+  width: 12px;
+}
+
+body::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 5%;
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: #424242;
+  border-radius: 20px;
+  border: 4px solid transparent;
 }

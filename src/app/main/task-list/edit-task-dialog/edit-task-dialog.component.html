@@ -1,31 +1,38 @@
-<div fxLayout="column">
-  <mat-form-field color="accent"  appearance="fill" class="fullwidth">
+<div fxLayout="column" fxLayoutGap="10px">
+  <h1>Edit Task</h1>
+  <mat-form-field color="accent" appearance="fill" class="fullwidth">
     <mat-label>What need to do?</mat-label>
     <input [(ngModel)]="data.task.text" matInput type="text" name="taskText" autofocus>
   </mat-form-field>
 
   <div fxLayout="row" fxLayoutAlign="space-between center">
-    <mat-checkbox [(ngModel)]="data.task.isRepeatable">Is repeatable</mat-checkbox>
-    <div *ngIf="data.task.isRepeatable" fxLayout="row" fxLayoutAlign="space-between center">
-      <mat-form-field [style.margin-right]="'10px'">
-        <input matInput  [(ngModel)]="data.task.goalRepeatCount" placeholder="Repeating count">
-      </mat-form-field>
-      <mat-form-field [style.margin-right]="'10px'">
-        <input matInput [(ngModel)]="data.task.habbitIntervalInHours" placeholder="Repeating interval (hrs)">
-      </mat-form-field>
+    <div class="prop-group" fxLayout fxLayoutAlign="space-between center">
+      <mat-checkbox [style.margin-right]="'10px'" [(ngModel)]="data.task.isRepeatable">Is repeatable</mat-checkbox>
+      <div *ngIf="data.task.isRepeatable" fxLayout="row" fxLayoutAlign="space-between center">
+        <mat-form-field [style.margin-right]="'10px'" color="accent">
+          <input matInput [(ngModel)]="data.task.goalRepeatCount" placeholder="Repeating count">
+        </mat-form-field>
+        <mat-form-field [style.margin-right]="'10px'" color="accent" fxLayout fxLayoutAlign="space-between center">
+          <input matInput [(ngModel)]="data.task.habbitIntervalInHours" placeholder="Repeating interval (hrs)">
+        </mat-form-field>
+        <button mat-icon-button>
+          <mat-icon class="reset-icon" matTooltip="Will reset progress count after applaying change"
+                    (click)="resetRepeatingCount()">
+            replay
+          </mat-icon>
+        </button>
+      </div>
     </div>
 
-
-
-    <div fxLayout="row" fxLayoutAlign="space-between center">
-      <mat-form-field [style.width]="'85px'"  [style.margin-right]="'10px'">
+    <div class="prop-group" fxLayout="row" fxLayoutAlign="space-between center">
+      <mat-form-field [style.width]="'85px'" [style.margin-right]="'10px'" color="accent">
         <input matInput placeholder="Duration (hr)" type="number" min="0"
                [(ngModel)]="data.task.executionDuration">
       </mat-form-field>
 
-      <mat-form-field [style.margin-bottom]="'7px'">
+      <mat-form-field [style.margin-bottom]="'7px'" color="accent">
         <input matInput placeholder="Choose a deadline" (click)="picker.open()" name="nnnn"
-               [(ngModel)]="data.task.deadline"  [ngxMatDatetimePicker]="picker" >
+               [(ngModel)]="data.task.deadline" [ngxMatDatetimePicker]="picker">
         <mat-datepicker-toggle matSuffix [for]="$any(picker)"></mat-datepicker-toggle>
         <ngx-mat-datetime-picker #picker [showSeconds]="false"
                                  [color]="'primary'"
@@ -34,20 +41,23 @@
       </mat-form-field>
     </div>
   </div>
+
   <button mat-stroked-button
+          color="accent"
           (click)="addConnectedLine()"
           [disabled]="isAddingDuplicatesDisabled()"
   >
     Add connected duplicate
   </button>
-  <div *ngIf="!!connectedDuplicates.length" >
+
+  <div *ngIf="!!connectedDuplicates.length">
     <div fxFill fxLayout="row" fxLayoutAlign="space-evenly center" class="divider"
          *ngFor="let item of connectedDuplicates">
       <mat-select #selectedCtg placeholder="Category"
                   [value]="item.cId"
                   (valueChange)="ctgSelectionChanged(item, $event)">
         <div *ngFor="let ctg of categories">
-          <mat-option [value]="ctg.id" >{{ctg.name}}</mat-option>
+          <mat-option [value]="ctg.id">{{ ctg.name }}</mat-option>
         </div>
       </mat-select>
       <mat-select placeholder="Subcategory"
@@ -55,11 +65,11 @@
                   [disabled]="!item.cId"
                   (valueChange)=" item.sId = $event">
         <div *ngFor="let sub of (categories | findBy: 'id': item.cId)?.subcategories || []">
-          <mat-option [value]="sub.id">{{sub.name}}</mat-option>
+          <mat-option [value]="sub.id">{{ sub.name }}</mat-option>
         </div>
       </mat-select>
-      <mat-icon (click)="removeConnectedLine(item)">close</mat-icon>
+      <mat-icon (click)="removeConnectedLine(item)" [style.padding-right.px]="10">close</mat-icon>
     </div>
   </div>
-  <button mat-stroked-button (click)="close(data.task)">Apply</button>
+  <button mat-stroked-button color="accent" (click)="close(data.task)">Apply</button>
 </div>

@@ -1,4 +1,4 @@
-import {Inject, Injectable, InjectionToken, LOCALE_ID} from "@angular/core";
+import {Inject, Injectable, LOCALE_ID} from "@angular/core";
 import {TaskItem} from "../models/task.model";
 import {from, Observable, of, switchMap, tap} from "rxjs";
 import {Config} from "../../../configs/config";

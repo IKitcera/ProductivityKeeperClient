@@ -2,41 +2,47 @@
   margin: 2% 5%;
 }
 
-div>h4 {
+div > h4 {
   font-size: 16px;
 }
 
-.mat-form-field{
+.mat-form-field {
   width: 100%;
 }
 
 div.block {
   margin: 0 20px;
 }
-h1{
-  margin-left:10px ;
+
+h1 {
+  margin-left: 10px;
 }
-.block-container{
+
+.block-container {
   padding: 20px;
   border: 2px solid #424242;
   border-radius: 5px;
   margin-bottom: 5px;
 }
 
-.option{
+.option {
   width: 40%;
+
+  .mat-icon {
+    margin-left: 10px;
+  }
 }
 
 .op-value {
   width: 40%;
 }
 
-.option-close{
+.option-close {
   width: 20%;
 }
 
 .grey {
-  color: rgb(60,60,60);
+  color: rgb(60, 60, 60);
 }
 
 
@@ -48,7 +54,7 @@ h1{
   padding: 2px 30px;
 }
 
-.ctg{
+.ctg {
   width: 400px;
 }
 
@@ -58,12 +64,12 @@ h1{
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  border: 1px solid rgb(60,60,60);
+  border: 1px solid rgb(60, 60, 60);
   justify-self: center;
 
 }
 
-.task{
+.task {
 
 }
 

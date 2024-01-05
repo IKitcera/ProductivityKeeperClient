@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {moveItemInArray} from "@angular/cdk/drag-drop";
 import {StorageService} from "../../core/services/storageService";
 import {TaskService} from "../../core/services/taskService";
@@ -13,6 +13,9 @@ import {TimerService} from "../../core/services/timerService";
 import {untilDestroyed} from "../../core/services/until-destroyed";
 import {tap} from "rxjs";
 import {DialogService} from "../../core/services/dialog.service";
+import {DOCUMENT} from "@angular/common";
+import {StorageConstants} from "../../core/constants/storage-constants";
+import {Theme} from "../../core/enums/theme.enum";
 
 @Component({
   selector: 'app-settings',
@@ -35,7 +38,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
               private authService: AuthService,
               private toastr: ToastrService,
               private dialog: DialogService,
-              private colorPicker: ColorPickerService) {
+              private colorPicker: ColorPickerService,
+              @Inject(DOCUMENT) private document: Document) {
   }
 
   ngOnInit(): void {
@@ -99,10 +103,57 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   public changedNotificationReminder(value: number): void {
-    this.storageService.saveNotificationTime(value);
+    this.storageService.setProp(StorageConstants.minBeforeDeadline, JSON.stringify(value ?? 10));
   }
 
   public getNotificationReminder(): number {
-    return this.storageService.getNotificationTime();
+    return this.storageService.retrieveProp<number>(StorageConstants.minBeforeDeadline, 10,
+      (key, value) => +value);
   }
+
+  public changedEstimatedCapacity(value: number): void {
+    this.storageService.setProp(StorageConstants.estimatedCapacityHrs, JSON.stringify(value ?? 14));
+  }
+
+  public getEstimatedCapacity(): number {
+    return this.storageService.retrieveProp<number>(StorageConstants.estimatedCapacityHrs, 14,
+      (key, value) => +value);
+  }
+
+  public selectedThemeChanged(theme: Theme): void {
+    console.log(theme)
+    const existingTheme= this.storageService.retrieveProp<Theme>(
+      StorageConstants.selectedTheme,
+      Theme.Dark,
+      (key, value) => Theme[value]
+    );
+    console.log(existingTheme, 'ex theme')
+    if (existingTheme) {
+      this.document.documentElement.classList.remove(this.getThemeName(existingTheme));
+    }
+
+    this.storageService.setProp(StorageConstants.selectedTheme, JSON.stringify(theme));
+    this.document.documentElement.classList.add(this.getThemeName(theme));
+  }
+
+  public getSelectedTheme(): Theme {
+    //TODO: Move later
+    const findEnumByValue = (currVal: Theme) => {
+      const vals = Object.values(Theme);
+      console.log(vals, 'i', vals.indexOf(currVal))
+      return Theme[vals.indexOf(currVal)];
+    };
+
+    return this.storageService.retrieveProp<Theme>(StorageConstants.selectedTheme, Theme.Dark,
+      (key, value) => {
+        console.log(value, findEnumByValue(value));
+        return findEnumByValue(value);
+      });
+  }
+
+  private getThemeName(theme: Theme): string {
+    return `${theme}-theme`;
+  }
+
+  protected readonly Theme = Theme;
 }
