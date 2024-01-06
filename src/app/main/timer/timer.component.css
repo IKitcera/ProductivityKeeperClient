@@ -10,7 +10,7 @@
 .container{
   border-radius: 5px;
   padding: 20px 40px;
-  border: 1px solid #7b1fa2;
+  border: 1px solid var(--timer-border);
   box-shadow: 0 0 5px dimgray;
 }
 

@@ -126,15 +126,17 @@ export class SettingsComponent implements OnInit, OnDestroy {
     const existingTheme= this.storageService.retrieveProp<Theme>(
       StorageConstants.selectedTheme,
       Theme.Dark,
-      (key, value) => Theme[value]
+      (key, value) => findEnumByValueFn(Theme, value)
     );
 
     if (existingTheme) {
+      console.log('e t', this.getThemeName(existingTheme));
       this.document.documentElement.classList.remove(this.getThemeName(existingTheme));
     }
 
     this.storageService.setProp(StorageConstants.selectedTheme, JSON.stringify(theme));
     this.document.documentElement.classList.add(this.getThemeName(theme));
+    console.log(this.document.documentElement.classList)
   }
 
   public getSelectedTheme(): Theme {

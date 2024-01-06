@@ -1,20 +1,21 @@
+@import 'src/app/core/scss/themes';
+
 nav div div {
   width: 60%
 }
 
-nav{
+nav {
   font-size: 20px;
   padding-top: 15px;
   padding-bottom: 15px;
   color: white;
-  background: #424242;
+  background: var(--navbar-background);
 }
 
 .spinner-wrap{
-  background: url("src/assets/bg3.jpg") #151515;
   image-rendering: pixelated;
   background-size: 1500px;
-  background-position: center;
+  background: url("../assets/bg3.jpg") center;
   position: absolute;
   top:0;
   left:0;

@@ -1,7 +1,7 @@
 .border {
   padding: 30px 25px;
   border-radius: 15px;
-  border:1px solid #69f0ae;
+  border:1px solid var(--accent);
   background: transparent;
   box-shadow: 0 0 3px dimgray;
 }
@@ -13,5 +13,5 @@
 }
 
 .regLogChange:hover {
-  color: #69f0ae;
+  color: var(--accent);
 }

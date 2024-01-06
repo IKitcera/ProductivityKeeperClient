@@ -11,7 +11,7 @@ import {findEnumByValueFn} from "./core/functions/find-enum-by-value.fuction";
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
   @ViewChild('router') router: any;

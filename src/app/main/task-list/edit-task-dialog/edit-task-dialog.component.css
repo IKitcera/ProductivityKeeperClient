@@ -37,11 +37,5 @@ input[type=number] {
   height: 80px;
   padding: 10px;
   flex-direction: row;
-  background: #555555;
-
-}
-.prop-group-label {
-  top: -50%;
-  background: #424242;
-  color: lightgray;
+  background: var(--mat-dialog-container-group-background);
 }

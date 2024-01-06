@@ -1,7 +1,8 @@
 .container {
-  height: 100%;
-  width: 100%;
-  margin: 2%;
+  /*height: 100%;*/
+  /*width: 100%;*/
+  padding: 1%;
+  overflow-x: hidden;
 }
 
 .container div {
@@ -9,10 +10,11 @@
 }
 
 .container div.chart {
-  color:white;
-  background: #424242;
-  height: 48vh;
-  width:48vw;
+  color: var(--text-general-color);
+  background: var(--mat-card-color);
+  height: 45vh;
+  width:45vw;
+  margin: 2%;
 }
 
 p {

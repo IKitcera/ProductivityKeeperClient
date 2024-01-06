@@ -24,15 +24,12 @@
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets",
-              "src/manifest.webmanifest",
-              "src/manifest.webmanifest",
-              "src/manifest.webmanifest"
+              "src/assets"
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/purple-green.css",
               "src/app/core/scss/themes.scss",
-              "src/styles.css"
+              "src/styles.scss"
             ],
             "scripts": [],
             "serviceWorker": true,
@@ -111,7 +108,7 @@
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/purple-green.css",
-              "src/styles.css"
+              "src/styles.scss"
             ],
             "scripts": []
           }

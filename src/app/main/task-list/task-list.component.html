@@ -73,7 +73,7 @@
                   <mat-checkbox class="fullwidth taskTxt" [checked]="task.isChecked"
                                 (change)="taskCheckedStateChanged(task.id)"
                                 [matTooltip]="task.text.length >= maxTaskCharachters ? task.text : ''">
-                    <div>{{task.text}}</div>
+                    <div [class.line-through]="task.isChecked" >{{task.text}}</div>
                   </mat-checkbox>
                   <div [ngClass]="{'faded': task.text.length >= maxTaskCharachters}"></div>
                   <mat-icon class="topright edit" (click)="editTask(subcategory.id, task)">edit</mat-icon>
