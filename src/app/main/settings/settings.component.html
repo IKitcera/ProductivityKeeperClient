@@ -45,6 +45,7 @@
       <div class="op-value autowidth">
         <mat-select #selectedReminder [value]="getNotificationReminder()"
                     (selectionChange)="changedNotificationReminder($event.value)">
+          <mat-option #o11 [value]="1">{{ o11.value | minsToDisplay }}</mat-option>
           <mat-option #o1 [value]="10">{{ o1.value | minsToDisplay }}</mat-option>
           <mat-option #o2 [value]="30">{{ o2.value | minsToDisplay }}</mat-option>
           <mat-option #o3 [value]="60">{{ o3.value | minsToDisplay }}</mat-option>

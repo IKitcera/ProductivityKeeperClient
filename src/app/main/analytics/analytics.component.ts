@@ -129,7 +129,7 @@ export class AnalyticsComponent implements OnDestroy {
       const currInd = arr.indexOf(comparingNr);
       const prepArr = [...arr.slice(0, currInd), ...arr.slice(currInd + 1, arr.length)];
 
-      return prepArr.filter(item => item <= comparingNr).length / prepArr.length;
+      return prepArr.filter(item => item < comparingNr).length / prepArr.length;
     }
     const preventIsNaN = (nr: number) => isNaN(nr) ? 0 : nr;
 
