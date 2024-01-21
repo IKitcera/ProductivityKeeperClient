@@ -7,9 +7,9 @@
 //  If you specify typography styles for the components you use elsewhere, you should delete this line.
 //  If you don't need the default component typographies but still want the hierarchy styles,
 //  you can delete this line and instead use:
-//    `@include mat.legacy-typography-hierarchy(mat.define-legacy-typography-config());`
-@include mat.all-legacy-component-typographies();
-@include mat.legacy-core();
+//    `@include mat.legacy-typography-hierarchy(mat.define-typography-config());`
+@include mat.all-component-typographies();
+@include mat.core();
 
 // Palettes
 $primary: mat.define-palette(mat.$purple-palette, 700);
@@ -44,7 +44,7 @@ $theme-light: mat.define-light-theme((
     accent: mat.define-palette(mat.$indigo-palette, 400),
     warn: mat.define-palette(mat.$amber-palette)
   ),
-  typography: mat.define-legacy-typography-config(),
+  typography: mat.define-typography-config(),
   density: 0)
 );
 
@@ -55,18 +55,18 @@ $theme-dark: mat.define-dark-theme((
     accent: $accent,
     warn: $warn
   ),
-  typography:  mat.define-legacy-typography-config(),
+  typography:  mat.define-typography-config(),
   density: 0)
 );
 
 .dark-theme {
-  @include mat.all-legacy-component-themes($theme-dark);
-  @include mat.all-legacy-component-colors($theme-dark);
+  @include mat.all-component-themes($theme-dark);
+  @include mat.all-component-colors($theme-dark);
 }
 
 .light-theme {
-  @include mat.all-legacy-component-themes($theme-light);
-  @include mat.all-legacy-component-colors($theme-light);
+  @include mat.all-component-themes($theme-light);
+  @include mat.all-component-colors($theme-light);
 
   $primary2: mat.define-palette(mat.$red-palette, 400);
   $accent2: mat.define-palette(mat.$indigo-palette, 400);

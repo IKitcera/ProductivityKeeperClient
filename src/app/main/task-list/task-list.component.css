@@ -110,11 +110,13 @@
   text-overflow: ellipsis;
 }
 
+/*TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version.*/
 ::ng-deep label.mat-checkbox-layout {
   height: auto;
 
 }
 
+/*TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version.*/
 ::ng-deep.mat-checkbox-layout .mat-checkbox-label {
   line-height: 24px;
   max-width: 50vw;
@@ -174,6 +176,7 @@
   font-size: 17px;
 }
 
+/*TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version.*/
 .mat-checkbox-checked {
   color: var(--task-item-checked-color);
 }
@@ -304,6 +307,6 @@
   background: var(--mat-card-color);
 }
 
-::ng-deep.mat-dialog-container {
+::ng-deep.mat-mdc-dialog-container {
   background: var(--mat-dialog-container-background) !important;
 }
