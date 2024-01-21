@@ -2,7 +2,7 @@ import {Injectable, OnDestroy} from "@angular/core";
 import {Observable} from "rxjs";
 import {SingleInputDialogComponent} from "../../common-components/single-input-dialog/single-input-dialog.component";
 import {dialogObservableWrap$} from "../functions/observable-helper.functions";
-import {MatDialog} from "@angular/material/dialog";
+import {MatLegacyDialog as MatDialog} from "@angular/material/legacy-dialog";
 import {ComponentType} from "@angular/cdk/overlay";
 import {
   SimpleConfirmationDialogComponent

@@ -1,6 +1,6 @@
 import {Component, Inject, OnDestroy} from '@angular/core';
 import {TaskItem} from "../../../core/models/task.model";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef} from "@angular/material/legacy-dialog";
 import {Category} from "../../../core/models/category.model";
 import {Subcategory} from "../../../core/models/subcategory.model";
 import {Unit} from "../../../core/models/unit.model";
