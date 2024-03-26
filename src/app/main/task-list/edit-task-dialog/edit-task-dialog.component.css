@@ -28,14 +28,31 @@ input[type=number] {
 }
 
 .prop-group {
-  display: flex;
-  align-content: center;
-  justify-content: space-between;
-  place: space-between center;
+  /*display: flex;*/
+  /*align-content: center;*/
+  /*justify-content: space-between;*/
+  /*flex-wrap: wrap;*/
+  /*place: space-between center;*/
   border: 1px solid lightgray;
   border-radius: 5px;
   height: 80px;
   padding: 10px;
-  flex-direction: row;
+  /*flex-direction: row;*/
   background: var(--mat-dialog-container-group-background);
+}
+
+.container {
+  padding: 20px;
+}
+
+h1 {
+  color: var(--text-general-color);
+}
+
+.mat-mdc-form-field {
+  display: flex;
+}
+
+.mdc-text-field {
+  overflow: visible !important;
 }

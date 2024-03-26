@@ -37,3 +37,17 @@ body::-webkit-scrollbar-thumb {
 
 
 
+.mat-mdc-button, .mdc-button__label {
+  display: flex !important;
+  align-items: center !important;
+}
+
+.mat-mdc-button .mdc-button__label, .mat-mdc-unelevated-button .mdc-button__label, .mat-mdc-raised-button .mdc-button__label, .mat-mdc-outlined-button .mdc-button__label {
+  display: flex !important;
+  align-items: center !important;
+}
+
+body {
+  --mdc-form-field-label-text-size: 14px !important;
+  --mdc-checkbox-state-layer-size: 25px !important;
+}

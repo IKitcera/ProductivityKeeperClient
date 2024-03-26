@@ -402,4 +402,22 @@ export class TaskListComponent implements OnDestroy {
         (a, b) => a + b.executionDuration || 0,
         0) || 0;
   }
+
+  public getTasksLeftDuration(tasks: TaskItem[]): number {
+    return tasks
+      .filter(t => !t.isChecked)
+      ?.reduce(
+        (a, b) => a + b.executionDuration || 0,
+        0) || 0;
+  }
+
+  public getEstimatedCapacityTooltip(tasks: TaskItem[]): string {
+    const estimatedD = this.getTasksEstimatedDuration(tasks);
+    if (!estimatedD) {
+      return '';
+    }
+    const estimatedDL = this.getTasksLeftDuration(tasks);
+    const leftStr = !!estimatedDL && estimatedDL !== estimatedD? ` / ${estimatedDL} left` : '';
+    return `(${estimatedD} hr${estimatedD > 1 ? 's' : ''}${leftStr})`
+  }
 }

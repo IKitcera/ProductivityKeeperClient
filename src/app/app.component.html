@@ -5,9 +5,9 @@
 
 <nav *ngIf="!(isLoading | async)">
   <div fxAlign="row" fxLayoutAlign="space-around">
-    <a [routerLink]="'/tasks'" fxFlex="45" fxFlexOffset="5">Productivity Keeper</a>
+    <a [routerLink]="''" fxFlex="45" fxFlexOffset="5">Productivity Keeper</a>
     <div fxLayoutAlign="space-around">
-      <a [routerLink]="'/tasks'">Tasks</a>
+      <a [routerLink]="''">Tasks</a>
       <a *ngIf="authService.isAuthorized()" [routerLink]="'/analytics'">Analytics</a>
       <a *ngIf="authService.isAuthorized()" [routerLink]="'/settings'">Settings</a>
       <a *ngIf="!authService.isAuthorized()">Login</a>

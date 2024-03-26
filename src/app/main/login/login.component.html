@@ -1,11 +1,11 @@
 <div fxFill fxLayoutAlign="center center">
   <div class="border" *ngIf="!isRegistration" fxLayout="column" fxLayoutAlign="center center">
     <h2>Sign in</h2>
-    <mat-form-field appearance="fill">
+    <mat-form-field appearance="outline">
       <mat-label>Email</mat-label>
       <input matInput name="e" type="text" [(ngModel)]="userName">
     </mat-form-field>
-    <mat-form-field  appearance="fill">
+    <mat-form-field  appearance="outline">
       <mat-label>Password</mat-label>
       <input matInput name="p" type="text" [(ngModel)]="password" type="password" (keyup.enter)="Login()">
     </mat-form-field>
@@ -16,15 +16,15 @@
   <form #regForm fxLayoutAlign="center center">
   <div *ngIf="isRegistration" class="border"  fxLayout="column" fxLayoutAlign="center center">
     <h3>Sign up</h3>
-    <mat-form-field appearance="fill">
+    <mat-form-field appearance="outline">
       <mat-label>Email</mat-label>
       <input name="e" matInput type="text" [(ngModel)]="userName">
     </mat-form-field>
-    <mat-form-field  appearance="fill">
+    <mat-form-field  appearance="outline">
       <mat-label>Password</mat-label>
       <input name="p" matInput type="text" [(ngModel)]="password" type="password">
     </mat-form-field>
-    <mat-form-field  appearance="fill">
+    <mat-form-field  appearance="outline">
       <mat-label>Confirm password</mat-label>
       <input name="pc" matInput type="text" [(ngModel)]="passwordConfirmation" type="password">
     </mat-form-field>

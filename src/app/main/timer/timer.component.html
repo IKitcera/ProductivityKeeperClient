@@ -8,29 +8,41 @@
     <div fxLayout="row wrap" class="label" fxLayoutAlign="start center">
       <h2>
         <mat-icon>flag</mat-icon>
-        {{(timer$ | async).label}}
+        {{ (timer$ | async).label }}
       </h2>
     </div>
-    <h4 class="medGray"><pre>{{getFormatString()}}</pre></h4>
-    <h4 class="medGray"><pre><span class="usualFrontFamily">{{goalValue.toString()}}</span></pre></h4>
-    <h2 class="centered large"><pre><span>{{currentValue.toString()}}</span></pre></h2>
+    <h4 class="medGray">
+      <pre>{{ getFormatString() }}</pre>
+    </h4>
+    <h4 class="medGray">
+      <pre><span class="usualFrontFamily">{{ goalValue.toString() }}</span></pre>
+    </h4>
+    <h2 class="centered large">
+      <pre><span>{{ currentValue.toString() }}</span></pre>
+    </h2>
     <div fxLayout="row" fxLayoutAlign="center center">
-      <button mat-stroked-button [disabled]="isTicking" (click)="start()">
-        <mat-icon>play_arrow</mat-icon>
-        <p>Start</p>
+      <button class="action-btn" mat-stroked-button [disabled]="isTicking" (click)="start()">
+        <div class="action-btn-content">
+          <mat-icon>play_arrow</mat-icon>
+          <p>Start</p>
+        </div>
       </button>
-      <button mat-stroked-button [disabled]="!isTicking" (click)="pause()">
-        <mat-icon>pause</mat-icon>
-        <p>Pause</p>
+      <button class="action-btn" mat-stroked-button [disabled]="!isTicking" (click)="pause()">
+        <div class="action-btn-content">
+          <mat-icon>pause</mat-icon>
+          <p>Pause</p>
+        </div>
       </button>
-      <button mat-stroked-button (click)="stop()">
-        <mat-icon>stop</mat-icon>
-        <p>Stop</p>
+      <button class="action-btn" mat-stroked-button (click)="stop()">
+        <div class="action-btn-content">
+          <mat-icon>stop</mat-icon>
+          <p>Stop</p>
+        </div>
       </button>
     </div>
     <div fxLayout="row" class="topright">
-    <mat-icon  (click)="editTimer()">edit</mat-icon>
-    <mat-icon  (click)="deleteTimer()">delete_outline</mat-icon>
+      <mat-icon (click)="editTimer()">edit</mat-icon>
+      <mat-icon (click)="deleteTimer()">delete_outline</mat-icon>
     </div>
   </div>
 </div>

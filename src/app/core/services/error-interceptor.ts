@@ -11,10 +11,9 @@ export class ErrorInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(request).pipe(catchError(err => {
-      if ([401].includes(err.status) && this.authService.isAuthorized()) {
+      if ([401, 403].includes(err.status) && this.authService.isAuthorized()) {
         // auto logout if 401 or 403 response returned from api
-        this.authService.refreshToken().subscribe();
-        return EMPTY;
+        return this.authService.refreshToken();
       }
 
       this.toastr.error(err.error?.message ?? 'Unknown error');

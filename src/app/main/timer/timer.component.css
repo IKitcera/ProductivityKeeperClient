@@ -32,3 +32,12 @@
 .label{
   margin: 0 10px;
 }
+
+.action-btn {
+  height: fit-content;
+}
+
+.action-btn-content {
+  flex-direction: column;
+  align-items: center;
+}

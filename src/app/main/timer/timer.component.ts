@@ -124,7 +124,7 @@ export class TimerComponent implements OnDestroy {
 
     confirmationIfTimerFulfilled$.pipe(
       filter(x => !!x),
-      switchMap(_ => this.timerService.setTimer(new Timer())),
+      switchMap(_ => this.timerService.deleteTimer(this.timer$.value.id)),
       tap(updateTimer => this.timer$.next(updateTimer)),
       untilDestroyed(this)
     ).subscribe();

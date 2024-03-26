@@ -102,7 +102,7 @@ export function tokenGetter() {
     FlexLayoutModule,
     HttpClientModule,
     MatDialogModule,
-    RouterModule.forRoot(routes, {useHash: true}),
+    RouterModule.forRoot(routes),
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,

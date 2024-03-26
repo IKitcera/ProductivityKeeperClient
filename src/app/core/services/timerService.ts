@@ -19,6 +19,11 @@ export class TimerService {
     return this.http.post<Timer>(this.apiUrl, timer);
   }
 
+  deleteTimer(timerId: number): Observable<Timer> {
+    const params = new HttpParams().set('timerId', timerId.toString());
+    return this.http.delete<Timer>(this.apiUrl, params);
+  }
+
   updateTicked(tickedSeconds: number): Observable<boolean> {
     const params = new HttpParams().set('tickedSeconds', tickedSeconds.toString());
     return this.http.post<boolean>(`${this.apiUrl}/update-ticked`, null, params);

@@ -52,6 +52,10 @@ export class NotificationsService {
 
   public scheduleNotification(task: TaskItem, showEarlierOnMins: number): void {
     if (task.isChecked || !task.deadline || new Date(task.deadline) < new Date()) {
+      if (this.existingTimeouts.has(task.id)) {
+        clearTimeout(this.existingTimeouts.get(task.id));
+        this.existingTimeouts.delete(task.id);
+      }
       return;
     }
 

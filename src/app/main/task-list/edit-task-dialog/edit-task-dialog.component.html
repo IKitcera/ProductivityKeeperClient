@@ -1,18 +1,18 @@
-<div fxLayout="column" fxLayoutGap="10px">
+<div class="container" fxLayout="column" fxLayoutGap="10px">
   <h1>Edit Task</h1>
   <mat-form-field color="accent" appearance="fill" class="fullwidth">
     <mat-label>What need to do?</mat-label>
     <input [(ngModel)]="data.task.text" matInput type="text" name="taskText" autofocus>
   </mat-form-field>
 
-  <div fxLayout="row" fxLayoutAlign="space-between center">
-    <div class="prop-group" fxLayout fxLayoutAlign="space-between center">
+  <div class="fullwidth" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="10px">
+    <div class="prop-group" fxLayout fxLayoutAlign>
       <mat-checkbox [style.margin-right]="'10px'" [(ngModel)]="data.task.isRepeatable">Is repeatable</mat-checkbox>
       <div *ngIf="data.task.isRepeatable" fxLayout="row" fxLayoutAlign="space-between center">
-        <mat-form-field [style.margin-right]="'10px'" color="accent">
-          <input matInput [(ngModel)]="data.task.goalRepeatCount" placeholder="Repeating count">
+        <mat-form-field [style.width.px]="90" [style.margin-right]="'10px'" color="accent" fxLayout fxLayoutAlign>
+          <input  matInput [(ngModel)]="data.task.goalRepeatCount" placeholder="Repeating count">
         </mat-form-field>
-        <mat-form-field [style.margin-right]="'10px'" color="accent" fxLayout fxLayoutAlign="space-between center">
+        <mat-form-field [style.margin-right]="'10px'" color="accent" fxLayout fxLayoutAlign>
           <input matInput [(ngModel)]="data.task.habbitIntervalInHours" placeholder="Repeating interval (hrs)">
         </mat-form-field>
         <button mat-icon-button>
@@ -25,12 +25,12 @@
     </div>
 
     <div class="prop-group" fxLayout="row" fxLayoutAlign="space-between center">
-      <mat-form-field [style.width]="'85px'" [style.margin-right]="'10px'" color="accent">
+      <mat-form-field [style.width.px]="90" [style.margin-right]="'10px'" color="accent" fxLayout fxLayoutAlign>
         <input matInput placeholder="Duration (hr)" type="number" min="0"
                [(ngModel)]="data.task.executionDuration">
       </mat-form-field>
 
-      <mat-form-field [style.margin-bottom]="'7px'" color="accent">
+      <mat-form-field color="accent" fxLayout fxLayoutAlign>
         <input matInput placeholder="Choose a deadline" (click)="picker.open()" name="nnnn"
                [(ngModel)]="data.task.deadline" [ngxMatDatetimePicker]="picker">
         <mat-datepicker-toggle matSuffix [for]="$any(picker)"></mat-datepicker-toggle>
@@ -68,8 +68,9 @@
           <mat-option [value]="sub.id">{{ sub.name }}</mat-option>
         </div>
       </mat-select>
-      <mat-icon (click)="removeConnectedLine(item)" [style.padding-right.px]="10">close</mat-icon>
+      <mat-icon color="lightgrey" (click)="removeConnectedLine(item)" [style.padding-right.px]="10">close</mat-icon>
     </div>
   </div>
+
   <button mat-stroked-button color="accent" (click)="close(data.task)">Apply</button>
 </div>

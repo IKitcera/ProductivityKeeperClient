@@ -19,7 +19,6 @@ export class EditTimerDialogComponent implements OnInit {
 
     matDialogRef.beforeClosed().subscribe(() => {
       this.timer.goal = this.goalTS.getInSeconds();
-      matDialogRef.close(this.timer);
     });
   }
 

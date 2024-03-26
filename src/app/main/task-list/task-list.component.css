@@ -11,12 +11,19 @@
 }
 .categoryName{
   position: relative;
-  margin-left: 5px;
-  width: fit-content;
-  min-width: 200px;
-  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
+
+  min-width: 200px;
+  width: fit-content;
+  height: 25px;
+
+  margin-left: 5px;
+  padding: 5px;
   border-radius: 8px;
+
   background:  transparent;
   box-shadow: 0 0 2px gray;
   color: var(--category-item-color);
@@ -90,13 +97,13 @@
 }
 
 .task{
-  line-height: 15px;
+  line-height: 15px !important;
 
   position: relative;
   min-width: 250px;
 
   color: var(--task-item-color);
-  font-size: 15px;
+  font-size: 16px;
   font-family: "Verdana", serif;
 }
 
@@ -111,15 +118,16 @@
 }
 
 /*TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version.*/
-::ng-deep label.mat-checkbox-layout {
+::ng-deep .mdc-label {
   height: auto;
 
 }
 
 /*TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version.*/
-::ng-deep.mat-checkbox-layout .mat-checkbox-label {
+::ng-deep.mat-mdc-checkbox-layout .mat-mdc-checkbox-label {
   line-height: 24px;
   max-width: 50vw;
+  --mdc-checkbox-state-layer-size: 5px !important;
 }
 
 .faded {
@@ -176,11 +184,8 @@
   font-size: 17px;
 }
 
-/*TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version.*/
-.mat-checkbox-checked {
-  color: var(--task-item-checked-color);
-}
 .line-through {
+  color: var(--task-item-checked-color) !important;
   text-decoration: var(--task-item-checked-color) line-through !important;
 }
 
@@ -309,4 +314,8 @@
 
 ::ng-deep.mat-mdc-dialog-container {
   background: var(--mat-dialog-container-background) !important;
+}
+
+.mr {
+  margin-right: 10px;
 }

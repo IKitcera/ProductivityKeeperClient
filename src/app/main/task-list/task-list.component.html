@@ -40,10 +40,9 @@
           <mat-expansion-panel-header>
             <mat-panel-title>
               <div fxLayout="row" fxLayoutAlign="start center">
-                <!-- TODO: optimize -->
-                <span>
-                  {{subcategory.name}} &emsp; <i>{{getTasksEstimatedDuration(subcategory.tasks) > 0 ? '('+ getTasksEstimatedDuration(subcategory.tasks) + ' hrs)' : ''}}</i>
-                </span>
+                <span class="mr">{{subcategory.name}}</span>
+                <i>{{getEstimatedCapacityTooltip(subcategory.tasks)}}</i>
+
                 <mat-icon class="warning-icon"
                           [matTooltip]="'Estimated duration (' + getTasksEstimatedDuration(subcategory.tasks) + ' hrs) is greater than ' + estimatedCapacityInHrs.toString() + ' hours'"
                           *ngIf="getTasksEstimatedDuration(subcategory.tasks) > estimatedCapacityInHrs"
