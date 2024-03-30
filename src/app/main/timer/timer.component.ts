@@ -28,9 +28,9 @@ export class TimerComponent implements OnDestroy {
   noTimer: boolean;
 
   format: TimerFormat = TimerFormat.FullDateTime;
-  timerId: number;
+  timerId: any;
 
-  private autosaveId: number;
+  private autosaveId: any;
 
   constructor(private dialog: DialogService,
               private timerService: TimerService,
