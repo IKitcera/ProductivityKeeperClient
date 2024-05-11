@@ -49,7 +49,7 @@
                   "maximumError": "170kb"
                 }
               ],
-              "ngswConfigPath": "src/ngsw-config.json",
+              "ngswConfigPath": "ngsw-config.json",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
