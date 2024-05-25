@@ -25,7 +25,7 @@ jobs:
         run: |
           npm install --legacy-peer-deps
           npm run build --if-present
-          npm run test --if-present
+          npm run test --if-present || { echo 'Tests failed or timed out'; exit 1; }
            timeout-minutes: 5
       
       - name: Upload artifact for deployment job
