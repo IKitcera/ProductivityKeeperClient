@@ -1,6 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EditTimerDialogComponent } from './edit-timer-dialog.component';
+import {TestModule} from "../../../../tests/test.module";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {Timer} from "../../../core/models/timer.model";
+import {of} from "rxjs";
 
 describe('EditTimerDialogComponent', () => {
   let component: EditTimerDialogComponent;
@@ -8,7 +12,16 @@ describe('EditTimerDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ EditTimerDialogComponent ]
+      declarations: [ EditTimerDialogComponent ],
+      imports: [TestModule],
+      providers: [
+        {
+          provide: MatDialogRef<EditTimerDialogComponent>, useValue: {
+            beforeClosed() { return of(null) }
+          }
+        },
+        {provide: MAT_DIALOG_DATA, useValue: new Timer()}
+      ]
     })
     .compileComponents();
   });

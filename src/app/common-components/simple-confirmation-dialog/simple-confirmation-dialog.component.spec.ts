@@ -1,6 +1,8 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { SimpleConfirmationDialogComponent } from './simple-confirmation-dialog.component';
+import {SimpleConfirmationDialogComponent} from './simple-confirmation-dialog.component';
+import {TestModule} from "../../../tests/test.module";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 
 describe('SimpleConfirmationDialogComponent', () => {
   let component: SimpleConfirmationDialogComponent;
@@ -8,9 +10,14 @@ describe('SimpleConfirmationDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SimpleConfirmationDialogComponent ]
+      declarations: [SimpleConfirmationDialogComponent],
+      imports: [TestModule],
+      providers: [
+        {provide: MAT_DIALOG_DATA, useValue: {label: 'lbl'}},
+        {provide: MatDialogRef<SimpleConfirmationDialogComponent>, useValue: {}}
+      ]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {

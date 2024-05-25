@@ -1,4 +1,12 @@
-import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Inject,
+  OnDestroy,
+  OnInit
+} from '@angular/core';
 import {moveItemInArray} from "@angular/cdk/drag-drop";
 import {StorageService} from "../../core/services/storageService";
 import {TaskService} from "../../core/services/taskService";
@@ -21,9 +29,10 @@ import {findEnumByValueFn} from "../../core/functions/find-enum-by-value.fuction
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.css']
+  styleUrls: ['./settings.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SettingsComponent implements OnInit, OnDestroy {
+export class SettingsComponent implements OnInit, OnDestroy, AfterViewInit {
   public categories: Category[];
   public timerFormat: TimerFormat;
   public timerFormatEnum = TimerFormat;
@@ -40,6 +49,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
               private toastr: ToastrService,
               private dialog: DialogService,
               private colorPicker: ColorPickerService,
+              private cdr: ChangeDetectorRef,
               @Inject(DOCUMENT) private document: Document) {
   }
 
@@ -53,6 +63,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
       tap(timer => this.timerFormat = timer.format),
       untilDestroyed(this)
     ).subscribe();
+  }
+
+  ngAfterViewInit(): void {
+    this.cdr.markForCheck();
   }
 
   ngOnDestroy(): void {

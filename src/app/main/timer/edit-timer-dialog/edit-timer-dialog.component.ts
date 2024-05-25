@@ -2,7 +2,6 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {Timer} from "../../../core/models/timer.model";
 import {TimeSpan} from "../timer.component";
-import {Time} from "@angular/common";
 
 @Component({
   selector: 'app-edit-timer-dialog',
@@ -12,6 +11,7 @@ import {Time} from "@angular/common";
 export class EditTimerDialogComponent implements OnInit {
   goalTS: TimeSpan = new TimeSpan();
   timer: Timer;
+
   constructor(@Inject(MAT_DIALOG_DATA) public data: Timer,
               public matDialogRef: MatDialogRef<EditTimerDialogComponent>) {
     this.timer = data;
