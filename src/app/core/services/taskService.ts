@@ -51,16 +51,6 @@ export class TaskService {
     return this.http.delete<void>(url);
   }
 
-  getSubcategories(categoryId: number): Observable<Subcategory[]> {
-    const url = `${this.subcategoryUrl}/${categoryId}`;
-    return this.http.get<Subcategory[]>(url);
-  }
-
-  getSubcategory(subcategoryId: number): Observable<Subcategory> {
-    const url = `${this.subcategoryUrl}/${subcategoryId}`;
-    return this.http.get<Subcategory>(url);
-  }
-
   updateSubcategory(subcategory: Subcategory): Observable<any> {
     const url = `${this.subcategoryUrl}/${subcategory.id}`;
     return this.http.put(url, subcategory);

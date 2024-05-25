@@ -1,4 +1,5 @@
 @use '@angular/material' as mat;
+@use '@ng-matero/extensions' as mtx;
 
 @include mat.core();
 
@@ -54,12 +55,14 @@ $theme-dark: mat.define-dark-theme((
   @include mat.all-component-themes($theme-dark);
   @include mat.all-component-colors($theme-dark);
   @include mat.all-component-typographies($theme-dark);
+  @include mtx.all-component-themes($theme-dark);
 }
 
 .light-theme {
   @include mat.all-component-themes($theme-light);
   @include mat.all-component-colors($theme-light);
   @include mat.all-component-typographies($theme-light);
+  @include mtx.all-component-themes($theme-light);
 
 
   $primary2: mat.define-palette(mat.$red-palette, 400);

@@ -33,18 +33,13 @@ import {TimerService} from "./core/services/timerService";
 import {StatisticService} from "./core/services/statisticService";
 import {EditTaskDialogComponent} from './main/task-list/edit-task-dialog/edit-task-dialog.component';
 import {MatDatepickerModule} from "@angular/material/datepicker";
-import {MatNativeDateModule} from "@angular/material/core";
+import {DateAdapter, MatNativeDateModule, NativeDateAdapter} from "@angular/material/core";
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import {NgxChartsModule} from "@swimlane/ngx-charts";
 import {ToastrModule} from "ngx-toastr";
 import {MatSliderModule} from "@angular/material/slider";
 import {MatDividerModule} from "@angular/material/divider";
 import {MatTableModule} from "@angular/material/table";
-import {
-  NgxMatDatetimePickerModule,
-  NgxMatNativeDateModule,
-  NgxMatTimepickerModule
-} from "@angular-material-components/datetime-picker";
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {SettingsComponent} from './main/settings/settings.component';
 import {MatCardModule} from "@angular/material/card";
@@ -59,10 +54,11 @@ import {DialogService} from "./core/services/dialog.service";
 import {FindByPipe} from "./core/pipes/findBy.pipe";
 import {AnalyticsComponent} from './main/analytics/analytics.component';
 import {Config} from '../configs/config';
-import { environment } from '../environments/environment';
-import { ServiceWorkerModule } from '@angular/service-worker'
+import {ServiceWorkerModule} from '@angular/service-worker'
 import {NotificationsService} from "./core/services/notifications.service";
 import {MinsToDisplayPipe} from "./core/pipes/minsToDisplay.pipe";
+import {MtxDatetimepickerModule} from "@ng-matero/extensions/datetimepicker";
+import {MtxNativeDatetimeModule} from "@ng-matero/extensions/core";
 
 const routes: Routes = [
   {path: '', component: TaskListComponent, canActivate: [AuthGuard]},
@@ -117,21 +113,20 @@ export function tokenGetter() {
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MtxNativeDatetimeModule,
     DragDropModule,
     NgxChartsModule,
     ToastrModule.forRoot(),
     MatSliderModule,
     MatDividerModule,
     MatTableModule,
-    NgxMatDatetimePickerModule,
-    NgxMatTimepickerModule,
-    NgxMatNativeDateModule,
     ColorPickerModule,
     MatProgressSpinnerModule,
     MatCardModule,
     MatRadioModule,
     ServiceWorkerModule.register('/ngsw-worker.js', {enabled: true}),
-    MinsToDisplayPipe
+    MinsToDisplayPipe,
+    MtxDatetimepickerModule
   ],
   exports: [
     FilterByPipe,
@@ -149,8 +144,8 @@ export function tokenGetter() {
     DialogService,
     NotificationsService,
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
-    { provide: 'API_URL', useValue: Config.apiUrl },
-    {provide: LOCALE_ID, useValue: 'en-CA' }
+    {provide: 'API_URL', useValue: Config.apiUrl},
+    {provide: LOCALE_ID, useValue: 'en-CA'},
   ],
   bootstrap: [AppComponent]
 })
