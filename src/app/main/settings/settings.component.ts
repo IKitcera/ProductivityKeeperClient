@@ -19,7 +19,7 @@ import {ColorPickerService} from "ngx-color-picker";
 import {TimerFormat} from "../timer/timer.component";
 import {TimerService} from "../../core/services/timerService";
 import {untilDestroyed} from "../../core/services/until-destroyed";
-import {tap} from "rxjs";
+import {first, tap} from "rxjs";
 import {DialogService} from "../../core/services/dialog.service";
 import {DOCUMENT} from "@angular/common";
 import {StorageConstants} from "../../core/constants/storage-constants";
@@ -55,13 +55,19 @@ export class SettingsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     this.taskService.getJustCategories().pipe(
-      tap(ctgArr => this.categories = ctgArr),
-      untilDestroyed(this)
+      first(),
+      tap(ctgArr => {
+        this.categories = ctgArr;
+        this.cdr.markForCheck();
+      })
     ).subscribe();
 
     this.timerService.getTimer().pipe(
-      tap(timer => this.timerFormat = timer.format),
-      untilDestroyed(this)
+      first(),
+      tap(timer => {
+        this.timerFormat = timer.format;
+        this.cdr.markForCheck();
+      })
     ).subscribe();
   }
 

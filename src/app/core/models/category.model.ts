@@ -4,7 +4,7 @@ export class Category {
   id: number;
   name: string;
   colorHex: string;
-  unitId: number
+  unitId: number;
   subcategories: Subcategory[] = [];
   isVisible: boolean;
 

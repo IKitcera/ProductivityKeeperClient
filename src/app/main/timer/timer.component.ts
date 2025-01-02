@@ -8,6 +8,7 @@ import {Constants} from "../../core/models/constants";
 import {untilDestroyed} from "../../core/services/until-destroyed";
 import {DialogService} from "../../core/services/dialog.service";
 import {filter} from "rxjs/operators";
+import { clearInterval, clearTimeout, setInterval, setTimeout } from 'worker-timers';
 
 @Component({
   selector: 'app-timer',
