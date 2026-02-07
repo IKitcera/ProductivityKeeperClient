@@ -6,5 +6,8 @@ COPY package*.json ./
 RUN npm install --force
 RUN npm install -g @angular/cli
 COPY . ./
-RUN npm run build --prod
-CMD ["ng", "serve", "--host", "0.0.0.0", "--port", "4201"]
+RUN npm run build --configuration=production
+
+CMD ["ng", "serve", "--configuration", "production", "--host", "0.0.0.0", "--port", "4201"]
+
+

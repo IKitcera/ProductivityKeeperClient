@@ -1,0 +1,55 @@
+<div class="container"
+  [style.background-image]="diaryViewConfig.backgroundImage"
+  [style.--textColor]="diaryViewConfig.textColor"
+  [style.--mutedTextColor]="diaryViewConfig.mutedTextColor"
+  [style.--maxMutedTextColor]="diaryViewConfig.maxMutedTextColor"
+>
+
+  <div class="header">
+    <span class="title">Diary</span>
+    <button mat-icon-button color="accent">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+  <div class="records-container">
+    @for(item of items; track item.id) {
+      <div class="record" >
+        <div class="flex">
+          <div>
+            <div class="record-title">{{item.title}}</div>
+            <div class="short-content-preview">{{item.content}}</div>
+            <div class="record-date">
+              {{item.createdAt | date:'medium'}}
+            </div>
+          </div>
+
+          <div class="record-image-container">
+            @if (item.imageUrl) {
+              <img class="record-image" [src]="item.imageUrl" alt="Record Image"/>
+            } @else {
+              <div class="flex items-center justify-center">
+                @let initials = item.title;
+                <span >{{initials}}</span>
+              </div>
+            }
+
+          </div>
+
+        </div>
+
+      </div>
+    }
+  </div>
+
+
+  <mat-button-toggle-group class="gradient-container" [(ngModel)]="diaryViewConfig">
+    @for (gradient of gradients; track $index) {
+      <mat-button-toggle class="gradient" [style.background-image]="gradient.backgroundImage" [value]="gradient">
+        <div class="gradient-name">{{gradient.name}}</div>
+      </mat-button-toggle>
+    }
+  </mat-button-toggle-group>
+</div>
+
+
+

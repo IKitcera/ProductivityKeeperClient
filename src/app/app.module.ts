@@ -1,4 +1,4 @@
-import {LOCALE_ID, NgModule} from '@angular/core';
+import {isDevMode, LOCALE_ID, NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 
 import {AppComponent} from './app.component';
@@ -59,6 +59,7 @@ import {NotificationsService} from "./core/services/notifications.service";
 import {MinsToDisplayPipe} from "./core/pipes/minsToDisplay.pipe";
 import {MtxDatetimepickerModule} from "@ng-matero/extensions/datetimepicker";
 import {MtxNativeDatetimeModule} from "@ng-matero/extensions/core";
+import {DiaryComponent} from "./main/diary/diary/diary.component";
 
 const routes: Routes = [
   {path: '', component: TaskListComponent, canActivate: [AuthGuard]},
@@ -66,6 +67,7 @@ const routes: Routes = [
   {path: 'login', component: LoginComponent},
   {path: 'settings', component: SettingsComponent, canActivate: [AuthGuard]},
   {path: 'analytics', component: AnalyticsComponent, canActivate: [AuthGuard]},
+  {path: 'diary', component: DiaryComponent, canActivate: [AuthGuard]},
   {path: '**', component: NotFoundError},  // Wildcard route for a 404 page
 ];
 
@@ -124,7 +126,10 @@ export function tokenGetter() {
     MatProgressSpinnerModule,
     MatCardModule,
     MatRadioModule,
-    ServiceWorkerModule.register('/ngsw-worker.js', {enabled: true}),
+    ServiceWorkerModule.register('/ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000'
+    }),
     MinsToDisplayPipe,
     MtxDatetimepickerModule
   ],

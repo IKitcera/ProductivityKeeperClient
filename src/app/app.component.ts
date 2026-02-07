@@ -1,4 +1,4 @@
-import {Component, Inject, ViewChild} from '@angular/core';
+import {Component, Inject, isDevMode, ViewChild} from '@angular/core';
 import {AuthService} from "./core/services/authServices";
 import {TaskListComponent} from "./main/task-list/task-list.component";
 import {BehaviorSubject} from "rxjs";
@@ -23,6 +23,7 @@ export class AppComponent {
     storageService: StorageService,
     @Inject(DOCUMENT) document: Document
   ) {
+    console.log(isDevMode())
     const existingTheme= storageService.retrieveProp<Theme>(
       StorageConstants.selectedTheme,
       Theme.Dark,

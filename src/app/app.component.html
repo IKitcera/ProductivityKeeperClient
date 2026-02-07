@@ -4,15 +4,16 @@
 </div>
 
 <nav *ngIf="!(isLoading | async)">
-  <div fxAlign="row" fxLayoutAlign="space-around">
-    <a [routerLink]="''" fxFlex="45" fxFlexOffset="5">Productivity Keeper</a>
-    <div fxLayoutAlign="space-around">
+  <div>
+    <a [routerLink]="''">Productivity Keeper</a>
+    <span>
       <a [routerLink]="''">Tasks</a>
       <a *ngIf="authService.isAuthorized()" [routerLink]="'/analytics'">Analytics</a>
+      <a *ngIf="authService.isAuthorized()" [routerLink]="'/diary'">Diary</a>
       <a *ngIf="authService.isAuthorized()" [routerLink]="'/settings'">Settings</a>
       <a *ngIf="!authService.isAuthorized()">Login</a>
       <a *ngIf="authService.isAuthorized()" (click)="authService.logout()">Logout</a>
-    </div>
+    </span>
   </div>
 </nav>
 

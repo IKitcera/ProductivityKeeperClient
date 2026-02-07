@@ -1,7 +1,24 @@
 @import 'src/app/core/scss/themes';
 
-nav div div {
-  width: 60%
+nav div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  margin: auto;
+  padding: 0 1rem;
+
+  span {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: end;
+
+    a {
+      padding: 0 0.5rem;
+      border-left: 1px solid gray;
+    }
+  }
+
 }
 
 nav {

@@ -68,7 +68,14 @@
               "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
-              "namedChunks": true
+              "namedChunks": true,
+              "serviceWorker": false,
+              "fileReplacements": [
+                {
+                  "replace": "src/configs/config.ts",
+                  "with": "src/configs/config.development.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -77,6 +84,7 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
+              "port": 4201,
               "buildTarget": "ProductivityKeeperClient:build:production"
             },
             "development": {
