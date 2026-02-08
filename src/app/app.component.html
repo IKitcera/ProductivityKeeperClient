@@ -1,21 +1,35 @@
 <!--SPINNER-->
-<div *ngIf="isLoading | async" class="spinner-wrap" fxFill fxLayoutAlign="center center">
-  <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
-</div>
-
-<nav *ngIf="!(isLoading | async)">
-  <div>
-    <a [routerLink]="''">Productivity Keeper</a>
-    <span>
-      <a [routerLink]="''">Tasks</a>
-      <a *ngIf="authService.isAuthorized()" [routerLink]="'/analytics'">Analytics</a>
-      <a *ngIf="authService.isAuthorized()" [routerLink]="'/diary'">Diary</a>
-      <a *ngIf="authService.isAuthorized()" [routerLink]="'/settings'">Settings</a>
-      <a *ngIf="!authService.isAuthorized()">Login</a>
-      <a *ngIf="authService.isAuthorized()" (click)="authService.logout()">Logout</a>
-    </span>
+@if (isLoading | async) {
+  <div class="spinner-wrap" fxFill fxLayoutAlign="center center">
+    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
   </div>
-</nav>
+}
+
+@if (!(isLoading | async)) {
+  <nav>
+    <div>
+      <a [routerLink]="''">Productivity Keeper</a>
+      <span>
+        <a [routerLink]="''">Tasks</a>
+        @if (authService.isAuthorized()) {
+          <a [routerLink]="'/analytics'">Analytics</a>
+        }
+        @if (authService.isAuthorized()) {
+          <a [routerLink]="'/diary'">Diary</a>
+        }
+        @if (authService.isAuthorized()) {
+          <a [routerLink]="'/settings'">Settings</a>
+        }
+        @if (!authService.isAuthorized()) {
+          <a>Login</a>
+        }
+        @if (authService.isAuthorized()) {
+          <a (click)="authService.logout()">Logout</a>
+        }
+      </span>
+    </div>
+  </nav>
+}
 
 <router-outlet #router (activate)="routeChanged($event)"></router-outlet>
 

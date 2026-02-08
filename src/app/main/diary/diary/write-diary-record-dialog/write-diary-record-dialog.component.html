@@ -10,10 +10,11 @@
     </button>
   </div>
 
-  <div *ngIf="!previewMode; else previewBlock">
-    <quill-editor [(ngModel)]="data.content" [style]="{minHeight: '200px'}"></quill-editor>
-  </div>
-  <ng-template #previewBlock>
+  @if (!previewMode) {
+    <div>
+      <quill-editor [(ngModel)]="data.content" [style]="{minHeight: '200px'}"></quill-editor>
+    </div>
+  } @else {
     <div class="quill-preview" [innerHTML]="data.content"></div>
-  </ng-template>
+  }
 </div>

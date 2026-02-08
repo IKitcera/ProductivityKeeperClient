@@ -1,35 +1,39 @@
 <div fxFill fxLayoutAlign="center center">
-  <div class="border" *ngIf="!isRegistration" fxLayout="column" fxLayoutAlign="center center">
-    <h2>Sign in</h2>
-    <mat-form-field appearance="outline">
-      <mat-label>Email</mat-label>
-      <input matInput name="e" type="text" [(ngModel)]="userName">
-    </mat-form-field>
-    <mat-form-field  appearance="outline">
-      <mat-label>Password</mat-label>
-      <input matInput name="p" type="text" [(ngModel)]="password" type="password" (keyup.enter)="Login()">
-    </mat-form-field>
-    <button fxLayoutAlign="center" mat-flat-button color="accent" (click)="Login()">Login</button>
+  @if (!isRegistration) {
+    <div class="border" fxLayout="column" fxLayoutAlign="center center">
+      <h2>Sign in</h2>
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput name="e" type="text" [(ngModel)]="userName">
+      </mat-form-field>
+      <mat-form-field  appearance="outline">
+        <mat-label>Password</mat-label>
+        <input matInput name="p" type="text" [(ngModel)]="password" type="password" (keyup.enter)="Login()">
+      </mat-form-field>
+      <button fxLayoutAlign="center" mat-flat-button color="accent" (click)="Login()">Login</button>
       <a class="regLogChange" (click)="isRegistration = true">No account? Register</a>
-  </div>
+    </div>
+  }
 
   <form #regForm fxLayoutAlign="center center">
-  <div *ngIf="isRegistration" class="border"  fxLayout="column" fxLayoutAlign="center center">
-    <h3>Sign up</h3>
-    <mat-form-field appearance="outline">
-      <mat-label>Email</mat-label>
-      <input name="e" matInput type="text" [(ngModel)]="userName">
-    </mat-form-field>
-    <mat-form-field  appearance="outline">
-      <mat-label>Password</mat-label>
-      <input name="p" matInput type="text" [(ngModel)]="password" type="password">
-    </mat-form-field>
-    <mat-form-field  appearance="outline">
-      <mat-label>Confirm password</mat-label>
-      <input name="pc" matInput type="text" [(ngModel)]="passwordConfirmation" type="password">
-    </mat-form-field>
-      <button mat-flat-button color="accent" (click)="Registration()">Register</button>
-    <a class="regLogChange" (click)="isRegistration = false">Already have an account? Login</a>
-    </div>
+    @if (isRegistration) {
+      <div class="border"  fxLayout="column" fxLayoutAlign="center center">
+        <h3>Sign up</h3>
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input name="e" matInput type="text" [(ngModel)]="userName">
+        </mat-form-field>
+        <mat-form-field  appearance="outline">
+          <mat-label>Password</mat-label>
+          <input name="p" matInput type="text" [(ngModel)]="password" type="password">
+        </mat-form-field>
+        <mat-form-field  appearance="outline">
+          <mat-label>Confirm password</mat-label>
+          <input name="pc" matInput type="text" [(ngModel)]="passwordConfirmation" type="password">
+        </mat-form-field>
+        <button mat-flat-button color="accent" (click)="Registration()">Register</button>
+        <a class="regLogChange" (click)="isRegistration = false">Already have an account? Login</a>
+      </div>
+    }
   </form>
 </div>

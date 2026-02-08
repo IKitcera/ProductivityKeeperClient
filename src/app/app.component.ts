@@ -1,9 +1,9 @@
-import {Component, Inject, isDevMode, ViewChild} from '@angular/core';
+import {Component, Inject, isDevMode, ViewChild, DOCUMENT} from '@angular/core';
 import {AuthService} from "./core/services/authServices";
 import {TaskListComponent} from "./main/task-list/task-list.component";
 import {BehaviorSubject} from "rxjs";
 import {StorageConstants} from "./core/constants/storage-constants";
-import {DOCUMENT} from "@angular/common";
+
 import {StorageService} from "./core/services/storageService";
 import {Theme} from "./core/enums/theme.enum";
 import {findEnumByValueFn} from "./core/functions/find-enum-by-value.fuction";

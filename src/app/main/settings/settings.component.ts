@@ -5,7 +5,8 @@ import {
   Component,
   Inject,
   OnDestroy,
-  OnInit
+  OnInit,
+  DOCUMENT
 } from '@angular/core';
 import {moveItemInArray} from "@angular/cdk/drag-drop";
 import {StorageService} from "../../core/services/storageService";
@@ -21,7 +22,7 @@ import {TimerService} from "../../core/services/timerService";
 import {untilDestroyed} from "../../core/services/until-destroyed";
 import {first, tap} from "rxjs";
 import {DialogService} from "../../core/services/dialog.service";
-import {DOCUMENT} from "@angular/common";
+
 import {StorageConstants} from "../../core/constants/storage-constants";
 import {Theme} from "../../core/enums/theme.enum";
 import {findEnumByValueFn} from "../../core/functions/find-enum-by-value.fuction";

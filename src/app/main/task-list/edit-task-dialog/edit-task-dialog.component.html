@@ -9,67 +9,77 @@
     <div class="prop-group">
       <mat-checkbox [(ngModel)]="data.task.isRepeatable">Is repeatable</mat-checkbox>
 
-      <div *ngIf="data.task.isRepeatable" class="repeatable-group">
-        <mat-form-field color="accent">
-          <input type="number" matInput [(ngModel)]="data.task.goalRepeatCount" placeholder="Repeating count">
-        </mat-form-field>
-        <mat-form-field color="accent">
-          <input type="number"  matInput [(ngModel)]="data.task.habbitIntervalInHours" placeholder="Repeating interval (hrs)">
-        </mat-form-field>
-        <button mat-icon-button>
-          <mat-icon class="reset-icon" matTooltip="Will reset progress count after applaying change"
-                    (click)="resetRepeatingCount()">
-            replay
-          </mat-icon>
-        </button>
-      </div>
+      @if (data.task.isRepeatable) {
+        <div class="repeatable-group">
+          <mat-form-field color="accent">
+            <input type="number" matInput [(ngModel)]="data.task.goalRepeatCount" placeholder="Repeating count">
+          </mat-form-field>
+          <mat-form-field color="accent">
+            <input type="number"  matInput [(ngModel)]="data.task.habbitIntervalInHours" placeholder="Repeating interval (hrs)">
+          </mat-form-field>
+          <button mat-icon-button>
+            <mat-icon class="reset-icon" matTooltip="Will reset progress count after applaying change"
+              (click)="resetRepeatingCount()">
+              replay
+            </mat-icon>
+          </button>
+        </div>
+      }
     </div>
 
     <div class="prop-group">
       <mat-form-field color="accent">
         <input matInput placeholder="Duration (hr)" type="number" min="0"
-               [(ngModel)]="data.task.executionDuration">
-      </mat-form-field>
+          [(ngModel)]="data.task.executionDuration">
+        </mat-form-field>
 
-      <mat-form-field color="accent">
-        <input matInput placeholder="Choose a deadline" (click)="datetimePicker.open()" name="nnnn"
-               [(ngModel)]="data.task.deadline" [mtxDatetimepicker]="datetimePicker">
-        <mtx-datetimepicker-toggle [for]="datetimePicker" matSuffix></mtx-datetimepicker-toggle>
-        <mtx-datetimepicker #datetimePicker [type]="'datetime'" [mode]="'landscape'" color="primary" timeInput>
-        </mtx-datetimepicker>
-      </mat-form-field>
-    </div>
-  </div>
-
-  <button mat-stroked-button
-          color="accent"
-          (click)="addConnectedLine()"
-          [disabled]="isAddingDuplicatesDisabled()"
-  >
-    Add connected duplicate
-  </button>
-
-  <div *ngIf="!!connectedDuplicates.length">
-    <div fxFill fxLayout="row" fxLayoutAlign="space-evenly center" class="divider"
-         *ngFor="let item of connectedDuplicates">
-      <mat-select #selectedCtg placeholder="Category"
-                  [value]="item.cId"
-                  (valueChange)="ctgSelectionChanged(item, $event)">
-        <div *ngFor="let ctg of categories">
-          <mat-option [value]="ctg.id">{{ ctg.name }}</mat-option>
+        <mat-form-field color="accent">
+          <input matInput placeholder="Choose a deadline" (click)="datetimePicker.open()" name="nnnn"
+            [(ngModel)]="data.task.deadline" [mtxDatetimepicker]="datetimePicker">
+            <mtx-datetimepicker-toggle [for]="datetimePicker" matSuffix></mtx-datetimepicker-toggle>
+            <mtx-datetimepicker #datetimePicker [type]="'datetime'" [mode]="'landscape'" color="primary" timeInput>
+            </mtx-datetimepicker>
+          </mat-form-field>
         </div>
-      </mat-select>
-      <mat-select placeholder="Subcategory"
-                  [value]="item.sId"
-                  [disabled]="!item.cId"
-                  (valueChange)=" item.sId = $event">
-        <div *ngFor="let sub of (categories | findBy: 'id': item.cId)?.subcategories || []">
-          <mat-option [value]="sub.id">{{ sub.name }}</mat-option>
-        </div>
-      </mat-select>
-      <mat-icon color="lightgrey" (click)="removeConnectedLine(item)" [style.padding-right.px]="10">close</mat-icon>
-    </div>
-  </div>
+      </div>
 
-  <button mat-stroked-button color="accent" (click)="close(data.task)">Apply</button>
-</div>
+      <button mat-stroked-button
+        color="accent"
+        (click)="addConnectedLine()"
+        [disabled]="isAddingDuplicatesDisabled()"
+        >
+        Add connected duplicate
+      </button>
+
+      @if (!!connectedDuplicates.length) {
+        <div>
+          @for (item of connectedDuplicates; track item) {
+            <div fxFill fxLayout="row" fxLayoutAlign="space-evenly center" class="divider"
+              >
+              <mat-select #selectedCtg placeholder="Category"
+                [value]="item.cId"
+                (valueChange)="ctgSelectionChanged(item, $event)">
+                @for (ctg of categories; track ctg) {
+                  <div>
+                    <mat-option [value]="ctg.id">{{ ctg.name }}</mat-option>
+                  </div>
+                }
+              </mat-select>
+              <mat-select placeholder="Subcategory"
+                [value]="item.sId"
+                [disabled]="!item.cId"
+                (valueChange)=" item.sId = $event">
+                @for (sub of (categories | findBy: 'id': item.cId)?.subcategories || []; track sub) {
+                  <div>
+                    <mat-option [value]="sub.id">{{ sub.name }}</mat-option>
+                  </div>
+                }
+              </mat-select>
+              <mat-icon color="lightgrey" (click)="removeConnectedLine(item)" [style.padding-right.px]="10">close</mat-icon>
+            </div>
+          }
+        </div>
+      }
+
+      <button mat-stroked-button color="accent" (click)="close(data.task)">Apply</button>
+    </div>

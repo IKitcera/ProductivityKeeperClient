@@ -1,55 +1,61 @@
 <!--      SPINNER-->
-<div class="spinner-wrap task-spinner stat-spinner" *ngIf="isLoading$ | async" fxLayoutAlign="center center">
-  <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
-</div>
+@if (isLoading$ | async) {
+  <div class="spinner-wrap task-spinner stat-spinner" fxLayoutAlign="center center">
+    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+  </div>
+}
 
-<div *ngIf="!noTimer" class="container">
-  <div class="timerContent">
-    <div fxLayout="row wrap" class="label" fxLayoutAlign="start center">
-      <h2>
-        <mat-icon>flag</mat-icon>
-        {{ (timer$ | async).label }}
+@if (!noTimer) {
+  <div class="container">
+    <div class="timerContent">
+      <div fxLayout="row wrap" class="label" fxLayoutAlign="start center">
+        <h2>
+          <mat-icon>flag</mat-icon>
+          {{ (timer$ | async).label }}
+        </h2>
+      </div>
+      <h4 class="medGray">
+        <pre>{{ getFormatString() }}</pre>
+      </h4>
+      <h4 class="medGray">
+        <pre><span class="usualFrontFamily">{{ goalValue.toString() }}</span></pre>
+      </h4>
+      <h2 class="centered large">
+        <pre><span>{{ currentValue.toString() }}</span></pre>
       </h2>
-    </div>
-    <h4 class="medGray">
-      <pre>{{ getFormatString() }}</pre>
-    </h4>
-    <h4 class="medGray">
-      <pre><span class="usualFrontFamily">{{ goalValue.toString() }}</span></pre>
-    </h4>
-    <h2 class="centered large">
-      <pre><span>{{ currentValue.toString() }}</span></pre>
-    </h2>
-    <div fxLayout="row" fxLayoutAlign="center center">
-      <button class="action-btn" mat-stroked-button [disabled]="isTicking" (click)="start()">
-        <div class="action-btn-content">
-          <mat-icon>play_arrow</mat-icon>
-          <p>Start</p>
-        </div>
-      </button>
-      <button class="action-btn" mat-stroked-button [disabled]="!isTicking" (click)="pause()">
-        <div class="action-btn-content">
-          <mat-icon>pause</mat-icon>
-          <p>Pause</p>
-        </div>
-      </button>
-      <button class="action-btn" mat-stroked-button (click)="stop()">
-        <div class="action-btn-content">
-          <mat-icon>stop</mat-icon>
-          <p>Stop</p>
-        </div>
-      </button>
-    </div>
-    <div fxLayout="row" class="topright">
-      <mat-icon (click)="editTimer()">edit</mat-icon>
-      <mat-icon (click)="deleteTimer()">delete_outline</mat-icon>
+      <div fxLayout="row" fxLayoutAlign="center center">
+        <button class="action-btn" mat-stroked-button [disabled]="isTicking" (click)="start()">
+          <div class="action-btn-content">
+            <mat-icon>play_arrow</mat-icon>
+            <p>Start</p>
+          </div>
+        </button>
+        <button class="action-btn" mat-stroked-button [disabled]="!isTicking" (click)="pause()">
+          <div class="action-btn-content">
+            <mat-icon>pause</mat-icon>
+            <p>Pause</p>
+          </div>
+        </button>
+        <button class="action-btn" mat-stroked-button (click)="stop()">
+          <div class="action-btn-content">
+            <mat-icon>stop</mat-icon>
+            <p>Stop</p>
+          </div>
+        </button>
+      </div>
+      <div fxLayout="row" class="topright">
+        <mat-icon (click)="editTimer()">edit</mat-icon>
+        <mat-icon (click)="deleteTimer()">delete_outline</mat-icon>
+      </div>
     </div>
   </div>
-</div>
+}
 
-<div fxLayout="row" fxLayoutAlign="center center" *ngIf="!(isLoading$ | async) && noTimer">
-  <button color="primary" mat-stroked-button (click)="editTimer()">
-    Add specific timer
-  </button>
-</div>
+@if (!(isLoading$ | async) && noTimer) {
+  <div fxLayout="row" fxLayoutAlign="center center">
+    <button color="primary" mat-stroked-button (click)="editTimer()">
+      Add specific timer
+    </button>
+  </div>
+}
 
