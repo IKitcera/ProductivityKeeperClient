@@ -127,7 +127,7 @@
 ::ng-deep.mat-mdc-checkbox-layout .mat-mdc-checkbox-label {
   line-height: 24px;
   max-width: 50vw;
-  --mdc-checkbox-state-layer-size: 5px !important;
+  --mat-checkbox-state-layer-size: 5px !important;
 }
 
 .faded {
