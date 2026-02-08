@@ -60,6 +60,7 @@ import {MinsToDisplayPipe} from "./core/pipes/minsToDisplay.pipe";
 import {MtxDatetimepickerModule} from "@ng-matero/extensions/datetimepicker";
 import {MtxNativeDatetimeModule} from "@ng-matero/extensions/core";
 import {DiaryComponent} from "./main/diary/diary/diary.component";
+import {QuillModule} from "ngx-quill";
 
 const routes: Routes = [
   {path: '', component: TaskListComponent, canActivate: [AuthGuard]},
@@ -131,7 +132,8 @@ export function tokenGetter() {
       registrationStrategy: 'registerWhenStable:30000'
     }),
     MinsToDisplayPipe,
-    MtxDatetimepickerModule
+    MtxDatetimepickerModule,
+    QuillModule.forRoot()
   ],
   exports: [
     FilterByPipe,

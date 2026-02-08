@@ -4,6 +4,9 @@ import {MatButtonToggle, MatButtonToggleGroup} from "@angular/material/button-to
 import {FormsModule} from "@angular/forms";
 import {MatIconButton, MatMiniFabButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
+import {WriteDiaryRecordDialogComponent} from "./write-diary-record-dialog/write-diary-record-dialog.component";
+import {MatDialog} from "@angular/material/dialog";
+import {filter, take, tap} from "rxjs";
 
 @Component({
   selector: 'app-diary',
@@ -21,7 +24,7 @@ import {MatIcon} from "@angular/material/icon";
 })
 export class DiaryComponent {
 
-  public items = [
+  public items: DiaryRecord[] = [
     {
       id: 12,
       title: 'My thoughts',
@@ -186,6 +189,22 @@ Excited for a change of scenery and new experiences.`,
   ];
 
   public diaryViewConfig: DiaryViewConfig = this.gradients[5];
+
+  constructor(private dialog: MatDialog) {
+
+  }
+
+  public openDiaryRecord(item: DiaryRecord): void {
+    this.dialog.open<WriteDiaryRecordDialogComponent, DiaryRecord>(WriteDiaryRecordDialogComponent, {
+      data: item,
+    }).afterClosed().pipe(
+      take(1),
+      filter(x => !!x),
+      tap(diaryRecord => {
+
+      })
+    ).subscribe();
+  }
 }
 interface DiaryViewConfig {
   name: string;
@@ -193,4 +212,12 @@ interface DiaryViewConfig {
   textColor?: string;
   mutedTextColor?: string;
   maxMutedTextColor?: string;
+}
+
+export interface DiaryRecord {
+  id: number;
+  title: string;
+  content: string;
+  createdAt: Date;
+  imageUrl?: string;
 }

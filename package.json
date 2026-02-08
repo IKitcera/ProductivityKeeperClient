@@ -33,6 +33,7 @@
     "d3": "^7.8.5",
     "k6": "^0.0.0",
     "ngx-color-picker": "^12.0.1",
+    "ngx-quill": "^30.0.1",
     "ngx-toastr": "^18.0.0",
     "rxjs": "~7.5.0",
     "simple-statistics": "^7.8.3",

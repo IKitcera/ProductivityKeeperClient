@@ -1,0 +1,19 @@
+<div>
+  <mat-form-field>
+    <mat-label>Title</mat-label>
+    <input matInput [(ngModel)]="data.title">
+  </mat-form-field>
+
+  <div class="flex items-center gap-2 mb-2">
+    <button mat-stroked-button color="primary" (click)="previewMode = !previewMode">
+      {{ previewMode ? 'Edit' : 'Preview' }}
+    </button>
+  </div>
+
+  <div *ngIf="!previewMode; else previewBlock">
+    <quill-editor [(ngModel)]="data.content" [style]="{minHeight: '200px'}"></quill-editor>
+  </div>
+  <ng-template #previewBlock>
+    <div class="quill-preview" [innerHTML]="data.content"></div>
+  </ng-template>
+</div>

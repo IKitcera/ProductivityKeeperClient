@@ -13,7 +13,7 @@
   </div>
   <div class="records-container">
     @for(item of items; track item.id) {
-      <div class="record" >
+      <div class="record" (click)="openDiaryRecord(item)">
         <div class="flex">
           <div>
             <div class="record-title">{{item.title}}</div>
@@ -27,9 +27,9 @@
             @if (item.imageUrl) {
               <img class="record-image" [src]="item.imageUrl" alt="Record Image"/>
             } @else {
-              <div class="flex items-center justify-center">
-                @let initials = item.title;
-                <span >{{initials}}</span>
+              <div class="record-image-placeholder">
+                {{item.title.split(' ')?.[0]?.[0]?.toUpperCase()}}
+                {{item.title.split(' ')?.[1]?.[0]?.toUpperCase()}}
               </div>
             }
 
