@@ -1,5 +1,5 @@
-@import 'ngx-toastr/toastr';
-@import 'src/app/core/scss/themes';
+@use 'ngx-toastr/toastr';
+@use 'src/app/core/scss/themes';
 
 @tailwind base;
 @tailwind components;

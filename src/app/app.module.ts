@@ -8,7 +8,6 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatExpansionModule} from "@angular/material/expansion";
 import {MatIconModule} from "@angular/material/icon";
-import {FlexLayoutModule} from "@angular/flex-layout";
 import {RouterModule, Routes} from "@angular/router";
 import {AuthGuard} from "./core/services/auth-guard";
 import {NotFoundError} from "rxjs";
@@ -100,7 +99,6 @@ export function tokenGetter() {
         MatCheckboxModule,
         MatExpansionModule,
         MatIconModule,
-        FlexLayoutModule,
         MatDialogModule,
         RouterModule.forRoot(routes),
         JwtModule.forRoot({

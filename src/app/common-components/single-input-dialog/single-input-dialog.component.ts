@@ -1,14 +1,11 @@
-import {Component, Inject, Input, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {TaskItem} from "../../core/models/task.model";
-import {Unit} from "../../core/models/unit.model";
-import {text} from "d3";
 
 @Component({
-    selector: 'app-single-input-dialog',
-    templateUrl: './single-input-dialog.component.html',
-    styleUrls: ['./single-input-dialog.component.css'],
-    standalone: false
+  selector: 'app-single-input-dialog',
+  templateUrl: './single-input-dialog.component.html',
+  styleUrls: ['./single-input-dialog.component.css'],
+  standalone: false
 })
 export class SingleInputDialogComponent implements OnInit {
 

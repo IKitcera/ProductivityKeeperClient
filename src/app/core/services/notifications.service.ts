@@ -34,7 +34,6 @@ export class NotificationsService {
           title, {
             body,
             icon: "assets/ntf-reminder.png",
-            vibrate: [50, 100, 120, 100, 50, 100, 50],
             tag: task.tags.map(t => t.text).join(', ')
           });
       })
