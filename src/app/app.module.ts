@@ -17,7 +17,7 @@ import {JwtModule} from "@auth0/angular-jwt";
 import {AuthService} from "./core/services/authServices";
 import {TaskService} from "./core/services/taskService";
 import {HttpService} from "./core/services/httpService";
-import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from "@angular/common/http";
+import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {FormsModule} from "@angular/forms";
 import {MatInputModule} from "@angular/material/input";
@@ -76,85 +76,79 @@ export function tokenGetter() {
   return localStorage.getItem('_token');
 }
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    TaskListComponent,
-    LoginComponent,
-    SingleInputDialogComponent,
-    StatisticsComponent,
-    TimerComponent,
-    EditTimerDialogComponent,
-    EditTaskDialogComponent,
-    SettingsComponent,
-    SimpleConfirmationDialogComponent,
-    FilterByPipe,
-    FindByPipe,
-    AnalyticsComponent
-  ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    MatCheckboxModule,
-    MatExpansionModule,
-    MatIconModule,
-    FlexLayoutModule,
-    HttpClientModule,
-    MatDialogModule,
-    RouterModule.forRoot(routes),
-    JwtModule.forRoot({
-      config: {
-        tokenGetter: tokenGetter,
-        allowedDomains: ['localhost:65070', 'localhost:44398']
-      }
-    }),
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    FormsModule,
-    MatTooltipModule,
-    MatSelectModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MtxNativeDatetimeModule,
-    DragDropModule,
-    NgxChartsModule,
-    ToastrModule.forRoot(),
-    MatSliderModule,
-    MatDividerModule,
-    MatTableModule,
-    ColorPickerModule,
-    MatProgressSpinnerModule,
-    MatCardModule,
-    MatRadioModule,
-    ServiceWorkerModule.register('/ngsw-worker.js', {
-      enabled: !isDevMode(),
-      registrationStrategy: 'registerWhenStable:30000'
-    }),
-    MinsToDisplayPipe,
-    MtxDatetimepickerModule,
-    QuillModule.forRoot()
-  ],
-  exports: [
-    FilterByPipe,
-    FindByPipe
-  ],
-  providers: [
-    AuthGuard,
-    HttpClient,
-    HttpService,
-    AuthService,
-    TaskService,
-    TimerService,
-    StatisticService,
-    StorageService,
-    DialogService,
-    NotificationsService,
-    {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
-    {provide: 'API_URL', useValue: Config.apiUrl},
-    {provide: LOCALE_ID, useValue: 'en-CA'},
-  ],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+        TaskListComponent,
+        LoginComponent,
+        SingleInputDialogComponent,
+        StatisticsComponent,
+        TimerComponent,
+        EditTimerDialogComponent,
+        EditTaskDialogComponent,
+        SettingsComponent,
+        SimpleConfirmationDialogComponent,
+        FilterByPipe,
+        FindByPipe,
+        AnalyticsComponent
+    ],
+    exports: [
+        FilterByPipe,
+        FindByPipe
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        BrowserAnimationsModule,
+        MatCheckboxModule,
+        MatExpansionModule,
+        MatIconModule,
+        FlexLayoutModule,
+        MatDialogModule,
+        RouterModule.forRoot(routes),
+        JwtModule.forRoot({
+            config: {
+                tokenGetter: tokenGetter,
+                allowedDomains: ['localhost:65070', 'localhost:44398']
+            }
+        }),
+        MatButtonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        MatTooltipModule,
+        MatSelectModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MtxNativeDatetimeModule,
+        DragDropModule,
+        NgxChartsModule,
+        ToastrModule.forRoot(),
+        MatSliderModule,
+        MatDividerModule,
+        MatTableModule,
+        ColorPickerModule,
+        MatProgressSpinnerModule,
+        MatCardModule,
+        MatRadioModule,
+        ServiceWorkerModule.register('/ngsw-worker.js', {
+            enabled: !isDevMode(),
+            registrationStrategy: 'registerWhenStable:30000'
+        }),
+        MinsToDisplayPipe,
+        MtxDatetimepickerModule,
+        QuillModule.forRoot()], providers: [
+        AuthGuard,
+        HttpClient,
+        HttpService,
+        AuthService,
+        TaskService,
+        TimerService,
+        StatisticService,
+        StorageService,
+        DialogService,
+        NotificationsService,
+        { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+        { provide: 'API_URL', useValue: Config.apiUrl },
+        { provide: LOCALE_ID, useValue: 'en-CA' },
+        provideHttpClient(withInterceptorsFromDi()),
+    ] })
 export class AppModule {
 }

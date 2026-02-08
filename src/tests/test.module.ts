@@ -1,6 +1,6 @@
 import {LOCALE_ID, NgModule} from "@angular/core";
 import {AuthGuard} from "../app/core/services/auth-guard";
-import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from "@angular/common/http";
+import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
 import {HttpService} from "../app/core/services/httpService";
 import {AuthService} from "../app/core/services/authServices";
 import {TaskService} from "../app/core/services/taskService";
@@ -47,68 +47,62 @@ import {FilterByPipe} from "../app/core/pipes/filterBy.pipe";
 import {FindByPipe} from "../app/core/pipes/findBy.pipe";
 import {RouterTestingModule} from "@angular/router/testing";
 
-@NgModule({
-  declarations: [
-    FilterByPipe,
-    FindByPipe,
-  ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    MatCheckboxModule,
-    MatExpansionModule,
-    MatIconModule,
-    FlexLayoutModule,
-    HttpClientModule,
-    MatDialogModule,
-    RouterTestingModule.withRoutes([]),
-    // JwtModule.forRoot({
-    //   config: {
-    //     tokenGetter: tokenGetter,
-    //     allowedDomains: ['localhost:65070', 'localhost:44398']
-    //   }
-    // }),
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    FormsModule,
-    MatTooltipModule,
-    MatSelectModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MtxNativeDatetimeModule,
-    DragDropModule,
-    NgxChartsModule,
-    ToastrModule.forRoot(),
-    MatSliderModule,
-    MatDividerModule,
-    MatTableModule,
-    ColorPickerModule,
-    MatProgressSpinnerModule,
-    MatCardModule,
-    MatRadioModule,
-    MinsToDisplayPipe,
-    MtxDatetimepickerModule
-  ],
-  providers: [
-    AuthGuard,
-    HttpClient,
-    HttpService,
-    AuthService,
-    TaskService,
-    TimerService,
-    StatisticService,
-    StorageService,
-    DialogService,
-    NotificationsService,
-    {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
-    {provide: 'API_URL', useValue: Config.apiUrl},
-    {provide: LOCALE_ID, useValue: 'en-CA'},
-  ],
-  exports: [
-    FilterByPipe,
-    FindByPipe,
-    MinsToDisplayPipe,
-  ]
-})
+@NgModule({ declarations: [
+        FilterByPipe,
+        FindByPipe,
+    ],
+    exports: [
+        FilterByPipe,
+        FindByPipe,
+        MinsToDisplayPipe,
+    ], imports: [BrowserModule,
+        BrowserAnimationsModule,
+        MatCheckboxModule,
+        MatExpansionModule,
+        MatIconModule,
+        FlexLayoutModule,
+        MatDialogModule,
+        RouterTestingModule.withRoutes([]),
+        // JwtModule.forRoot({
+        //   config: {
+        //     tokenGetter: tokenGetter,
+        //     allowedDomains: ['localhost:65070', 'localhost:44398']
+        //   }
+        // }),
+        MatButtonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        MatTooltipModule,
+        MatSelectModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MtxNativeDatetimeModule,
+        DragDropModule,
+        NgxChartsModule,
+        ToastrModule.forRoot(),
+        MatSliderModule,
+        MatDividerModule,
+        MatTableModule,
+        ColorPickerModule,
+        MatProgressSpinnerModule,
+        MatCardModule,
+        MatRadioModule,
+        MinsToDisplayPipe,
+        MtxDatetimepickerModule], providers: [
+        AuthGuard,
+        HttpClient,
+        HttpService,
+        AuthService,
+        TaskService,
+        TimerService,
+        StatisticService,
+        StorageService,
+        DialogService,
+        NotificationsService,
+        { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+        { provide: 'API_URL', useValue: Config.apiUrl },
+        { provide: LOCALE_ID, useValue: 'en-CA' },
+        provideHttpClient(withInterceptorsFromDi()),
+    ] })
 export class TestModule {}

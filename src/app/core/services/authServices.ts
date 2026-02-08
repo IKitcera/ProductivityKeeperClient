@@ -1,5 +1,5 @@
 import {HttpService} from "./httpService";
-import {HttpParams} from "@angular/common/http";
+import { HttpParams } from "@angular/common/http";
 import {AbstractUser} from "../models/abstract-user.model";
 import {Injectable} from "@angular/core";
 import {ActivatedRoute, Router} from "@angular/router";
