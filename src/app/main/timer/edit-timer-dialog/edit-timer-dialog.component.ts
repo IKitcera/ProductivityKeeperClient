@@ -4,9 +4,10 @@ import {Timer} from "../../../core/models/timer.model";
 import {TimeSpan} from "../timer.component";
 
 @Component({
-  selector: 'app-edit-timer-dialog',
-  templateUrl: './edit-timer-dialog.component.html',
-  styleUrls: ['./edit-timer-dialog.component.css']
+    selector: 'app-edit-timer-dialog',
+    templateUrl: './edit-timer-dialog.component.html',
+    styleUrls: ['./edit-timer-dialog.component.css'],
+    standalone: false
 })
 export class EditTimerDialogComponent implements OnInit {
   goalTS: TimeSpan = new TimeSpan();

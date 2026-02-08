@@ -6,17 +6,16 @@ import {FormsModule} from "@angular/forms";
 import {QuillEditorComponent} from "ngx-quill";
 
 @Component({
-  selector: 'app-write-diary-record-dialog',
-  standalone: true,
-  imports: [
-    MatFormField,
-    MatLabel,
-    FormsModule,
-    MatInput,
-    QuillEditorComponent
-  ],
-  templateUrl: './write-diary-record-dialog.component.html',
-  styleUrl: './write-diary-record-dialog.component.css'
+    selector: 'app-write-diary-record-dialog',
+    imports: [
+        MatFormField,
+        MatLabel,
+        FormsModule,
+        MatInput,
+        QuillEditorComponent
+    ],
+    templateUrl: './write-diary-record-dialog.component.html',
+    styleUrl: './write-diary-record-dialog.component.css'
 })
 export class WriteDiaryRecordDialogComponent {
   previewMode = false;

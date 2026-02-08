@@ -9,9 +9,10 @@ import {Tag} from "../../../core/models/tag.model";
 import {IConnectedDuplicate} from "../../../core/interfaces/connected-duplicate.interface";
 
 @Component({
-  selector: 'app-edit-task-dialog',
-  templateUrl: './edit-task-dialog.component.html',
-  styleUrls: ['./edit-task-dialog.component.css']
+    selector: 'app-edit-task-dialog',
+    templateUrl: './edit-task-dialog.component.html',
+    styleUrls: ['./edit-task-dialog.component.css'],
+    standalone: false
 })
 export class EditTaskDialogComponent implements OnDestroy {
 

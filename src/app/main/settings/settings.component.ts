@@ -27,10 +27,11 @@ import {Theme} from "../../core/enums/theme.enum";
 import {findEnumByValueFn} from "../../core/functions/find-enum-by-value.fuction";
 
 @Component({
-  selector: 'app-settings',
-  templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-settings',
+    templateUrl: './settings.component.html',
+    styleUrls: ['./settings.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SettingsComponent implements OnInit, OnDestroy, AfterViewInit {
   public categories: Category[];

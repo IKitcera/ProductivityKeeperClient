@@ -11,10 +11,11 @@ import {untilDestroyed} from "../../core/services/until-destroyed";
 import {SignalRService} from "../../core/services/hubs/signalr.service";
 
 @Component({
-  selector: 'app-statistics',
-  templateUrl: './statistics.component.html',
-  styleUrls: ['./statistics.component.css'],
-  providers: [ChartHubService]
+    selector: 'app-statistics',
+    templateUrl: './statistics.component.html',
+    styleUrls: ['./statistics.component.css'],
+    providers: [ChartHubService],
+    standalone: false
 })
 export class StatisticsComponent implements OnDestroy, AfterViewInit {
 

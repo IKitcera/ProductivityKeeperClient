@@ -11,9 +11,10 @@ import {filter} from "rxjs/operators";
 import { clearInterval, clearTimeout, setInterval, setTimeout } from 'worker-timers';
 
 @Component({
-  selector: 'app-timer',
-  templateUrl: './timer.component.html',
-  styleUrls: ['./timer.component.css']
+    selector: 'app-timer',
+    templateUrl: './timer.component.html',
+    styleUrls: ['./timer.component.css'],
+    standalone: false
 })
 export class TimerComponent implements OnDestroy {
 

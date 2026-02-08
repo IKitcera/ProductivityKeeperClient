@@ -9,18 +9,17 @@ import {MatDialog} from "@angular/material/dialog";
 import {filter, take, tap} from "rxjs";
 
 @Component({
-  selector: 'app-diary',
-  standalone: true,
-  imports: [
-    DatePipe,
-    MatButtonToggleGroup,
-    MatButtonToggle,
-    FormsModule,
-    MatIconButton,
-    MatIcon,
-  ],
-  templateUrl: './diary.component.html',
-  styleUrl: './diary.component.scss'
+    selector: 'app-diary',
+    imports: [
+        DatePipe,
+        MatButtonToggleGroup,
+        MatButtonToggle,
+        FormsModule,
+        MatIconButton,
+        MatIcon,
+    ],
+    templateUrl: './diary.component.html',
+    styleUrl: './diary.component.scss'
 })
 export class DiaryComponent {
 

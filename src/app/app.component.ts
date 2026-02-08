@@ -9,9 +9,10 @@ import {Theme} from "./core/enums/theme.enum";
 import {findEnumByValueFn} from "./core/functions/find-enum-by-value.fuction";
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss'],
+    standalone: false
 })
 export class AppComponent {
   @ViewChild('router') router: any;

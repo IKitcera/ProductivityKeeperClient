@@ -21,9 +21,10 @@ import {StorageService} from "../../core/services/storageService";
 import {StorageConstants} from "../../core/constants/storage-constants";
 
 @Component({
-  selector: 'app-task-list',
-  templateUrl: './task-list.component.html',
-  styleUrls: ['./task-list.component.css']
+    selector: 'app-task-list',
+    templateUrl: './task-list.component.html',
+    styleUrls: ['./task-list.component.css'],
+    standalone: false
 })
 export class TaskListComponent implements OnDestroy {
 
