@@ -1,5 +1,5 @@
 <div class="categories-wrap" [style.display]="areTasksLoading ? 'none' : 'block'">
-  <div fxLayout="row wrap" fxFlexFill fxLayoutAlign="start center" class="categoryNamesList">
+  <div class="categoryNamesList flex flex-row flex-wrap w-full items-center">
     @for (category of (unit$ | async)?.categories || []; track category) {
       <div>
         @if ((activeCtg$ | async) !== category && category.isVisible) {
@@ -31,10 +31,10 @@
 </div>
 
 <!--CONTENT-->
-<div class="main-content-wrap" fxLayout="row" [style.display]="areTasksLoading && showAnotherBackground ? 'none' : 'flex'" >
+<div class="main-content-wrap flex flex-row" [style.display]="areTasksLoading && showAnotherBackground ? 'none' : 'flex'" >
   <!-- tasks loader -->
   @if (areTasksLoading && showAnotherBackground) {
-    <div class="spinner-wrap task-spinner" fxLayoutAlign="center center">
+    <div class="spinner-wrap task-spinner flex justify-center items-center">
       <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
     </div>
   }
@@ -45,12 +45,11 @@
     (cdkDropListDropped)="dropSubcategory($event)">
     <mat-accordion multi cdkDropListGroup>
       @for (subcategory of (activeCtg$ | async)?.subcategories; track subcategory) {
-        <div cdkDrag [cdkDragData]="subcategory"
-          >
+        <div cdkDrag [cdkDragData]="subcategory">
           <mat-expansion-panel expanded="true" class="subcategory">
             <mat-expansion-panel-header>
               <mat-panel-title>
-                <div fxLayout="row" fxLayoutAlign="start center">
+                <div class="flex flex-row items-center">
                   <span class="mr">{{subcategory.name}}</span>
                   <i>{{getEstimatedCapacityTooltip(subcategory.tasks)}}</i>
                   @if (getTasksEstimatedDuration(subcategory.tasks) > estimatedCapacityInHrs) {
@@ -76,10 +75,9 @@
               @for (task of subcategory.tasks; track task) {
                 <div cdkDrag
                   cdkDragLockAxis="y"
-                  [cdkDragData]="task"
-                  >
-                  <div fxLayout="row wrap taskWrap">
-                    <div class="task" fxLayout="row wrap" fxLayoutAlign>
+                  [cdkDragData]="task">
+                  <div class="flex flex-row flex-wrap taskWrap">
+                    <div class="task flex flex-row flex-wrap items-center">
                       <mat-checkbox class="fullwidth taskTxt" [checked]="task.isChecked"
                         (change)="taskCheckedStateChanged(task.id)"
                         [matTooltip]="task.text.length >= maxTaskCharachters ? task.text : ''">
@@ -90,16 +88,15 @@
                       <mat-icon class="topright delete" (click)="deleteTask(task)">close</mat-icon>
                     </div>
                     @if (task.isRepeatable && task.timesToRepeat > 0) {
-                      <div class="right repeatable-text " fxLayout="row" fxLayoutAlign="center center">
+                      <div class="right repeatable-text flex flex-row items-center justify-center">
                         {{'(' + task.timesToRepeat + ' left) - ' + ((task.goalRepeatCount-task.timesToRepeat)/ task.goalRepeatCount | percent)}}
                       </div>
                     }
                     @for (tag of (tags$ | async)
                       | filterBy: 'taskId' : task.id : false
                       | filterBy: 'subcategoryId' : subcategory.id : true; track tag) {
-                      <div class="tag" fxLayout fxLayoutAlign
-                        >
-                        <div fxLayout fxLayoutAlign>
+                      <div class="tag flex flex-row items-center">
+                        <div class="flex flex-row items-center">
                           <div [matTooltip]="tag.text || ''" (click)="changeActiveCategory(tag.categoryId)">
                             <mat-icon class="tag_icon" [style.color]="tag.colorHex">sell</mat-icon>
                           </div>
@@ -120,7 +117,7 @@
         </div>
       }
       @if (!(activeCtg$ | async) || (activeCtg$ | async).subcategories.length === 0) {
-        <div fxLayout="row" fxLayoutAlign="space-evenly center" >
+        <div class="flex flex-row justify-evenly items-center" >
           <h3> You don't have any subcategory </h3>
           <button class="m-1" mat-mini-fab [disabled]="!(activeCtg$ | async)" (click)="addSubcategory()">
             <mat-icon>add</mat-icon>
@@ -133,7 +130,7 @@
     </button>
   </div>
   <!--  TIMER & STATISTICS-->
-  <div fxLayout="column" class="childContainer">
+  <div class="flex flex-col childContainer">
     <app-timer #timer></app-timer>
     <app-statistics #stat [activeCtg]="activeCtg$ | async"></app-statistics>
   </div>
@@ -141,6 +138,6 @@
 </div>
 
 <mat-divider></mat-divider>
-<div class="footer" fxLayoutAlign="end center" [style.margin-right]="'10%'" [style.margin-top]="'10px'">
+<div class="footer flex flex-row justify-end items-center" [style.margin-right]="'10%'" [style.margin-top]="'10px'">
   {{'Ⓒ IKitsera   -   2024'}}
 </div>

@@ -1,5 +1,11 @@
 @use 'src/app/core/scss/themes';
 
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 nav div {
   display: flex;
   flex-wrap: wrap;
@@ -29,15 +35,167 @@ nav {
   background: var(--navbar-background);
 }
 
-.spinner-wrap {
-  image-rendering: pixelated;
-  background-size: 1500px;
-  background: url("../assets/bg3.jpg") center;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 10;
+
+
+/* ── Mobile Splash ─────────────────────────────────────── */
+@keyframes orb-drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(18px, -22px) scale(1.08); }
+  66%       { transform: translate(-14px, 12px) scale(0.94); }
 }
+
+@keyframes pulse-glow {
+  0%, 100% { text-shadow: 0 0 18px #ffff00cc, 0 0 40px #ffff0066; }
+  50%       { text-shadow: 0 0 36px #ffff00ff, 0 0 80px #ffff0099, 0 0 120px #ffff0044; }
+}
+
+@keyframes today-glow {
+  0%, 100% { text-shadow: 0 0 14px #69f0aebb, 0 0 30px #69f0ae66; }
+  50%       { text-shadow: 0 0 28px #69f0aeff, 0 0 60px #69f0ae99; }
+}
+
+@keyframes dot-bounce {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40%            { transform: scale(1);   opacity: 1;   }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+.mobile-splash {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at 30% 20%, #2d1b4e 0%, #0d0d14 55%, #0a0a0f 100%);
+  overflow: hidden;
+
+  /* ambient glowing orbs */
+  &__orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.35;
+    animation: orb-drift 9s ease-in-out infinite;
+
+    width: 260px; height: 260px;
+    top: -60px; left: -60px;
+    background: radial-gradient(circle, #7b1fa2 0%, transparent 70%);
+
+    &--2 {
+      width: 200px; height: 200px;
+      top: auto; left: auto;
+      bottom: -50px; right: -40px;
+      background: radial-gradient(circle, #1b5e20 0%, transparent 70%);
+      animation-delay: -4s;
+      animation-duration: 11s;
+    }
+
+    &--3 {
+      width: 320px; height: 320px;
+      top: 10%; right: -80px;
+      background: radial-gradient(circle, #1a237e 0%, transparent 70%);
+      animation-delay: -7s;
+      animation-duration: 13s;
+
+      @media (max-width: 767px) { display: none; }
+    }
+  }
+
+  &__content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem 1.5rem;
+    animation: fade-up 0.7s ease both;
+  }
+
+  /* pill badge */
+  &__badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #69f0ae;
+    border: 1px solid #69f0ae55;
+    background: #69f0ae12;
+    border-radius: 999px;
+    padding: 0.3rem 1rem;
+    backdrop-filter: blur(4px);
+  }
+
+  /* quote block */
+  &__quote {
+    text-align: center;
+    color: #e0e0e0;
+    line-height: 1.4;
+
+    @media (min-width: 768px) { padding: 0 1rem; }
+  }
+
+  &__line {
+    font-size: 1.15rem;
+    margin: 0;
+    opacity: 0.85;
+
+    &--sub  { font-size: 0.95rem; opacity: 0.6; margin-top: 0.5rem; }
+    &--bottom { font-size: 1.05rem; margin-top: 0.25rem; display: flex; align-items: baseline; justify-content: center; gap: 0.3rem; }
+  }
+
+  &__future {
+    font-size: 3.5rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #ffff00;
+    margin: 0;
+    animation: pulse-glow 3s ease-in-out infinite;
+
+    @media (min-width: 768px) {
+      font-size: 6rem;
+      letter-spacing: -0.04em;
+    }
+  }
+
+  &__today {
+    font-weight: 700;
+    color: #69f0ae;
+    animation: today-glow 3s ease-in-out infinite;
+    animation-delay: -1.5s;
+  }
+
+  &__not { opacity: 0.5; }
+
+  &__tomorrow {
+    opacity: 0.4;
+    text-decoration-color: #ef5350;
+    color: #bdbdbd;
+  }
+
+  /* three-dot loader */
+  &__loader {
+    display: flex;
+    gap: 0.5rem;
+
+    span {
+      display: block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #7b1fa2;
+
+      &:nth-child(1) { animation: dot-bounce 1.4s ease-in-out infinite; }
+      &:nth-child(2) { animation: dot-bounce 1.4s ease-in-out infinite 0.2s; }
+      &:nth-child(3) { animation: dot-bounce 1.4s ease-in-out infinite 0.4s; }
+    }
+  }
+
+}
+/* ── end Mobile Splash ─────────────────────────────────── */
 
 img {
   image-rendering: pixelated;

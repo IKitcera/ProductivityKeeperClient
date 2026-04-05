@@ -3,11 +3,8 @@
     <mat-label>What is your goal?</mat-label>
     <input [(ngModel)]="timer.label" matInput type="text" name="tName" (keyup.enter)="close()" autofocus>
   </mat-form-field>
-<!--  <mat-select>-->
-<!--    <mat-option [value]=""> </mat-option>-->
-<!--  </mat-select>-->
   <mat-label>Enter the duration of the timer</mat-label>
-  <div class="flex justify-evenly items-center">
+  <div class="flex flex-row justify-evenly items-center">
     <mat-form-field color="accent"  appearance="fill">
       <mat-label>Years</mat-label>
       <input [(ngModel)]="goalTS.years" matInput type="text" name="gYear">
@@ -22,7 +19,7 @@
     </mat-form-field>
   </div>
 
-  <div fxLayout="row" fxLayoutAlign="space-evenly center">
+  <div class="flex flex-row justify-evenly items-center">
     <mat-form-field color="accent"  appearance="fill">
       <mat-label>Hours</mat-label>
       <input [(ngModel)]="goalTS.hours" matInput type="text" name="gHour">

@@ -1,6 +1,6 @@
 <!--      SPINNER-->
 @if (isLoading$ | async) {
-  <div class="spinner-wrap task-spinner stat-spinner" fxLayoutAlign="center center">
+  <div class="spinner-wrap task-spinner stat-spinner flex justify-center items-center">
     <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
   </div>
 }
@@ -8,7 +8,7 @@
 @if (!noTimer) {
   <div class="container">
     <div class="timerContent">
-      <div fxLayout="row wrap" class="label" fxLayoutAlign="start center">
+      <div class="label flex flex-row flex-wrap items-center justify-start">
         <h2>
           <mat-icon>flag</mat-icon>
           {{ (timer$ | async).label }}
@@ -23,7 +23,7 @@
       <h2 class="centered large">
         <pre><span>{{ currentValue.toString() }}</span></pre>
       </h2>
-      <div fxLayout="row" fxLayoutAlign="center center">
+      <div class="flex flex-row justify-center items-center">
         <button class="action-btn" mat-stroked-button [disabled]="isTicking" (click)="start()">
           <div class="action-btn-content">
             <mat-icon>play_arrow</mat-icon>
@@ -43,7 +43,7 @@
           </div>
         </button>
       </div>
-      <div fxLayout="row" class="topright">
+      <div class="topright flex flex-row">
         <mat-icon (click)="editTimer()">edit</mat-icon>
         <mat-icon (click)="deleteTimer()">delete_outline</mat-icon>
       </div>
@@ -52,10 +52,9 @@
 }
 
 @if (!(isLoading$ | async) && noTimer) {
-  <div fxLayout="row" fxLayoutAlign="center center">
+  <div class="flex flex-row justify-center items-center">
     <button color="primary" mat-stroked-button (click)="editTimer()">
       Add specific timer
     </button>
   </div>
 }
-

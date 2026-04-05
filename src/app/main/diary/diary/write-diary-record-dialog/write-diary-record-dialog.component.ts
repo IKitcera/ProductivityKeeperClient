@@ -4,6 +4,7 @@ import {DiaryRecord} from "../diary.component";
 import {MatFormField, MatInput, MatLabel} from "@angular/material/input";
 import {FormsModule} from "@angular/forms";
 import {QuillEditorComponent} from "ngx-quill";
+import {MatButton} from "@angular/material/button";
 
 @Component({
   selector: 'app-write-diary-record-dialog',
@@ -12,7 +13,8 @@ import {QuillEditorComponent} from "ngx-quill";
     MatLabel,
     FormsModule,
     MatInput,
-    QuillEditorComponent
+    QuillEditorComponent,
+    MatButton
   ],
   templateUrl: './write-diary-record-dialog.component.html',
   styleUrl: './write-diary-record-dialog.component.css',

@@ -60,7 +60,8 @@ export class TaskListComponent implements OnDestroy {
       (key, value) => +value);
   }
 
-  @HostListener('window:beforeunload', ['$event']) unloadHandler(): void {
+  @HostListener('window:beforeunload', ['$event'])
+  unloadHandler(event: Event): void {
     this.loaderStateChanged.next(true);
   }
 

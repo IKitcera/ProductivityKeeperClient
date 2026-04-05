@@ -1,7 +1,7 @@
 import {Component, Inject, isDevMode, ViewChild, DOCUMENT} from '@angular/core';
 import {AuthService} from "./core/services/authServices";
 import {TaskListComponent} from "./main/task-list/task-list.component";
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject, debounceTime} from "rxjs";
 import {StorageConstants} from "./core/constants/storage-constants";
 
 import {StorageService} from "./core/services/storageService";
@@ -18,6 +18,12 @@ export class AppComponent {
   @ViewChild('router') router: any;
   title = 'ProductivityKeeperClient';
   isLoading = new BehaviorSubject(false);
+  isLoadingSignal = toSignal(
+    this.isLoading.pipe(
+        takeUntilDestroyed(this),
+      debounceTime(1000)
+    )
+  );
 
   constructor(
     public authService: AuthService,

@@ -1,11 +1,33 @@
 <!--SPINNER-->
 @if (isLoading | async) {
-  <div class="spinner-wrap" fxFill fxLayoutAlign="center center">
-    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
-  </div>
-}
+  <div class="h-full w-full relative">
+    <div class="mobile-splash">
+      <div class="mobile-splash__orb"></div>
+      <div class="mobile-splash__orb mobile-splash__orb--2"></div>
+      <div class="mobile-splash__orb mobile-splash__orb--3"></div>
 
-@if (!(isLoading | async)) {
+      <div class="mobile-splash__content">
+        <div class="mobile-splash__badge">Productivity Keeper</div>
+
+        <div class="mobile-splash__quote">
+          <p class="mobile-splash__line">Your</p>
+          <p class="mobile-splash__future">future</p>
+          <p class="mobile-splash__line mobile-splash__line--sub">is created by what you do</p>
+          <p class="mobile-splash__line mobile-splash__line--bottom">
+            <span class="mobile-splash__today">today</span>
+            <span class="mobile-splash__not"> not </span>
+            <s class="mobile-splash__tomorrow">tomorrow</s>
+          </p>
+        </div>
+
+        <div class="mobile-splash__loader">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+} @else {
   <nav>
     <div>
       <a [routerLink]="''">Productivity Keeper</a>
@@ -32,8 +54,4 @@
 }
 
 <router-outlet #router (activate)="routeChanged($event)"></router-outlet>
-
-
-
-
 

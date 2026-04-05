@@ -1,43 +1,43 @@
 <!--      SPINNER-->
 @if (isLoading) {
-  <div class="spinner-wrap task-spinner stat-spinner" fxLayoutAlign="center center">
+  <div class="spinner-wrap task-spinner stat-spinner flex justify-center items-center">
     <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
   </div>
 }
 <!--     CONTENT-->
 @if ((statistic$ | async) && !isLoading) {
   <div class="container">
-    <div fxLayoutAlign="center center">
+    <div class="flex justify-center items-center">
       <h2>Statistics</h2>
     </div>
-    <div fxLayout="row" fxLayoutAlign="space-evenly" fxLayoutGap="20px">
-      <div fxLayout="row" fxLayoutAlign="center center">
+    <div class="flex flex-row justify-evenly gap-5">
+      <div class="flex flex-row items-center">
         <p>Count of done today:{{'\t'}}</p>
         <p class="pl-10">{{(statistic$ | async).countOfDoneToday}}</p>
       </div>
-      <div fxLayout="row" fxLayoutAlign="center center">
+      <div class="flex flex-row items-center">
         <p>Count of done total:{{'\t'}}</p>
         <p class="pl-10">{{(statistic$ | async).countOfDoneTotal}}</p>
       </div>
     </div>
-    <div fxLayout="row" fxLayoutAlign="space-evenly" fxLayoutGap="20px">
-      <div fxLayout="row" fxLayoutAlign="center center">
+    <div class="flex flex-row justify-evenly gap-5">
+      <div class="flex flex-row items-center">
         <p>Percent of done today: </p>
         <p class="pl-10">{{(statistic$ | async).percentOfDoneToday | percent}} </p>
       </div>
-      <div fxLayout="row" fxLayoutAlign="center center">
+      <div class="flex flex-row items-center">
         <p>Percent of done total: </p>
         <p class="pl-10">{{(statistic$ | async).percentOfDoneTotal| percent}} </p>
       </div>
     </div>
-    <div fxLayout="row" fxLayoutAlign="space-evenly" >
-      <div fxLayout="row" fxLayoutAlign="center center">
+    <div class="flex flex-row justify-evenly">
+      <div class="flex flex-row items-center">
         <p>Expired total: </p>
         <p class="pl-10">{{(statistic$ | async).countOfExpiredTotal}}</p>
       </div>
     </div>
     <div>
-      <div fxLayout="row" fxLayoutAlign="end center" >
+      <div class="flex flex-row justify-end items-center">
         <button mat-icon-button [disabled]="selectedChart === SelectedChart.Gauge" (click)="selectedChart = SelectedChart.Gauge; statisticSource$.subscribe()">
           <mat-icon>incomplete_circle</mat-icon>
         </button>
@@ -99,7 +99,7 @@
           }
         }
       </div>
-      <div fxLayout="row" fxLayoutAlign="end center">
+      <div class="flex flex-row justify-end items-center">
         @if (selectedChart === SelectedChart.Line) {
           <button mat-stroked-button
             (click)="scaleLinearGraphicsData(1)"
