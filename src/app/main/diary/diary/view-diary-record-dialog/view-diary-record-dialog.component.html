@@ -1,0 +1,15 @@
+@let diaryViewConf = diaryViewConfig();
+<div class="p-6 shadow-xl overflow-y-auto"
+     [style.background]="diaryViewConf?.backgroundImage"
+     [style.color]="diaryViewConf?.textColor">
+  <mat-form-field appearance="outline" class="w-full mb-6">
+    <mat-label>Title</mat-label>
+    <input matInput [value]="item()?.title" class="text-lg font-semibold" placeholder="Diary title..." readonly tabindex="-1">
+  </mat-form-field>
+
+  <div class="bg-gray-100 dark-theme:bg-gray-900/80 border border-gray-200 dark-theme:border-gray-700 rounded-2xl p-5 min-h-[220px] prose prose-slate dark:prose-invert max-w-none transition-colors quill-preview"
+       [innerHTML]="item()?.content"
+       [style.background]="diaryViewConf?.backgroundImage"
+       [style.color]="diaryViewConf?.textColor">
+  </div>
+</div>

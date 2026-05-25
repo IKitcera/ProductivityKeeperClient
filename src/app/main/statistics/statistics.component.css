@@ -1,6 +1,6 @@
 .container{
   margin-top: 20px;
-  padding: 20px 40px;
+  padding: 10px 15px;
   color: var(--text-general-color);
   background: var(--mat-card-color);
   border-radius: 5px;

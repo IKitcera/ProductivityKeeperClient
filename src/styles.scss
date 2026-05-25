@@ -8,11 +8,27 @@
 html, body { height: 100%; }
 body {
   margin: 0;
-  font-family: Roboto, sans-serif;
+  font-family: var(--font-sans, sans-serif);
+  font-size: var(--text-base);
+  font-weight: var(--font-normal);
+  line-height: var(--leading-normal);
   background: var(--background);
 
-  scrollbar-width: thin;          /* "auto" or "thin" */
-  scrollbar-color: var(--navbar-background) transparent;   /* scroll thumb and track */
+  scrollbar-width: thin;
+  scrollbar-color: var(--navbar-background) transparent;
+}
+
+/* Headings — same face as body, distinguished by weight & size */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-sans, sans-serif);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-snug);
+}
+
+/* Monospaced contexts */
+code, kbd, pre, samp {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.9em;
 }
 
 .fullwidth{

@@ -6,6 +6,7 @@ $background-box-size: 70px;
   margin: 0 !important;
   padding: 2rem;
   color: var(--textColor);
+  max-width: 100% !important;
 
   .header {
     display: flex;
@@ -40,6 +41,11 @@ $background-box-size: 70px;
       display: flex;
       flex-direction: column;
       gap: 0.25rem;
+      cursor: pointer;
+      &:hover {
+        opacity: 0.8;
+        backdrop-filter: brightness(0.8) contrast(1.1);
+      }
 
       .record-title {
         font-size: 1.25rem;
@@ -147,6 +153,11 @@ $background-box-size: 70px;
         padding: 0.5rem 0;
         backdrop-filter: brightness(0.5);
       }
+    }
+
+
+    &.mat-button-toggle-checked .gradient-name:hover{
+      backdrop-filter: none;
     }
   }
 }

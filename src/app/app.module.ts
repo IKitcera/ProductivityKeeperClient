@@ -60,6 +60,12 @@ import {MtxDatetimepickerModule} from "@ng-matero/extensions/datetimepicker";
 import {MtxNativeDatetimeModule} from "@ng-matero/extensions/core";
 import {DiaryComponent} from "./main/diary/diary/diary.component";
 import {QuillModule} from "ngx-quill";
+import {DiaryService} from "./core/services/diary.service";
+import {Store, StoreModule} from "@ngrx/store";
+import {DiaryViewConfigState, initialDiaryViewConfig} from "./main/diary/diary/store/diary-view-config.state";
+import {diaryViewConfigReducer} from "./main/diary/diary/store/diary-view-config.reducer";
+import { localStorageSync } from 'ngrx-store-localstorage';
+import { ActionReducer, MetaReducer } from '@ngrx/store';
 
 const routes: Routes = [
   {path: '', component: TaskListComponent, canActivate: [AuthGuard]},
@@ -74,6 +80,15 @@ const routes: Routes = [
 export function tokenGetter() {
   return localStorage.getItem('_token');
 }
+
+export function localStorageSyncReducer(reducer: ActionReducer<any>): ActionReducer<any> {
+  return localStorageSync({
+    keys: ['diaryConfig'],
+    rehydrate: true
+  })(reducer);
+}
+
+const metaReducers: Array<MetaReducer<any, any>> = [localStorageSyncReducer];
 
 @NgModule({ declarations: [
         AppComponent,
@@ -132,7 +147,11 @@ export function tokenGetter() {
         }),
         MinsToDisplayPipe,
         MtxDatetimepickerModule,
-        QuillModule.forRoot()], providers: [
+        QuillModule.forRoot(),
+        StoreModule.forRoot({
+          diaryConfig: diaryViewConfigReducer
+        }, { metaReducers }),
+    ], providers: [
         AuthGuard,
         HttpClient,
         HttpService,
@@ -143,6 +162,7 @@ export function tokenGetter() {
         StorageService,
         DialogService,
         NotificationsService,
+        DiaryService,
         { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
         { provide: 'API_URL', useValue: Config.apiUrl },
         { provide: LOCALE_ID, useValue: 'en-CA' },

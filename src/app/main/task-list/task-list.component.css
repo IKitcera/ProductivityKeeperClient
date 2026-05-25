@@ -1,3 +1,8 @@
+:host ::ng-deep {
+  --mat-expansion-header-expanded-state-height: 52px !important;
+}
+
+
 .main-content-wrap{
   margin-top: 1%;
   margin-left: 1%;
@@ -268,9 +273,9 @@
 }
 
 .tasks-list {
-  overflow: hidden;
-  display: block;
+  overflow: visible;
   min-height: 24px;
+  max-height: 100%;
 }
 
 .task {
@@ -279,6 +284,8 @@
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
+  -webkit-line-clamp: 2;
+  line-height: 15px; max-height: 30px;
 }
 
 .cdk-drag-preview {

@@ -7,22 +7,28 @@
 
 @if (!noTimer) {
   <div class="container">
-    <div class="timerContent">
-      <div class="label flex flex-row flex-wrap items-center justify-start">
-        <h2>
-          <mat-icon>flag</mat-icon>
+    <div class="timerContent grid grid-template-columns-1 gap-2">
+      <div class="label flex flex-wrap items-center justify-between">
+        <h2 class="flex items-center">
+          <mat-icon class="text-lg">flag</mat-icon>
           {{ (timer$ | async).label }}
         </h2>
+        <div class="flex items-center">
+          <mat-icon class="text-lg" (click)="editTimer()">edit</mat-icon>
+          <mat-icon class="text-lg" (click)="deleteTimer()">delete_outline</mat-icon>
+        </div>
       </div>
-      <h4 class="medGray">
-        <pre>{{ getFormatString() }}</pre>
-      </h4>
-      <h4 class="medGray">
-        <pre><span class="usualFrontFamily">{{ goalValue.toString() }}</span></pre>
-      </h4>
-      <h2 class="centered large">
-        <pre><span>{{ currentValue.toString() }}</span></pre>
-      </h2>
+      <div>
+        <h4 class="medGray">
+          <pre>{{ getFormatString() }}</pre>
+        </h4>
+        <h4 class="medGray">
+          <pre><span class="usualFrontFamily">{{ goalValue.toString() }}</span></pre>
+        </h4>
+        <h2 class="centered large">
+          <pre><span>{{ currentValue.toString() }}</span></pre>
+        </h2>
+      </div>
       <div class="flex flex-row justify-center items-center">
         <button class="action-btn" mat-stroked-button [disabled]="isTicking" (click)="start()">
           <div class="action-btn-content">
@@ -42,10 +48,6 @@
             <p>Stop</p>
           </div>
         </button>
-      </div>
-      <div class="topright flex flex-row">
-        <mat-icon (click)="editTimer()">edit</mat-icon>
-        <mat-icon (click)="deleteTimer()">delete_outline</mat-icon>
       </div>
     </div>
   </div>

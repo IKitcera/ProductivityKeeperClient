@@ -1,20 +1,21 @@
-<div>
-  <mat-form-field>
+<div class="container p-6 shadow-xl overflow-y-auto"
+     [style.background]="diaryViewConfig()?.backgroundImage"
+     [style.color]="diaryViewConfig()?.textColor"
+     [style.--maxMutedTextColor]="diaryViewConfig()?.maxMutedTextColor"
+     [style.--mutedTextColor]="diaryViewConfig()?.mutedTextColor"
+     [style.--textColor]="diaryViewConfig()?.textColor"
+     [style.--backgroundImage]="diaryViewConfig()?.backgroundImage">
+  <mat-form-field appearance="outline" class="w-full">
     <mat-label>Title</mat-label>
-    <input matInput [(ngModel)]="data.title">
+    <input matInput [(ngModel)]="item.title" class="text-lg font-semibold" placeholder="Diary title...">
   </mat-form-field>
 
-  <div class="flex items-center gap-2 mb-2">
-    <button mat-stroked-button color="primary" (click)="previewMode = !previewMode">
-      {{ previewMode ? 'Edit' : 'Preview' }}
+  <quill-editor [(ngModel)]="item.content" [style]="{minHeight: '220px', background: 'transparent'}" class="quill-custom"></quill-editor>
+
+  <div class="flex justify-end mt-8">
+    <button mat-flat-button color="primary" class="px-8 py-2 rounded-lg text-base font-semibold shadow-md flex items-center gap-2"
+            (click)="dialogRef.close(item)">
+      Save <mat-icon class="ml-2">lightbulb</mat-icon>
     </button>
   </div>
-
-  @if (!previewMode) {
-    <div>
-      <quill-editor [(ngModel)]="data.content" [style]="{minHeight: '200px'}"></quill-editor>
-    </div>
-  } @else {
-    <div class="quill-preview" [innerHTML]="data.content"></div>
-  }
 </div>

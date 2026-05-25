@@ -1,0 +1,147 @@
+/*
+ * Style the Angular Material dialog container for this component.
+ * Use ::ng-deep to ensure the style applies to the overlay container.
+ */
+::ng-deep .mat-dialog-container {
+  border-radius: 1.1rem !important;
+  background: #fff;
+  box-shadow: 0 4px 32px 0 rgba(31,41,55,0.13);
+  padding: 2.25rem 1.75rem !important;
+  font-size: 1.09rem;
+  border: 1px solid #e5e7eb;
+}
+
+@media (prefers-color-scheme: dark) {
+  ::ng-deep .mat-dialog-container {
+    background: #23272f !important;
+    color: #f3f4f6 !important;
+    border: 1px solid #374151;
+    box-shadow: 0 4px 32px 0 rgba(0,0,0,0.28);
+  }
+}
+
+.container {
+  ::ng-deep .mat-dialog-container {
+    border-radius: 1.25rem !important;
+    box-shadow: 0 8px 32px 0 rgba(31, 41, 55, 0.25), 0 1.5px 6px 0 rgba(0,0,0,0.10);
+    padding: 2.5rem 2rem !important;
+    font-size: 1.08rem;
+    backdrop-filter: blur(8px);
+    z-index: 0;
+  }
+
+  /* Quill toolbar */
+  ::ng-deep .quill-custom .ql-toolbar {
+    border-radius: 0.75rem 0.75rem 0 0;
+    border: 1px solid var(--maxMutedTextColor);
+    box-shadow: 0 2px 8px 0 rgba(31,41,55,0.06);
+    padding: 0.4rem 0.9rem;
+    color: var(--mutedTextColor);
+    backdrop-filter: brightness(0.1) opacity(0.1) !important;
+    z-index: 0;
+  }
+
+  ::ng-deep .ql-fill {
+    color: var(--mutedTextColor);
+    fill: var(--mutedTextColor);
+  }
+  ::ng-deep .dark-theme .ql-toolbar {
+    background: #262a32;
+    border: 1px solid #374151;
+    border-bottom: none;
+    color: #f3f4f6;
+    backdrop-filter: opacity(0.1) !important;
+
+    button {
+      color: var(--mutedTextColor) !important;
+    }
+  }
+  /* Quill container */
+  ::ng-deep .quill-custom .ql-container {
+    border-radius: 0 0 0.75rem 0.75rem;
+    background: transparent !important;
+    border: 1px solid var(--maxMutedTextColor);
+    border-top: none;
+  }
+  ::ng-deep .dark-theme .quill-custom .ql-container {
+    background: transparent;
+    border: 1px solid #374151;
+    border-top: none;
+  }
+  /* Quill editor */
+  ::ng-deep .quill-custom .ql-editor {
+    padding: 1.15rem 1rem;
+    min-height: 150px;
+    font-size: 1.12rem;
+    background: transparent;
+    border-radius: 0 0 0.75rem 0.75rem;
+    color: var(--textColor);
+  }
+  ::ng-deep .dark-theme .quill-custom .ql-editor {
+    color: #f3f4f6;
+  }
+  /* Toolbar buttons and pickers */
+  ::ng-deep .quill-custom .ql-toolbar button,
+  ::ng-deep .quill-custom .ql-toolbar .ql-picker-label,
+  ::ng-deep .quill-custom .ql-toolbar .ql-stroke,
+  ::ng-deep .quill-custom .ql-toolbar .ql-fill,
+  ::ng-deep .quill-custom .ql-toolbar .ql-picker,
+  ::ng-deep .quill-custom .ql-toolbar .ql-picker-item,
+  ::ng-deep .quill-custom .ql-toolbar .ql-picker-label svg,
+  ::ng-deep .quill-custom .ql-toolbar .ql-picker-options svg {
+    color: var(--mutedTextColor) !important;
+    fill: var(--mutedTextColor) !important;
+    stroke: var(--maxMutedTextColor) !important;
+  }
+  ::ng-deep .quill-custom .ql-toolbar button:hover,
+  ::ng-deep .quill-custom .ql-toolbar button.ql-active,
+  ::ng-deep .quill-custom .ql-toolbar .ql-picker-label:hover,
+  ::ng-deep .quill-custom .ql-toolbar .ql-picker-label.ql-active {
+    background: transparent;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px 0 rgba(31,41,55,0.13);
+    color: #1f2937;
+    border: 1px solid var(--maxMutedTextColor);
+    backdrop-filter: brightness(0.1);
+  }
+  ::ng-deep .dark-theme .quill-custom .ql-toolbar button:hover,
+  ::ng-deep .dark-theme .quill-custom .ql-toolbar button.ql-active,
+  ::ng-deep .dark-theme .quill-custom .ql-toolbar .ql-picker-label:hover,
+  ::ng-deep .dark-theme .quill-custom .ql-toolbar .ql-picker-label.ql-active {
+    background: #30343c !important;
+    color: #fff !important;
+    box-shadow: 0 2px 8px 0 rgba(0,0,0,0.18);
+  }
+  /* Picker dropdowns */
+  ::ng-deep .quill-custom .ql-toolbar .ql-picker-options {
+    border-radius: 0.6rem;
+    margin-top: 0.18rem;
+    box-shadow: 0 4px 16px 0 rgba(31,41,55,0.10);
+    background: var(--backgroundImage) !important;
+    z-index: 1000;
+  }
+  ::ng-deep .quill-custom .ql-toolbar .ql-picker-option {
+    background: var(--backgroundImage) !important;
+    color: var(--mutedTextColor) !important;
+    border-radius: 8px !important;
+    transition: background 0.16s, color 0.16s;
+    z-index: 1000;
+
+    &:hover {
+      background: transparent;
+      filter: brightness(0.7) opacity(0.9) contrast(1.1) !important;
+    }
+  }
+  ::ng-deep .quill-custom .ql-toolbar .ql-picker-option:hover,
+  ::ng-deep .quill-custom .ql-toolbar .ql-picker-option.ql-selected {
+    background: rgba(255,255,255,0.7) !important;
+    color: var(--maxMutedTextColor) !important;
+
+  }
+  ::ng-deep .dark-theme .quill-custom .ql-toolbar .ql-picker-options {
+
+    border: 1px solid var(--maxMutedTextColor) !important;
+    border-radius: 8px;
+    box-shadow: 0 4px 24px 0 rgba(0,0,0,0.18) !important;
+  }
+}

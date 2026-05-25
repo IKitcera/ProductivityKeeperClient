@@ -30,9 +30,11 @@
               "src/assets"
             ],
             "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/purple-green.css",
-              "src/app/core/scss/themes.scss",
-              "src/styles.scss"
+                  "./node_modules/@angular/material/prebuilt-themes/purple-green.css",
+                  "node_modules/quill/dist/quill.core.css",
+                  "node_modules/quill/dist/quill.snow.css",
+                  "src/app/core/scss/themes.scss",
+                  "src/styles.scss"
             ],
             "scripts": [],
             "serviceWorker": "ngsw-config.json",
@@ -53,8 +55,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "200kb",
-                  "maximumError": "200kb"
+                  "maximumWarning": "300kb",
+                  "maximumError": "400kb"
                 }
               ],
               "fileReplacements": [
@@ -121,8 +123,10 @@
               "src/manifest.webmanifest"
             ],
             "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/purple-green.css",
-              "src/styles.scss"
+                  "./node_modules/@angular/material/prebuilt-themes/purple-green.css",
+                  "node_modules/quill/dist/quill.core.css",
+                  "node_modules/quill/dist/quill.snow.css",
+                  "src/styles.scss"
             ],
             "scripts": []
           }

@@ -1,13 +1,13 @@
-FROM node:20 AS frontend
-EXPOSE 4201
-EXPOSE 4201
-WORKDIR /app/ProductivityKeeperClient
+FROM node:20 AS build
+WORKDIR /app
+
 COPY package*.json ./
 RUN npm install --force
-RUN npm install -g @angular/cli
 COPY . ./
 RUN npm run build --configuration=production
 
-CMD ["ng", "serve", "--configuration", "production", "--host", "0.0.0.0", "--port", "4201"]
+FROM nginx:1.27-alpine AS final
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist/productivity-keeper-client/browser /usr/share/nginx/html
 
-
+EXPOSE 80

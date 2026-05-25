@@ -1,5 +1,5 @@
 .medGray{
-  margin-left: 25px;
+  text-align: center;
   font-size: 16px;
   color: rgba(50,50,50, 1);
   height: 20px;
@@ -9,7 +9,7 @@
 
 .container{
   border-radius: 5px;
-  padding: 20px 40px;
+  padding: 10px 5px;
   border: 1px solid var(--timer-border);
   box-shadow: 0 0 5px dimgray;
 }
@@ -20,13 +20,6 @@
 
 .timerContent{
   position: relative;
-}
-
-.topright{
-  position: absolute;
-  top: 0;
-  right: 0;
-  font-size: 18px;
 }
 
 .label{

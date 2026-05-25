@@ -1,55 +1,76 @@
+@let diaryViewConf = diaryViewConfig();
 <div class="container"
-  [style.background-image]="diaryViewConfig.backgroundImage"
-  [style.--textColor]="diaryViewConfig.textColor"
-  [style.--mutedTextColor]="diaryViewConfig.mutedTextColor"
-  [style.--maxMutedTextColor]="diaryViewConfig.maxMutedTextColor"
->
+     [style.minHeight]="'calc(100vh - 63px)'"
+     [style.background-image]="diaryViewConf.backgroundImage"
+     [style.--textColor]="diaryViewConf.textColor"
+     [style.--mutedTextColor]="diaryViewConf.mutedTextColor"
+     [style.--maxMutedTextColor]="diaryViewConf.maxMutedTextColor"
+  >
 
-  <div class="header">
+  <div class="header h-fit">
     <span class="title">Diary</span>
-    <button mat-icon-button color="accent">
+    <button mat-icon-button color="accent" (click)="editDiaryRecord()">
       <mat-icon>add</mat-icon>
     </button>
   </div>
-  <div class="records-container">
-    @for(item of items; track item.id) {
-      <div class="record" (click)="openDiaryRecord(item)">
-        <div class="flex">
-          <div>
-            <div class="record-title">{{item.title}}</div>
-            <div class="short-content-preview">{{item.content}}</div>
-            <div class="record-date">
-              {{item.createdAt | date:'medium'}}
-            </div>
-          </div>
-
+  <div class="records-container flex-1 min-h-0">
+    @if (!items()?.length) {
+      <div class="flex items-center justify-center h-full text-lg" [style.--textColor]="diaryViewConf.textColor">
+        No diary records yet. Click the <mat-icon>add</mat-icon> button to create your first entry!
+      </div>
+    }
+    @for (item of items(); track item.id) {
+      <div class="record" (click)="editDiaryRecord(item)">
+        <div class="flex gap-4">
           <div class="record-image-container">
             @if (item.imageUrl) {
               <img class="record-image" [src]="item.imageUrl" alt="Record Image"/>
             } @else {
               <div class="record-image-placeholder">
-                {{item.title.split(' ')?.[0]?.[0]?.toUpperCase()}}
-                {{item.title.split(' ')?.[1]?.[0]?.toUpperCase()}}
+                {{ item.title.split(' ')?.[0]?.[0]?.toUpperCase() }}
+                {{ item.title.split(' ')?.[1]?.[0]?.toUpperCase() }}
               </div>
             }
-
           </div>
 
+          <div class="flex-1">
+            <div class="record-title flex items-center justify-between">
+              <span>{{ item.title }}</span>
+              <button mat-icon-button [matMenuTriggerFor]="recordMenu" (click)="$event.stopPropagation()">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #recordMenu="matMenu">
+                <button mat-menu-item (click)="viewDiaryRecord(item); $event.stopPropagation()">
+                  <mat-icon>visibility</mat-icon>
+                  <span>View</span>
+                </button>
+                <button mat-menu-item (click)="editDiaryRecord(item); $event.stopPropagation()">
+                  <mat-icon>edit</mat-icon>
+                  <span>Edit</span>
+                </button>
+                <button mat-menu-item (click)="deleteDiaryRecord(item); $event.stopPropagation()" class="text-red-600">
+                  <mat-icon color="warn">delete</mat-icon>
+                  <span>Delete</span>
+                </button>
+              </mat-menu>
+            </div>
+            <div class="short-content-preview"><div [innerHTML]=" item.contentPreview"></div></div>
+            <div class="record-date">
+              {{ item.updatedAt | date:'medium' }}
+            </div>
+          </div>
         </div>
-
       </div>
     }
   </div>
 
 
-  <mat-button-toggle-group class="gradient-container" [(ngModel)]="diaryViewConfig">
+  <mat-button-toggle-group class="gradient-container flex-none mt-auto" [value]="diaryViewConfig" (change)="onGradientChange($event.value)">
     @for (gradient of gradients; track $index) {
       <mat-button-toggle class="gradient" [style.background-image]="gradient.backgroundImage" [value]="gradient">
-        <div class="gradient-name">{{gradient.name}}</div>
+        <div class="gradient-name">{{ gradient.name }}</div>
       </mat-button-toggle>
     }
   </mat-button-toggle-group>
 </div>
-
-
 

@@ -4,12 +4,62 @@
 @include mat.elevation-classes();
 @include mat.app-background();
 
+// ── Typography ──────────────────────────────────────────────────────────────
+// Inter  → body / UI text
+// Outfit → display / headings
+$typography: mat.m2-define-typography-config(
+  $font-family:   'Inter, Roboto, sans-serif',
+  $headline-1:    mat.m2-define-typography-level(6rem,   6rem,   300, 'Outfit, sans-serif', -0.04em),
+  $headline-2:    mat.m2-define-typography-level(3.75rem,3.75rem,300, 'Outfit, sans-serif', -0.02em),
+  $headline-3:    mat.m2-define-typography-level(3rem,   3.125rem,400,'Outfit, sans-serif'),
+  $headline-4:    mat.m2-define-typography-level(2.125rem,2.5rem, 400,'Outfit, sans-serif', 0.02em),
+  $headline-5:    mat.m2-define-typography-level(1.5rem,  2rem,   400, 'Outfit, sans-serif'),
+  $headline-6:    mat.m2-define-typography-level(1.25rem, 2rem,   600, 'Outfit, sans-serif', 0.02em),
+  $subtitle-1:    mat.m2-define-typography-level(1rem,    1.75rem,400),
+  $subtitle-2:    mat.m2-define-typography-level(0.875rem,1.375rem,600),
+  $body-1:        mat.m2-define-typography-level(1rem,    1.5rem, 400),
+  $body-2:        mat.m2-define-typography-level(0.875rem,1.25rem,400),
+  $caption:       mat.m2-define-typography-level(0.75rem, 1.25rem,400),
+  $button:        mat.m2-define-typography-level(0.875rem,2.25rem,600, 'Inter, Roboto, sans-serif', 0.04em),
+);
+
 // Palettes
 $primary: mat.m2-define-palette(mat.$m2-purple-palette, 700);
 $accent: mat.m2-define-palette(mat.$m2-green-palette, A200);
 $warn: mat.m2-define-palette(mat.$m2-red-palette);
 
 :root {
+  /* ── Font families ───────────────────────────────── */
+  --font-sans:    'Inter', Roboto, ui-sans-serif, sans-serif;
+  --font-display: 'Outfit', ui-sans-serif, sans-serif;
+  --font-mono:    'Roboto Mono', ui-monospace, monospace;
+
+  /* ── Font weights ────────────────────────────────── */
+  --font-light:     300;
+  --font-normal:    400;
+  --font-medium:    500;
+  --font-semibold:  600;
+  --font-bold:      700;
+  --font-extrabold: 800;
+  --font-black:     900;
+
+  /* ── Type scale (rem) ────────────────────────────── */
+  --text-2xs:   0.625rem;   /* 10 px */
+  --text-xs:    0.75rem;    /* 12 px */
+  --text-sm:    0.875rem;   /* 14 px */
+  --text-base:  1rem;       /* 16 px */
+  --text-lg:    1.125rem;   /* 18 px */
+  --text-xl:    1.25rem;    /* 20 px */
+  --text-2xl:   1.5rem;     /* 24 px */
+  --text-3xl:   1.875rem;   /* 30 px */
+  --text-4xl:   2.25rem;    /* 36 px */
+  --text-display: 3.5rem;   /* 56 px — splash / hero */
+
+  /* ── Line heights ────────────────────────────────── */
+  --leading-tight:  1.25;
+  --leading-snug:   1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed:1.625;
   --background: slategray;
   --navbar-background: #424242;
   --mat-card-color: #424242;
@@ -37,7 +87,7 @@ $theme-light: mat.m2-define-light-theme((
     accent: mat.m2-define-palette(mat.$m2-indigo-palette, 400),
     warn: mat.m2-define-palette(mat.$m2-amber-palette)
   ),
-  typography: mat.m2-define-typography-config(),
+  typography: $typography,
   density: 0)
 );
 
@@ -48,7 +98,7 @@ $theme-dark: mat.m2-define-dark-theme((
     accent: $accent,
     warn: $warn
   ),
-  typography:  mat.m2-define-typography-config(),
+  typography: $typography,
   density: 0)
 );
 

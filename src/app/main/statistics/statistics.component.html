@@ -10,30 +10,29 @@
     <div class="flex justify-center items-center">
       <h2>Statistics</h2>
     </div>
-    <div class="flex flex-row justify-evenly gap-5">
-      <div class="flex flex-row items-center">
-        <p>Count of done today:{{'\t'}}</p>
-        <p class="pl-10">{{(statistic$ | async).countOfDoneToday}}</p>
+    <mat-divider></mat-divider>
+    <div class="grid grid-cols-2 gap-x-2 gap-y-1 mt-2">
+      <div class="flex flex-row items-center justify-between gap-2.5">
+        <p>Count of done today:</p>
+        <p>{{(statistic$ | async).countOfDoneToday}}</p>
       </div>
-      <div class="flex flex-row items-center">
-        <p>Count of done total:{{'\t'}}</p>
-        <p class="pl-10">{{(statistic$ | async).countOfDoneTotal}}</p>
+      <div class="flex flex-row items-center justify-between  gap-2.5">
+        <p>Count of done total:</p>
+        <p>{{(statistic$ | async).countOfDoneTotal}}</p>
       </div>
-    </div>
-    <div class="flex flex-row justify-evenly gap-5">
-      <div class="flex flex-row items-center">
+      <div class="flex flex-row items-center justify-between  gap-2.5">
         <p>Percent of done today: </p>
-        <p class="pl-10">{{(statistic$ | async).percentOfDoneToday | percent}} </p>
+        <p>{{(statistic$ | async).percentOfDoneToday | percent}} </p>
       </div>
-      <div class="flex flex-row items-center">
+      <div class="flex flex-row items-center justify-between  gap-2.5">
         <p>Percent of done total: </p>
-        <p class="pl-10">{{(statistic$ | async).percentOfDoneTotal| percent}} </p>
+        <p>{{(statistic$ | async).percentOfDoneTotal| percent}} </p>
       </div>
     </div>
-    <div class="flex flex-row justify-evenly">
-      <div class="flex flex-row items-center">
+    <div class="flex flex-row justify-evenly mt-1">
+      <div class="flex flex-row items-center justify-between gap-6">
         <p>Expired total: </p>
-        <p class="pl-10">{{(statistic$ | async).countOfExpiredTotal}}</p>
+        <p>{{(statistic$ | async).countOfExpiredTotal}}</p>
       </div>
     </div>
     <div>

@@ -1,0 +1,22 @@
+/* View-only dialog for diary record (matches write dialog style) */
+.p-6 {
+  padding: 1.5rem;
+}
+.bg-white {
+  background: #fff;
+}
+.dark .bg-gray-800, .dark-theme .bg-gray-800 {
+  background: #23272f;
+}
+.shadow-xl {
+  box-shadow: 0 4px 32px 0 rgba(31,41,55,0.13);
+}
+.rounded-2xl {
+  border-radius: 1.1rem;
+}
+.prose {
+  font-family: var(--font-sans, 'Inter', sans-serif);
+  font-size: 1.08rem;
+  line-height: 1.7;
+}
+
